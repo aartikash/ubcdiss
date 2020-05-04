@@ -3,18 +3,12 @@
 
 \chapter{Abstract}
 
-This document provides brief instructions for using the \class{ubcdiss}
-class to write a \acs{UBC}-conformant dissertation in \LaTeX.  This
-document is itself written using the \class{ubcdiss} class and is
-intended to serve as an example of writing a dissertation in \LaTeX.
-This document has embedded \acp{URL} and is intended to be viewed
-using a computer-based \ac{PDF} reader.
+%Safety-critical cyber-physical systems \ag{mention acronym CPS here itself} have important real-world applications \ag{without some examples here, this sentence would give the reader no information}.
+The controllers for safety-critical cyber-physical systems(CPS) have recently been leveraging the research progress in Deep Neural Networks (DNNs) to construct data-driven controller models. Multiple approaches have been used to enforce \textit{safety} and \textit{stability} properties on trained models for obtaining robust neural networks. However, none of the existing approaches focus on the attacks that can exist due to 1) the physical nature of CPS and 2) the inherently adversarial nature of DNNs.  
 
-Note: Abstracts should generally try to avoid using acronyms.
+We provide a systematic approach to synthesize a new category of attacks called \attack in DNN based safety-critical CPS. A \attack is carried out by perturbing specific inputs that we call \textit{critical inputs} by minimal amounts to change the DNN's output in a stealthy way. These perturbations propagate as \textit{ripples} over multiple DNN layers and can lead to corruptions that can be fatal in certain cases. Identifying the DNN's \textit{critical inputs} is essential to reduce the time required and the state space explored for these attacks. %The critical inputs are those that affect the final outputs the most on being perturbed; \ag{Can end sentence here} those inputs most likely to generate a ripple in the network. 
 
-Note: at \ac{UBC}, both the \ac{GPS} Ph.D. defence programme and the
-Library's online submission system restricts abstracts to 350
-words.
+Our attack synthesis technique is based on modeling the attack as an optimization problem using Mixed Integer Linear Programming(MILP). We model \attack specific objective (cost) functions tailored for: 1) identifying the critical inputs and, 2) finding the smallest perturbations. We synthesize these attacks for three practical open-source systems in increasing order of complexity -- Artificial Pancreas Systems(APS), Collision Avoidance systems HCAS and ACAS Xu respectively. We successfully managed to synthesize  \attack for APS, HCAS and ACAS Xu in approximately 1 second, 3 minutes and 5 minutes respectively. 
 
 % Consider placing version information if you circulate multiple drafts
 %\vfill

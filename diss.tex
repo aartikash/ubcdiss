@@ -72,7 +72,24 @@
 %% \begin{dinglist}{##}\item... or dingautolist (which auto-increments)
 %% to create a bullet list with the provided character.
 \usepackage{pifont}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{ gensymb }
+\usepackage{ upgreek }
+\usepackage{xspace}
+\theoremstyle{plain}
 
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{blindtext}
+\newtheorem{problem}{Problem}
+\newtheorem*{approach*}{Approach}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Configure fonts for XeTeX / XeLaTeX using the fontspec package.
 %% Be sure to check out the fontspec documentation.
@@ -302,37 +319,38 @@
 %% Document meta-data: be sure to also change the \hypersetup information
 %%
 
-\title{On the Use of the \texttt{ubcdiss} Template}
+\title{ReLUSyn: Synthesizing Ripple Attacks for Deep Neural Network-Based Safety-Critical Systems.}
 %\subtitle{If you want a subtitle}
 
-\author{Johnny Canuck}
-\previousdegree{B. Basket Weaving, University of Illustrious Arts, 1991}
-\previousdegree{M. Silly Walks, Another University, 1994}
+\author{Aarti Kashyap}
+\previousdegree{B. Technology, College of Engineering Pune, 2018}
+
 
 % What is this dissertation for?
-\degreetitle{Doctor of Philosophy}
+\degreetitle{Master of Applied Science}
 
 \institution{The University of British Columbia}
 \campus{Vancouver}
 
-\faculty{The Faculty of XXX}
-\department{Basket Weaving}
-\submissionmonth{April}
-\submissionyear{2192}
+\faculty{The Faculty of graduate and postdoctoral studies}
+\department{Computer Engineering}
+\submissionmonth{}
+\submissionyear{2020}
 
 % details of your examining committee
-\examiningcommittee{John Smith, Materials Engineering}{Supervisor}
+\examiningcommittee{Karthik Pattabiraman, Electrical and Computer Engineering}{Supervisor}
+\iffalse
 \examiningcommittee{Mary Maker, Materials Engineering}%
     {Supervisory Committee Member}
 \examiningcommittee{Nebulous Name, Department}{Supervisory Committee Member}
 \examiningcommittee{Magnus Monolith, Other Department}{Additional Examiner}
 
 % details of your supervisory committee
-\supervisorycommittee{Ira Crater, Materials Engineering}%
+\supervisorycommittee{Karthik Pattabiraman, Electrical and Computer Engineering}%
     {Supervisory Committee Member}
 \supervisorycommittee{Adeline Long, \textsc{CEO} of Aerial Machine
     Transportation, Inc.}{Supervisory Committee Member}
-
+\fi
 %% hyperref package provides support for embedding meta-data in .PDF
 %% files
 \hypersetup{
@@ -414,9 +432,10 @@
 \acresetall	% reset all acronyms used so far
 
 %    1. Introduction
-\include{intro}
+%\include{intro}
 \include{chap1}
-
+\include{chap2}
+\include{chap3}
 %    2. Main body
 % Generally recommended to put each chapter into a separate file
 %\include{relatedwork}
@@ -431,15 +450,16 @@
 %    5. Bibliography
 \begin{singlespace}
 \raggedright
-\bibliographystyle{abbrvnat}
-\bibliography{biblio}
+	\bibliography{bib}
+\bibliographystyle{ieeetr}
 \end{singlespace}
 
 \appendix
 %    6. Appendices (including copies of all required UBC Research
 %       Ethics Board's Certificates of Approval)
 %\include{reb-coa}	% pdfpages is useful here
-\include{appendix}
+
+%\include{appendix}
 
 \backmatter
 %    7. Index
