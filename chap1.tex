@@ -3,7 +3,7 @@
 \label{ch:Chapter1}
 %\section{Introduction}
 %Para-1 - What are safety-critical cps? Some egs. of their existance in different applications. What are the damages they are capable of causing?
-CPS combine the cyber capabilities with physical capabilities which neither part can solve alone \cite{Platzer18}. %They are useful in multiple application domains \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465}.
+\ac{CPS} combine the cyber capabilities with physical capabilities which neither part can solve alone \cite{Platzer18}. %They are useful in multiple application domains \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465}.
 Some common safety-critical applications include medical devices \cite{10.1145/2038642.2038667} \cite{6051465} \cite{10.1145/2461328.2461369} \cite{Bresolin2015} % \ag{you might want to not put too many references for the examples. Consider focusing on putting references related to the concepts that you will utilize or have seen wrt the topic of the paper}.
 Unfortunately, there have been multiple, targeted attacks on safety-critical CPS such as pacemakers\cite{4531149}, airplanes \cite{217595} etc.  %cars \cite{10.5555/1929820.1929848},   %drones and rovers \cite{10.1145/3359789.3359847}. 
 
@@ -16,13 +16,13 @@ Traditionally, CPS have used classical control theory-based controllers  \cite{1
 %
 
 %Paragraph 3- What are FDI attacks? - why are they common? - previous instances of these attacks. 
-For example, by targeting the way sensors capture real-world data, an attacker can inject a false sensor reading. These are called false data injection attacks (FDIA). In an FDIA, an attacker compromises the measurements from the sensors in such a way that undetected errors are introduced in the outputs by changing the state estimation \cite{7438916}. In turn, these can lead to incorrect actions or unintended behavior. 
+For example, by targeting the way sensors capture real-world data, an attacker can inject a false sensor reading. These are called \ac{FDIA}. In an FDIA, an attacker compromises the measurements from the sensors in such a way that undetected errors are introduced in the outputs by changing the state estimation \cite{7438916}. In turn, these can lead to incorrect actions or unintended behavior. 
 %The change in the state estimation leads to a wrong step being taken by the system.  
 
 
 %paragraph 4- What are DNN based controllers? Why are they being used in CPS? Why is this work important?
 
-Recently, Deep Neural Network (DNN) based controllers are replacing classical control-theory based controllers \cite{xiang18} \cite{Kocic2019} \cite{bechtel2017deeppicar}. There are two reasons for using DNNs in CPS: %\ag{you might want to use \textit{itemize/enumerate} to properly format the points. Might become difficult for the reader} 
+Recently,  \ac{DNN} based controllers are replacing classical control-theory based controllers \cite{xiang18} \cite{Kocic2019} \cite{bechtel2017deeppicar}. There are two reasons for using DNNs in CPS: %\ag{you might want to use \textit{itemize/enumerate} to properly format the points. Might become difficult for the reader} 
 1) due to the data-based nature of DNNs, modeling the systems is easier as compared to control theory based systems, which require domain expertise \cite{Aamir_2013}, 2) modeling complex CPS such as autonomous vehicles has certain limitations when using classical control theory \cite{article23}. For example, autonomous vehicles require multiple interacting dynamic control systems, whereas conventional control designs are built for only one specific system. DNNs provide this dynamic capability.
 
 %There are two types of FDIA: random FDIA and targeted FDIA. 
@@ -65,9 +65,9 @@ Second, the existence of non-linear activation functions such as ReLU makes it d
 %To generate the FDIA, we focus on one type of non-linear activation function which is the Rectified Linear Unit (ReLU). The adoption of ReLU is considered as one of the milestones in deep learning revolution since the technique permits very deep neural networks ~\cite{Goodfellow-et-al-2016}.
 %The reason we specifically chose ReLU for our tool is because as shown in Figure 1 , it can be partitioned to be represented in a piece-wise linear format. This property and the structure of the DNNs allows us to model it in Mixed-Integer Linear Programming (MILP) format. Mixed Integer Linear Porgramming (MILP) allows us to create models to find feasible solutions for the models. In our case we create a DNN model such that we can find security attacks using our formulation.     \karthik{We haven't introduced this yet? - AK(DOne)}
 
-Our technique tackles both the challenges and finds the critical inputs and also the minimal perturbations to cause a successful \attack. To do so, we model the attack synthesis as an optimization problem using Mixed Integer Linear Programming(MILP), and build an automated tool called \tool. %to find \attack \ag{You can end the sentence at \tool} .
+Our technique tackles both the challenges and finds the critical inputs and also the minimal perturbations to cause a successful \attack. To do so, we model the attack synthesis as an optimization problem using\ac{MILP}, and build an automated tool called \tool. %to find \attack \ag{You can end the sentence at \tool} .
 
-To tackle the state space explosion, we design \attack specific cost functions (i.e., objective functions) that reduce the search space significantly. This allows us to efficiently find the ripples (if they exist), or provide a proof of their absence in that specific setting. To find the smallest perturbations that cause  ripples, we define the model as a set of equations and constraints with an objective function. Therefore, finding the perturbations is achieved by solving the model. Minimizing the cost functions provides an assurance that the smallest possible perturbations are found. %\karthik{Why is this important? Who's we here ? - It is imp because smallest perturbation means minimal effort from attacker}. %The next approach \karthik{What's the first approach ? I've told  you before - say upfront how many approaches you have and label them} 
+To tackle the state space explosion, we design \attack specific cost functions (i.e., objective functions) that reduce the search space significantly. This allows us to efficiently find the ripples (if they exist), or provide a proof of their absence in that specific setting. To find the smallest perturbations that cause  ripples, we define the model as a set of equations and constraints with an objective function. Therefore, finding the perturbations is achieved by solving the model. Minimizing cost functions provides an assurance that the smallest possible perturbations are found. %\karthik{Why is this important? Who's we here ? - It is imp because smallest perturbation means minimal effort from attacker}. %The next approach \karthik{What's the first approach ? I've told  you before - say upfront how many approaches you have and label them} 
 Further we also locate the critical inputs automatically. Instead of trying to perturb all the inputs in a system, we focus on perturbing only the critical %\karthik{Is this the same as the critical input? Be consistent in terminology -yes}
 inputs as it significantly reduces the search space and the time taken to synthesize the attacks %\karthik{I don't understand - I thought you already found the ripples - yes but ripples can exist by  perturbing multiple inputs and/or one input, the ripples that exist sucessfully with perturbing even a single input are called critical inputs.}. 
 
@@ -116,7 +116,7 @@ The main contributions in this paper are as follows:
 	%\newline
 	
 	\item Implement a tool called \tool, and demonstrate its applicability by synthesizing \attack.%\karthik{Make this a macro in latex} 
-	\item Using \tool, we successfully identify the \textit{critical inputs} in three important safety-critical applications: Artificial Pancreas System (APS),  and  two collision avoidance systems for unmanned vehicles called ACAS-Xu and HCAS
+	\item Using \tool, we successfully identify the \textit{critical inputs} in three important safety-critical applications: \ac{APS},  and  two collision avoidance systems for unmanned vehicles called \ac{ACAS-Xu} and \ac{HCAS}.
 	\item Evaluate \tool's performance and show that it can synthesize \attack in a short time period.   % and utilizing limited memory. 
 	%\karthik{What about memory ?- very less memory - it can also run on rpi given gurobi can be easily installed on it.} 
 	%\newline
