@@ -1,0 +1,25 @@
+\chapter{Conclusion}
+We demonstrate \tool, which is based on generating \attack as an optimization problem using MILP. We address the two main challenges in synthesizing \attack: 1) locating the critical inputs and, 2) finding the smallest perturbations for critical inputs to conduct \attack. To locate the critical inputs, we model a cost function and add $delta$ variable to the inputs and minimize the $delta$. This tells the attacker changing precisely which inputs will result in wrong output predictions. 
+
+%Insights
+% - smaller systems easier to attack due to sizes
+% - ACAS more robust due to the normalization layer that we discuss in Eva, and hence it is possible to make systems more robust
+%- cost function affects the state explosion of the system. When we add a minimize delta, it takes longer because it has to find the smallest delta, whereas if we do not minimize the deltas and add general ranges, it returns the first feasible solution. 
+
+Based on our work, we concluded certain things. The first well-known observation is that it is easier (in terms of time) to find attacks on small-sized DNN based CPS. APS took less than a second for finding an attack whereas ACAS Xu took as high as 5 hours in some specific cases. The second interesting observation was that we found fewer attacks in ACAS Xu as compared to APS. The reason is that ACAS Xu is a more robustly designed network due to the existence of normalization that makes it difficult to generate ripples. Hence, it is possible to design robust DNN while designing the architectures. Finally, we observe that cost function affects the state explosion of the system. If there is a minimization function on the input perturbations, it takes much longer to compute and can also lead to explosions in certain cases as compared to having no minimization function. 
+
+
+
+%Future work
+Finally, we believe that there are many more extensions that can be done with \tool. First, it can be extended for multiple different application domains to find attacks. For eg. Autonomous Vehicles have multiple stacks of DNNs to compute the output and \tool can be utilized to find attacks in multiple DNNs. Second, one can try and model cost functions for an attack model different from ours and use our insights to generate attacks. Third, we observe that in some ACAS Xu attack scenarios we were getting a time-out which tells us that there is the scope of improvement in the heuristics we have currently proposed for a speedup.
+
+\iffalse
+We have addressed security as an optimization problem by modeling the Deep Neural Network as a Mixed Integer Linear model. This is the first step to automatically synthesize attacks called ripple attacks that on small perturbations to the input propagate further to cause output perturbations. 
+
+We discussed the modeling details, designing attack specific cost functions \smi{change 'cost functions' to 'target inputs/perturbation bounds'; cost functions mean objective function which doesn't change for us}, finding critical inputs and finally finding the minimum perturbations for a successful attack that we call as a ripple attack. We show our evaluation on three systems of different sizes. Our biggest system size is (5,50,50,50,50,50,5). We model the cost functions such that even for big systems, our approach does not blow up \smi{we should chat and clarify the meaning of cost functions in this context}. We chose the three systems that are practical safety-critical systems that is an artificial pancreas system, and two aircraft collision avoidance networks.
+
+For the medical system which is a considerably smaller system than our collision avoidance system, we are able to find the critical inputs and synthesize minimum perturbations in less than a second. For bigger system with more layers and number of neurons per layer, we are successfully able to synthesize attacks within a minute. 
+
+We believe that using our technique to find similar attacks in systems such as self-driving cars that have multiple DNNs instead of one in their control system would be an interesting future work. As mentioned in the discussion section using our approach for tracing error propagation is another interesting use case. Finally, modeling application specific heuristics for systems such as surgical arm to synthesize attacks is another interesting topic for future research. 
+\fi 
+%\input{discussion}

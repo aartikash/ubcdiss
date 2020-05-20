@@ -42,7 +42,7 @@ check the upper and lower bounds of the inputs to prevent them from deviating by
 %\karthik{This is the same point as the one above}. DNNs are constructed using data that provides an input-output mapping for the controller. \karthik{So what?}
 
 
-In this paper, we ask whether { \attack \em can be mounted on DNN-based controllers, and if so, whether it is possible to find the attacks automatically with minimal cost.} 
+In this work, we ask whether { \attack \em can be mounted on DNN-based controllers, and if so, whether it is possible to find the attacks automatically with minimal cost.} 
 %karthik{Doesn't automatic imply minimal effort ? Did you mean cost ?}. - yes cost  }
 %since mathematical modeling is different. \karthik{So I'm not sure I understand why this is specific to control theory ?}
 %The traditional FDIA has been conducted in a control theory based CPS settings. 
@@ -98,7 +98,7 @@ We handle the non-linearity of activation functions in two ways. First, we chose
 %Also, providing general upper and lower bounds does not show that the systems are free of side channel attacks or stealthy attacks such as the FDIA \karthik{Why are we talking about side-channel attacks?}. There have been many attacks on DNN systems that uses adversarial perturbations in the inputs for mis-classifying outputs \cite{Szegedy2013IntriguingPO}\cite{deng2020analysis}. %\karthik{Provide citations}
 %However, there is no work or automated technique that demonstrates FDI attacks in DNN based controllers for CPS. 
 %Also, it is not a trivial task to map the existing techniques directly since our use case is different from the previous use-cases. 
-{\textit{To the best of our knowledge, we are the first to  propose an automated approach to systematically locate the critical inputs and find the minimum perturbations to conduct a \attack for DNN-based controller systems.}}
+{\textit{To the best of our knowledge, we are the first to  propose an automated approach to systematically locate the critical inputs and find the minimum perturbations to conduct a \ac{RFDIA} for DNN-based controller systems.}}
 %{\textit{To the best of our knowledge, we are the first to systematically propose security optimizations to find the optimal FDI attacks for DNN based controllers for CPS by finding the critical inputs instead of perturbing all the inputs. }
 %\todot{Frame the problem statement better}
 \newline
@@ -107,7 +107,7 @@ The main contributions in this paper are as follows:
 %\setlist{nolistsep}
 \newline
 \begin{enumerate}
-	\item Demonstrate that FDI attacks on classical control-theory based CPS are also applicable to DNN-based controllers, and define\attack specific to DNN based CPS. %\ag{Didnt you mention that FDIA for control-theory based CPS is not applicable to DNN-based CPS? Which is what this paper addresses about?- attacks are applicable; attack generation technique is not} 
+	\item Demonstrate that FDIA on classical control-theory based CPS are also applicable to DNN-based controllers, and define RFDIA specific to DNN based CPS. %\ag{Didnt you mention that FDIA for control-theory based CPS is not applicable to DNN-based CPS? Which is what this paper addresses about?- attacks are applicable; attack generation technique is not} 
 	% \karthik{How can you abstract the system as a problem?}
 	% \newline
 	\item Model the attack synthesis as an optimization problem (specifically as a MILP). %\karthik{Once you define an acronymn, use it consistently} 
