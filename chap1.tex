@@ -3,41 +3,50 @@
 \label{ch:Chapter1}
 %\section{Introduction}
 %Para-1 - What are safety-critical cps? Some egs. of their existance in different applications. What are the damages they are capable of causing?
-\ac{CPS} combine the cyber capabilities with physical capabilities which neither part can solve alone \cite{Platzer18}. %They are useful in multiple application domains \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465}.
+\ac{CPS} combine the cyber capabilities with physical capabilities which neither part can solve alone \cite{Platzer18}. They are useful in multiple application domains \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465}.
 Some common safety-critical applications include medical devices \cite{10.1145/2038642.2038667} \cite{6051465} \cite{10.1145/2461328.2461369} \cite{Bresolin2015} % \ag{you might want to not put too many references for the examples. Consider focusing on putting references related to the concepts that you will utilize or have seen wrt the topic of the paper}.
-Unfortunately, there have been multiple, targeted attacks on safety-critical CPS such as pacemakers\cite{4531149}, airplanes \cite{217595} etc.  %cars \cite{10.5555/1929820.1929848},   %drones and rovers \cite{10.1145/3359789.3359847}. 
+Unfortunately, there have been multiple, targeted attacks on safety-critical CPS such as pacemakers\cite{4531149}, airplanes \cite{217595} and  cars \cite{10.5555/1929820.1929848}.
 
 %\todot{Add some more examples from practical world to show the importance of safety-critical world} Hence, they require hard guarantees otherwise they can lead to incomprehensible damages such as loss of life. There have been reports where self-driving cars ended up in crashes leading to loss of life. \todot{Add some real life examples of damage due to reliability}
 
 %Paragrah-2 - controller based cyber physical systems - What have cps been modelled using previously and the different sort of attacks that have been show in those cases. 
 Traditionally, CPS have used classical control theory-based controllers  \cite{1337806} \cite{10.1145/2038642.2038667} \cite{6051465}. Control theory utilizes differential equations to model the systems' behavior, while accounting for any external factors that might affect the system e.g., friction, wind etc. This makes them vulnerable to malicious attacks that exploit these tolerances.
-%The first publicly reported targeted attack on a SCADA system \cite{article22} was the attack on Maroochy Shire Council’s sewage control system in Queensland, Australia where the attacker caused more than 750,000 gallons of untreated sewage water to be released into parks and resulted in more than \$200,000 clean up damages \cite{10.1016/j.adhoc.2009.04.012}. There have also been targeted attacks demonstrated on surgical robots \cite{7579758}, bugs disguised as attacks \cite{242054}. There have been multiple attacks to the control systems in the past but a lot of the attacks have no public information\cite{doi:10.1080/13518040590969785}
+The first publicly reported targeted attack on a SCADA system \cite{article22} was the attack on Maroochy Shire Council’s sewage control system in Queensland, Australia where the attacker caused more than 750,000 gallons of untreated sewage water to be released into parks and resulted in more than \$200,000 clean up damages \cite{10.1016/j.adhoc.2009.04.012}. There have also been targeted attacks demonstrated on surgical robots \cite{7579758}, bugs disguised as attacks \cite{242054}. There have been multiple attacks demonstrated in the control systems in the past but a lot of the attacks have no public information\cite{doi:10.1080/13518040590969785}.
 %\todot{Add more examples of attacks here from papers}
 %
 
 %Paragraph 3- What are FDI attacks? - why are they common? - previous instances of these attacks. 
-For example, by targeting the way sensors capture real-world data, an attacker can inject a false sensor reading. These are called \ac{FDIA}. In an FDIA, an attacker compromises the measurements from the sensors in such a way that undetected errors are introduced in the outputs by changing the state estimation \cite{7438916}. In turn, these can lead to incorrect actions or unintended behavior. 
+For eg. by targeting the way sensors capture real-world data, an attacker can inject a false sensor reading. These are called \ac{FDIA}. In an FDIA, an attacker compromises the measurements from the sensors in such a way that undetected errors are introduced in the outputs by changing the state estimation \cite{7438916}. In turn, these can lead to incorrect actions or unintended behavior. 
 %The change in the state estimation leads to a wrong step being taken by the system.  
 
 
 %paragraph 4- What are DNN based controllers? Why are they being used in CPS? Why is this work important?
 
 Recently,  \ac{DNN} based controllers are replacing classical control-theory based controllers \cite{xiang18} \cite{Kocic2019} \cite{bechtel2017deeppicar}. There are two reasons for using DNNs in CPS: %\ag{you might want to use \textit{itemize/enumerate} to properly format the points. Might become difficult for the reader} 
-1) due to the data-based nature of DNNs, modeling the systems is easier as compared to control theory based systems, which require domain expertise \cite{Aamir_2013}, 2) modeling complex CPS such as autonomous vehicles has certain limitations when using classical control theory \cite{article23}. For example, autonomous vehicles require multiple interacting dynamic control systems, whereas conventional control designs are built for only one specific system. DNNs provide this dynamic capability.
+\begin{enumerate}
+	\item  Due to the data-based nature of DNNs, modeling the systems is easier as compared to control theory based systems, which require domain expertise \cite{Aamir_2013}. For eg. to model a medical system such as \ac{APS} conventional control theory requires precise equations to build models. DNNs on the other hand can automatically build models with data. There are different problems encountered in building DNN models that depends on the availability of  data, however, the designers don't need to model precise control equations like in control theory. 
+		\item  Modeling complex CPS such as autonomous vehicles has certain limitations when using classical control theory \cite{article23}. For eg., autonomous vehicles require multiple interacting dynamic control systems, whereas conventional control designs are built for only one specific system. DNNs provide this dynamic capability. Due to the data driven modeling using DNNs, it is relatively easier to build models for autonomous vehicles that have multiple models interacting within it such as image recognition and lane detection. There are separate models that are used for detecting the obstacles, and one for detecting the lanes. These models have to interact continuously with each other to decide the next best course of action.
+\end{enumerate}
+
 
 %There are two types of FDIA: random FDIA and targeted FDIA. 
 %To construct a targeted FDIA, the relationship described through classical control theory is assumed to be known by the attacker. Hence, previous techniques proposed for targeted
 FDIA generation techniques for classical control theory based controllers \cite{10.1145/1952982.1952995} are not applicable to DNNs because they have different mathematical representations. This is because typical FDIA techniques construct attack vectors according to the control-theory equations. %In DNN these equations are different and the same attack vectors cannot be used.
 % since the interfaces are completely different. 
-Further, in classical control theory, small perturbations in specific inputs can lead to changes in outputs by changing the state estimations. %There have been multiple mechanisms proposed to synthesize the FDIA in classical controllers.  
+Further, in classical control theory, small perturbations in specific inputs can lead to changes in outputs by changing the state estimations. There have been multiple mechanisms proposed to synthesize the FDIA in classical controllers  \cite{e3f0020abba24d4389aff937fe8bcdd5},  \cite{10.1145/1952982.1952995}.  
 However, using the same mechanisms to synthesize FDIA in DNN  based controllers as stated above does not work as said above %due to the differences in their interface \ag{This statement is mentioned at the start of the paragraph, just in different words. Consider why this sentence is different}
 -- we design a technique to synthesize FDIA for DNN controllers. We call these \attack as they are transmitted through the DNN's layers in the CPS like ripples in large puddle of water. % \karthik{How do ripple attacks differ from classical FDIAs? - they are transmitted through the layers, unlike in classical fdia since there are no layers type structure in control theory.}
 
 %paragraph 3a
 A ripple is created when the perturbation caused at the input layer is transmitted to the output layer thereby causing deviations without raising any alarms. 
 %However, to cause a successful ripple it is important to identify the  input and its perturbation that will ensure that the output is deviated by a certain threshold. %If we conduct a FDI attack but by perturbing the not so effective input \karthik{What does this mean}, the ripple will not be successful. Hence, t
-To mount a successful \attack, we need to identify two things: 1) the critical inputs-- these are inputs that affect the final outputs most on being perturbed; inputs most likely to generate a ripple in the network and , 2) the smallest amount by which each critical input needs to be perturbed to cause a ripple. We are looking for the smallest perturbations because large deviations in the inputs can trigger alarms due to the inbuilt error detection mechanisms that 
-check the upper and lower bounds of the inputs to prevent them from deviating by large amounts.
+To mount a successful \attack, the attacker need to identify two things: 
+\begin{enumerate}
+	\item The critical inputs-- these affect the final outputs most on being perturbed; inputs most likely to generate a ripple in the network. To attack the system the attacker does not need to modify all the inputs. Modifying the important inputs is enough to attack the system but locating the inputs can be tricky because not all inputs can lead to an attack. 
+	\item The smallest amount by which each critical input needs to be perturbed to cause a ripple. We are looking for the smallest perturbations because large deviations in the inputs can trigger alarms due to the inbuilt error detection mechanisms that 
+	check the upper and lower bounds of the inputs to prevent them from deviating by large amounts.
+\end{enumerate}
+
 %\karthik{I don't understand the difference}
 %\karthik{This is the same point as the one above}. DNNs are constructed using data that provides an input-output mapping for the controller. \karthik{So what?}
 
@@ -53,9 +62,15 @@ In this work, we ask whether { \attack \em can be mounted on DNN-based controlle
 %\karthik{What mechanisms are these?- yes done}.  	
 %Paragraph 4a - why is the FDIA in DNN be challenging?
 
-To synthesize ripples in DNN based CPS, there are two main challenges. First, the state space for DNN based systems is very big since the DNN model is constructed using huge data sets. This makes it difficult to find the perturbations for inputs. If an attacker is conducting the attack in a practical setting, she has limited time to mount the attacks.  %\karthik{Why is limited time a factor?}. 
-Second, the existence of non-linear activation functions such as ReLU makes it difficult to find linear mappings between the inputs and the outputs to synthesize \attack.
-%\karthik{Does ripple mean just the perturbation or does it include the input?}.                                                            
+To synthesize ripples in DNN based CPS, there are two main challenges.
+\begin{enumerate}
+
+	\item If an attacker is conducting the attack in a practical setting, she has limited time to mount the attacks. For eg. when an attacker is trying to attack a DNN based CPS, the architecture can be made available through open source documents, however, the exact values of the architecture differ from each other. A medical device such as \ac{APS} will have a similar architecture but the relations between the parameters are going to be different for different patients. Hence for attacking the devices the attacker requires a one time access to the devices to obtain the precise data for attacking the system. Once the data is obtained through the access the attacker has limited time to launch the attack.  %\karthik{Why is limited time a factor?}. 
+	\item The state space for DNN based systems is very big since the DNN model is constructed using huge data sets. This makes it difficult to find the perturbations for inputs. The existence of non-linear activation functions such as ReLU as shown in Figure 1.1 makes it difficult to find linear mappings between the inputs and the outputs to synthesize \attack and hence we need an approach that can handle the  non-linearity of the activation functions. 
+	%\karthik{Does ripple mean just the perturbation or does it include the input?}.  
+\end{enumerate}
+
+                                                          
 
 %To understand the the existance of successful ripples in DNN based CPS, there are two challenges with respect to the control theory approach. First, the state space for DNN based systems is typically much bigger than control-theoretic models. The reason behind this is that the control theory equations are well defined for different different modes for state estimation. In DNNs, this is not the case, since the model is defined using the data-set, and needs to capture the behaviors for the CPS. %\karthik{Really ? All possible behaviors ?}. 
 %Therefore, verification of DNNs is still an open and challenging problem. Researchers have spent a lot of time on verifying the properties for CPS modeled using control theory using theorem proving \cite{Araiza_Illan_2014} \cite{SYS-001} . Hence, there are guarantees associated with the control theory systems. However, DNNs lack in providing strong guarantees for the systems due to the reasons stated above. 
@@ -71,15 +86,20 @@ To tackle the state space explosion, we design \attack specific cost functions (
 Further we also locate the critical inputs automatically. Instead of trying to perturb all the inputs in a system, we focus on perturbing only the critical %\karthik{Is this the same as the critical input? Be consistent in terminology -yes}
 inputs as it significantly reduces the search space and the time taken to synthesize the attacks %\karthik{I don't understand - I thought you already found the ripples - yes but ripples can exist by  perturbing multiple inputs and/or one input, the ripples that exist sucessfully with perturbing even a single input are called critical inputs.}. 
 
-We handle the non-linearity of activation functions in two ways. First, we chose the ReLU activation function as this can be converted from a non-linear function to a piece-wise linear function by adding a set of logical constraints. This allows us to create solvable models in MILP. Second, we add constraints to bound the search space that allows \tool to return results without state-space explosion. %\karthik{What's the second thing?}
+We handle the non-linearity of activation functions in two ways. 
+\begin{enumerate}
+	\item First, we chose the ReLU activation as shown in Figure 1.1 function as this can be converted from a non-linear function to a piece-wise linear function by adding a set of logical constraints. This allows us to create solvable models in MILP.
+	\item Second, we add constraints to bound the search space that allows \tool to return results without state-space explosion
+\end{enumerate}
+ . %\karthik{What's the second thing?}
 %\karthik{Wait a second - you just said it was non-linear, but now you're saying it's piece-wise linear}
 
-%\begin{figure}
-%	\centering
-%	\includegraphics[width=0.7\linewidth]{Images/ReLU}
-%	\caption[Activation functions]{ReLU activation function}
-%	\label{fig:ReLU}
-%\end{figure}
+\begin{figure}
+	\centering
+		\includegraphics[width=0.7\linewidth]{Images/ReLU}
+	\caption[Activation functions]{ReLU activation function}
+	\label{fig:ReLU}
+\end{figure}
 
 
 % Paragraph 5 - Building up on the non-linearity challenge 1) why are relu being used so much 2) what is relu doing
@@ -123,7 +143,8 @@ The main contributions in this paper are as follows:
 \end{enumerate}
 
 % Karthik - I folded this in with the contributions above- pk
-%Our evaluation shows that ReLUSyn can provide a uniform platform for finding security attacks in a complex system constructed using DNNs. ReLUSyn also shows that we can abstract the security problem as an optimization problem to systematically find the possible attacks in the form of FDI and reason about the system. We believe we are the first to propose an optimization framework that allows different attack modeling for DNNs. We show modelings for three types of FDI attacks. SInce the framework comes with three predefined attack models they can utilise them directly. We also believe this will lead to future work as researchers can model their own attacks for their applications and use the framework. This provides a plug and play functionality within our framework. 
+%Our evaluation shows that ReLUSyn can provide a uniform platform for finding security attacks in a complex system constructed using DNNs. ReLUSyn also shows that we can abstract the security problem as an optimization problem to systematically find the possible attacks in the form of FDI and reason about the system. We believe we are the first to propose an optimization framework that allows different attack modeling for DNNs. 
+We show modelings for different types of RFDIA in three different systems. \tool comes with three predefined attack models they can utilize them directly. We also believe this will lead to future work as researchers can model their own attacks for their applications and use the framework. \tool provides a plug and play functionality for different 
 
 %ReLUSyn always returns a result if there is a FDI attack possible \karthik{Can we use terms such as sound, complete etc.?}. It also allows us to find more subtle perturbations to conduct the FDI attacks by applying specific optimizations while modeling the DNN using MILP \karthik{I don't understand}. We demonstrate three different attacks for two different applications of CPS, and hence, in the future designing more cost functions for different attacks can be a way to proceed towards the ideal case \karthik{What ideal case ?}. 
 
