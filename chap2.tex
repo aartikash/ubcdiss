@@ -1,9 +1,10 @@
 \chapter{Background}
 \label{ch:Chapter2}
 
+This chapter provides background that is required for understanding the mechanisms of our technique. We provide a short summary of conventional control theory systems followed by DNN based systems, and the different roles of people in the work. We finally end the chapter with a formal definition of our problem statement. 
 
 
-This chapter provides background that is required for understanding the mechanisms of our technique. We provide a short summary of conventional control theory systems followed by DNN based systems. We finally end the chapter with a formal definition of our problem statement. 
+
 %We consider a closed-loop system as shown in Figure 2, with sensors as the inputs to the DNN and the actuators that take the output from the DNN based controllers. We describe the model for CPS, followed by the DNN controller model, attack model formalism and the problem statement.
 
 %\aarti{Should the diagram be more descriptive with DNNs in the middle?}
@@ -83,6 +84,15 @@ where, for a real vector x, ReLU(x):= max\{0,x\} (per layer).
 During the training of the network, the parameters (weights and bias) are determined; we know those values when we are trying to find attacks on the CPS.
 
 
+\section{People description}
+
+\begin{enumerate}
+	\item \textbf{Specification Designer/Domain Expert:} The domain expert in the realm of \ac{CPS} is responsible for designing the specification documents. For eg. for \ac{APS} the domain expert designs the safe thresholds for the amount of insulin to be injected inside a patient. The domain expert tells values that should trigger alarms in case of a high blood glucose value in a human. 
+	
+	\item \textbf{System Developer:} These are the people or the designers who based on the specification of the CPS implement the system. For eg. \ac{APS} can be modeled using several different mechanisms. One can use a set of differential equations to design the relations between insulin or blood glucose or one can use \ac{ML} models to build the system models such as decision trees, k-means etc. 
+	
+	\item \textbf{Attacker:} We are the attackers for the system in the scenario. Our goal is to attack the \ac{CPS} in a stealthy manner. Stealthy here implies we attack the system without getting detected. 
+\end{enumerate}
 
 
 
