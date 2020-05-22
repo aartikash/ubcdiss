@@ -3,8 +3,7 @@
 
 
 
-
-This chapter provides background that is required for understanding the mechanisms of our technique. We provide a short summary of conventional control theory systems followed by DNN based systems. We then provide a short intro to \ac{MILP} which we use for formalizing our evaluation systems (APS, ACAS Xu and HCAS) . We finally end the chapter with a formal definition of our problem statement. 
+This chapter provides background that is required for understanding the mechanisms of our technique. We provide a short summary of conventional control theory systems followed by DNN based systems. We finally end the chapter with a formal definition of our problem statement. 
 %We consider a closed-loop system as shown in Figure 2, with sensors as the inputs to the DNN and the actuators that take the output from the DNN based controllers. We describe the model for CPS, followed by the DNN controller model, attack model formalism and the problem statement.
 
 %\aarti{Should the diagram be more descriptive with DNNs in the middle?}
@@ -65,17 +64,27 @@ Each output layer computes its output through the following formula.
 F_i(x) &= \upsigma(W_ix + b_i) ,  i = 1,.....,K, (2)  \\
 \end{align*}
 
-The $\upsigma$ is the abstraction for different activation functions that can be used to model the DNN as mentioned in the introduction. Our tool focuses on using Rectified Linear Unit (ReLU) since it is one of the most commonly used functions. %It is also piecewise linear so we can model it using MILP encoding. 
+The $\upsigma$ is the abstraction for different activation functions that can be used to model the DNN. There are multiple types of activation functions which all come with different modeling capabilities such as ReLU ($f(x) = max {0,x}$) as shown in Figure 2.3, logistic $f(x)=1/(1+ exp(-e))$
+ Our tool focuses on using Rectified Linear Unit (ReLU) as shown in Figure 2.3 since it is empirically seems to work well and converged much more quickly than a Sigmoid  activation function as shown by Krizhevsky et al. in \cite{10.1145/3065386}.  %It is also piecewise linear so we can model it using MILP encoding. 
 
 \begin{align*}
 F_i(x) &= ReLU(W_ix + b_i) ,  i = 1,.....,K , (3) \\
 \end{align*}
 
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Images/ReLU}
+	\caption[Activation functions]{ReLU activation function}
+	\label{fig:ReLU}
+\end{figure}
 where, for a real vector x, ReLU(x):= max\{0,x\} (per layer).
 
 During the training of the network, the parameters (weights and bias) are determined; we know those values when we are trying to find attacks on the CPS.
 
-Note: Add a section introducing MILP.
+
+
+
 
 \section{Problem Statement}
 %Given that we have the trained DNN model available, in the above section, we identify two problems that we are interested in solving. The first one is identifying the critical inputs in DNN based CPS and the second is synthesizing \attack with minimal cost. 

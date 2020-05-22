@@ -66,7 +66,7 @@ To synthesize ripples in DNN based CPS, there are two main challenges.
 \begin{enumerate}
 
 	\item If an attacker is conducting the attack in a practical setting, she has limited time to mount the attacks. For eg. when an attacker is trying to attack a DNN based CPS, the architecture can be made available through open source documents, however, the exact values of the architecture differ from each other. A medical device such as \ac{APS} will have a similar architecture but the relations between the parameters are going to be different for different patients. Hence for attacking the devices the attacker requires a one time access to the devices to obtain the precise data for attacking the system. Once the data is obtained through the access the attacker has limited time to launch the attack.  %\karthik{Why is limited time a factor?}. 
-	\item The state space for DNN based systems is very big since the DNN model is constructed using huge data sets. This makes it difficult to find the perturbations for inputs. The existence of non-linear activation functions such as ReLU as shown in Figure 1.1 makes it difficult to find linear mappings between the inputs and the outputs to synthesize \attack and hence we need an approach that can handle the  non-linearity of the activation functions. 
+	\item The state space for DNN based systems is very big since the DNN model is constructed using huge data sets. This makes it difficult to find the perturbations for inputs. The existence of non-linear activation functions such as ReLU, tanh etc. makes it difficult to find linear mappings between the inputs and the outputs to synthesize \attack and hence we need an approach that can handle the  non-linearity of the activation functions. 
 	%\karthik{Does ripple mean just the perturbation or does it include the input?}.  
 \end{enumerate}
 
@@ -88,18 +88,12 @@ inputs as it significantly reduces the search space and the time taken to synthe
 
 We handle the non-linearity of activation functions in two ways. 
 \begin{enumerate}
-	\item First, we chose the ReLU activation as shown in Figure 1.1 function as this can be converted from a non-linear function to a piece-wise linear function by adding a set of logical constraints. This allows us to create solvable models in MILP.
+	\item First, we chose the ReLU activation function as this can be converted from a non-linear function to a piece-wise linear function by adding a set of logical constraints. This allows us to create solvable models in MILP. We believe that any activation function can be used so long it can be represented as a set of linear functions. 
 	\item Second, we add constraints to bound the search space that allows \tool to return results without state-space explosion
 \end{enumerate}
  . %\karthik{What's the second thing?}
 %\karthik{Wait a second - you just said it was non-linear, but now you're saying it's piece-wise linear}
 
-\begin{figure}
-	\centering
-		\includegraphics[width=0.7\linewidth]{Images/ReLU}
-	\caption[Activation functions]{ReLU activation function}
-	\label{fig:ReLU}
-\end{figure}
 
 
 % Paragraph 5 - Building up on the non-linearity challenge 1) why are relu being used so much 2) what is relu doing
