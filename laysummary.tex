@@ -11,9 +11,21 @@
 
 \chapter{Lay Summary}
 
-Safety-critical cyber-physical systems designs have recently evolved from utilizing conventional control theory to utilizing deep neural networks for model building purposes. Researchers have conducted security analysis in deep neural networks, and safety-critical systems modeled using conventional control theory separately.  However, understanding the effects of using deep networks for modeling safety-critical systems has not been completely explored yet. 
+\ac{CPS} are systems that perform computations by continuous interactions with the physical environment, and perform actions in the physical environment based on the computations. 
+These \ac{CPS} are deployed in many mission-critical applications such as medical devices (e.g., an \ac{APS}), autonomous vehicular systems (e.g., self-driving cars, unmanned aerial vehicles), and aircraft control management systems (e.g.,  \ac{HCAS} and \ac{ACAS-Xu}). 
+This mission-critical aspect of CPS suggests that ensuring their correct functioning, and complying with all safety specifications is of paramount importance. 
+Ensuring correctness is becoming more difficult at these systems adopt new technology, such as \ac{DNN}, to control these systems. 
+\ac{DNN} are black box algorithms whose inner workings are complex and difficult to discern.
+As such, understanding their vulnerabilities is also complex and difficult. 
 
-Our work looks at the security effects of deep neural networks in three practical safety-critical systems: Artificial Pancreas System, and Aircraft control management systems (ACAS Xu and HCAS). We introduce a new category of attacks called Ripple attacks which are formalized using Mixed Integer Linear Programming. We use the formalism to synthesize the attacks in our three chosen systems in a feasible amount of time. 
+This work addresses the problem of understanding vulnerabilities by introducing a  technique to produce attacks that can significantly affect the behavior. 
+We demonstrate that it is possible  to construct such attacks efficiently. 
+Understanding this new class of attacks sets the stage for developing methods to mitigate these vulnerabilities. 
+
+
+
+ 
+
 
 %Basically three things are being done here
 %1- new category of attacks

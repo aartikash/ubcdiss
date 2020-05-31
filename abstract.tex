@@ -3,13 +3,24 @@
 
 \chapter{Abstract}
 
-%Safety-critical cyber-physical systems \ag{mention acronym CPS here itself} have important real-world applications \ag{without some examples here, this sentence would give the reader no information}.
-Controllers for safety-critical cyber-physical systems(CPS) have recently been leveraging the research progress in Deep Neural Networks (DNNs) to construct data-driven controller models. Multiple approaches have been used to enforce \textit{safety} and \textit{stability} properties on trained models for obtaining robust neural networks. However, none of the existing approaches focus on the attacks that can exist due to 1) the physical nature of CPS and 2) the inherently adversarial nature of DNNs.  
+\ac{CPS} are deployed in many mission-critical applications such as medical devices (e.g., an \ac{APS}), autonomous vehicular systems (e.g., self-driving cars, unmanned aerial vehicles), and aircraft control management systems (e.g.,  \ac{HCAS} and \ac{ACAS-Xu}). 
+Ensuring correctness is becoming more difficult at these systems adopt new technology, such as \ac{DNN}, to control these systems. 
+\ac{DNN} are black box algorithms whose inner workings are complex and difficult to discern due to their data-driven nature.
+As such, understanding their vulnerabilities is also complex and difficult. 
 
-We provide a systematic approach to synthesize a new category of attacks called \ac{RFDIA} in DNN based safety-critical CPS. A \ac{RFDIA} is carried out by perturbing specific inputs that we call \textit{critical inputs} by minimal amounts to change the DNN's output in a stealthy way. These perturbations propagate as \textit{ripples} over multiple DNN layers and can lead to corruptions that can be fatal in certain cases. Identifying the DNN's \textit{critical inputs} is essential to reduce the time required and the state space explored for these attacks. The \textit{critical inputs} are those that affect the final outputs the most on being perturbed; those inputs most likely to generate a ripple in the network. 
 
-Our attack synthesis technique is based on modeling the attack as an optimization problem using Mixed Integer Linear Programming(MILP). We model \attack specific objective (cost) functions tailored for: 1) identifying the critical inputs and, 2) finding the smallest perturbations. We synthesize these attacks for three practical open-source systems in increasing order of complexity -- \ac{APS}), \ac{HCAS}, and \ac{ACAS-Xu}. Some of our observations were that conducting \ac{FDIA} in systems such as \ac{APS} was much easier to conduct despite the inbuilt safety settings as compared to systems such as \ac{ACAS-Xu} where the architectures are more robust. Modeling the cost functions and using range analysis we were able to successfully able to synthesize attacks without state explosions. 
-We successfully managed to synthesize  \attack for APS, HCAS and ACAS Xu in approximately 1 second, 3 minutes and 5 minutes respectively. 
+We provide a systematic approach to synthesize a new category of attacks called \ac{RFDIA} in \ac{DNN} based mission-critical systems.
+\ac{RFDIA} is carried out by perturbing specific inputs that we call critical inputs by minimal amounts to  change the \ac{DNN}'s output in a stealthily. These  perturbations propagate as ripples over multiple \ac{DNN} layers and can lead to corruptions that  can be fatal in certain cases. 
+We demonstrate that it is possible  to construct such attacks efficiently by identifying the \ac{DNN}'s critical inputs. 
+The critical inputs are those that  affect the final outputs the most on being perturbed; those inputs most likely to generate a ripple. 
+Understanding this new class of attacks sets the stage for developing methods to mitigate these vulnerabilities. 
+
+Our attack synthesis technique is based on model the attack as an optimization problem using \ac{MILP}.
+We define an abstraction for \ac{DNN} based \ac{CPS} that allows us to automatically: 1) identify the critical inputs, and 2) find the smallest perturbations. 
+We demonstrate our technique three practical \ac{CPS} with two mission-critical applications in increasing order of complexity: Medical systems (\ac{APS}) and aircraft control management systems (\ac{HCAS} and \ac{ACAS-Xu}). 
+Our key observation for scaling our technique to complex systems such as \ac{ACAS-Xu} was defining appropriate intervals for the inputs and the outputs for the \ac{DNN}s.
+
+
 
 % Consider placing version information if you circulate multiple drafts
 %\vfill
