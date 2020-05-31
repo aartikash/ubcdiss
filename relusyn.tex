@@ -1,4 +1,4 @@
-	\chapter{ReLUSyn}
+\chapter{ReLUSyn}
 % To automate the FDI attacks, we follow a three-step approach.
 %1. We first abstract the CPS DNN in a generalizable format developed by Dutta et al. \cite{10.1007/978-3-319-99429-1_11} that allows us to represent a trained network. 
 %2. Using the trained network values we pass it through the MILP modeling that we have constructed. 
@@ -16,7 +16,7 @@ Our goal is to automate the attack synthesis for complex systems such as CPS tha
 
 
 
-\subsection{Overview}
+\section{Overview}
 \label{section:overview}
 %This section introduces the different layers and how the framework is designed. It talks about how MILP allows us to model the DNN. Where is the cost function placed? What happens when a user enters an infeasible model. 
 
@@ -38,7 +38,7 @@ In this section, we explain how \tool tackles the challenges we have described i
 
 
 
-\subsection{Building the model}
+\section{Building the model}
 \label{section:attacks}
 %This section focuses on how we build the model using MILP and some background insights about DNN along with that. 
 \tool comes with automated attack synthesizers for Artificial Pancreas System, Aircraft Collision Avoidance systems ACAS Xu and Horizontal CAS. %Writing a new attack synthesizer into \tool boils down to defining the attack model as a function that can be easily plugged in our framework.
@@ -92,7 +92,7 @@ Y &=  ReLU(Wx + b) ...... (4)
 %Y &= ReLU(w_{11} x_1 + b_{11}  + w_{12} x_1 + b_{12} + w_{13} x_1 + b_{11}   )   \\
 \end{align*}
 The above equation represents the toyAPS. We convert the equations above into a MILP model as shown in Algorithm 1. Every layer is initially modeled as a linear equation. The activation function is represented as piecewise linear. Our approach will work for any representation of a piece-wise linear function. However, in our work we specifically focus on ReLU as explained in the problem formulation section. 
-\subsection{Modeling cost functions for attacks}
+\section{Modeling cost functions for attacks}
 \label{section:costfunction}
 %Why is modeling cost function important
 After representing the pictorial representation of a network as shown in Figure 5 to Algorithm 1, the next step is to model the cost or objective function. The cost function is what decides on the smallest perturbations of the inputs for generating a ripple. 
@@ -150,14 +150,14 @@ Algorithm 2 shows how to include the cost functions for different attacks as a p
 If there are two inputs as in our toyAPS, we can either try to minimize the delta values for both the inputs or only one of the inputs. The reason it is important to understand this is because, in general, APS, there are inputs that come from two different sensors as explained in the motivating example section. %The first sensor is attached to the back of the patient that captured the blood-glucose levels of the patient and the second input is from the insulin pump to get the measure of the insulin level in the pump.
 The attacker might want to make changes to only one of the sensor readings. Hence, considering different scenarios, we can minimize the values depending on which input we are interested in conducting an FDI attack. 
 
-\subsection{Finding critical inputs}
+\section{Finding critical inputs}
 In our running example of APS, in reality, there are 74 inputs collected from two sensors every five minutes. The goal of the attacker is to locate the critical inputs such that they can conduct FDI at the right time. To do so, as described in the previous two sections, the tool can be used to chose the index of inputs to be perturbed. 
 
 If the attacker wants to locate one input that on perturbing by the smallest amounts can lead to the output change, they can specifically choose those inputs for conducting \attack.
 
 %Depending on the attack model of the attacker, they can choose input(s) they are interested in finding the minimum perturbations for. We have implemented a framework that allows the users to pass the input index for inputs to be perturbed as a parameter. We will show this in the Evaluation section in more detail. 
 \label{section:cost function}
-\subsection{Synthesizing attacks}
+\section{Synthesizing attacks}
 The final part is synthesizing the inputs that can be used to conduct \attack without triggering any alarms in the system. To do so we introduce the final constraints that put lower and upper bounds on the output of the networks. This is important for the optimization to return useful results. The reason the optimization approach wins here is that if we provide the proper constraints it gives us results in less than a second per attack. This precise modeling is the secret sauce that scales up our technique significantly and provides us \attack based on the scenario. Due to the proper ranges, the state space is handles well by our technique and does not result in blowups. 
 %\aarti{Should I add more here and also the algorithm for the synthesizing attack aspect?}              
 

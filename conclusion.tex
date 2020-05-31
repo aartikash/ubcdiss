@@ -1,12 +1,25 @@
 \chapter{Conclusion}
 We demonstrate \tool, which is based on generating \attack as an optimization problem using MILP. We address the two main challenges in synthesizing \attack: 1) locating the critical inputs and, 2) finding the smallest perturbations for critical inputs to conduct \attack. To locate the critical inputs, we model a cost function and add $delta$ variable to the inputs and minimize the $delta$. This tells the attacker changing precisely which inputs will result in wrong output predictions. 
+(This guides the attacker to minimize the inputs to mazimize the outputs 
 
 %Insights
 % - smaller systems easier to attack due to sizes
 % - ACAS more robust due to the normalization layer that we discuss in Eva, and hence it is possible to make systems more robust
 %- cost function affects the state explosion of the system. When we add a minimize delta, it takes longer because it has to find the smallest delta, whereas if we do not minimize the deltas and add general ranges, it returns the first feasible solution. 
 
-Based on our work, we concluded certain things. The first well-known observation is that it is easier (in terms of time) to find attacks on small-sized DNN based CPS. APS took less than a second for finding an attack whereas ACAS Xu took as high as 5 hours in some specific cases. The second interesting observation was that we found fewer attacks in ACAS Xu as compared to APS. The reason is that ACAS Xu is a more robustly designed network due to the existence of normalization that makes it difficult to generate ripples. Hence, it is possible to design robust DNN while designing the architectures. Finally, we observe that cost function affects the state explosion of the system. If there is a minimization function on the input perturbations, it takes much longer to compute and can also lead to explosions in certain cases as compared to having no minimization function. 
+Based on our findings we conclude that:
+
+\begin{enumerate}
+    \item The first well-known observation is that it is easier (in terms of time) to find attacks on small-sized DNN based CPS. APS took less than a second for finding an attack whereas ACAS Xu took as high as 5 hours in some specific cases. 
+
+\item We found fewer attacks in ACAS Xu as compared to APS indicating  that ACAS Xu is a more robustly designed network due to the existence of normalization that makes it difficult to generate ripples. Hence, it is possible to design robust DNN while designing the architectures. 
+
+\item Finally, we observe that cost function affects the state explosion of the system. If there is a minimization function on the input perturbations, it takes much longer to compute and can also lead to explosions in certain cases as compared to having no minimization function. 
+\end{enumerate}
+
+
+
+
 
 
 

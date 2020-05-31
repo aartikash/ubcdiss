@@ -82,6 +82,13 @@
 \usepackage{xspace}
 \theoremstyle{plain}
 
+\long\def\authornote#1{%
+	\leavevmode\unskip\raisebox{-3.5pt}{\rlap{$\scriptstyle\diamond$}}%
+	\marginpar{\raggedright\hbadness=10000
+		\def\baselinestretch{0.8}\tiny
+		\it #1\par}}
+
+\newcommand{\pu}[1]{\authornote{PM: #1}}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
@@ -436,12 +443,14 @@
 \include{chap1}
 \include{chap2}
 \include{motivatingattack}
-\include{relatedwork}
+\include{Rippleattacks}
+
 \include{challenges}
 \include{relusyn}
 \include{evaluation}
 \include{discussion}
 \include{futurework}
+\include{chap3}
 \include{conclusion}
 %    2. Main body
 % Generally recommended to put each chapter into a separate file

@@ -1,17 +1,24 @@
 \chapter{Challenges}
 Based on the two problems stated above, we have divided our challenges into two main categories. 
-\subsection*{\textbf{C1}:Finding the critical inputs}
-For the sophisticated attacker to conduct \attack as described in Section IV, they require two vital pieces. The first one is finding the critical inputs. We explain this with our running example of the APS system. APS has 74 inputs. It is not feasible to change all by doing False Data Injection since the attacker will have to keep changing the inputs every five minutes. Therefore, if the model architecture is known to the attacker, the goal of the attacker is to quickly locate the critical inputs. Given this is a DNN based system, it is not possible to test it for every possible input-output combination in minimal amount of time to figure out the patterns for finding the critical inputs. 
+\section{\textbf{C1}: Finding the critical inputs}
+For the sophisticated attacker to conduct \attack as described in Chapter 3, the attackers require two vital pieces. The first one is finding the critical inputs. We explain this with our motivating example of the APS system from Chapter 3. APS has 74 inputs. It is not feasible to change all inputs by False Data Injection since the attacker will have to keep changing the inputs every five minutes. Therefore, if the model architecture is known to the attacker, the goal of the attacker is to quickly locate the critical inputs. Given this is a DNN based system, it is not possible to test it for every possible input-output combination in minimal amount of time to figure out the patterns for finding the critical inputs. 
 
-\subsubsection*{\textbf{C11}: Selecting  the automated technique}
-The first part is choosing a technique that allows us to model a DNN and find the critical inputs through the modeling. There are multiple means of modeling the DNN, some of which are using SMT solvers, symbolic execution, MILP and many more. Our goal is twofold: 1) generality and, 2) scalability. APS has a  feed-forward architecture with 74 inputs whereas the other systems on which we test our technique have completely different architectures as can be observed from Table 1 in Section VIII. This is due to the difference in the application domain. APS is a medical system that is much easier to reason about as compared to our other test systems that are collision avoidance systems.
+\subsubsection*{Selecting  the automated technique}
+The first part is choosing a technique that allows the attacker to model a DNN and find the critical inputs through the modeling. There are multiple means of modeling the DNN, some of which are using SMT solvers, symbolic execution, MILP and many more. 
+Our goal is twofold: 
+\begin{enumerate}
+    \item generality
+    \item scalability
+\end{enumerate}
+
+APS has a  feed-forward architecture with 74 inputs whereas the other systems on which we test our technique have completely different architectures as can be observed from Table 6.1 in Chapter 6. This is due to the difference in the application domain. APS is a medical system that is much easier to reason about as compared to our other test systems that are collision avoidance systems for air traffic control management.
 APS has two layers and is the smallest system that we tested our technique for but we want our technique to be valid for much bigger systems as shown in Table 1. We show that MILP fulfills these two criteria by providing us generality and scalability. 
 
 
-\subsection*{\textbf{C2}:Finding the input perturbations}
+\section*{\textbf{C2}: Finding the input perturbations}
 After locating the critical inputs, the next part of the challenge is to find the correct perturbations that can lead to ripples in APS. Based on Section V formulation, if the inputs in equation (1) ($x$) are perturbed by very small amounts, the effects are not observed in the final output due to the existence of K layers in the system and the ReLU activation function as shown in (3). There is not a linear mapping between the inputs and the outputs and hence, it is a challenging problem to find just the right perturbations. We show how we tackle this in our methodology using MILP. To find the correct perturbations for \attack, we run into the following challenge. 
 
-\subsubsection*{\textbf{C21}: Designing \attack specific cost function and selecting the range intervals for inputs and outputs. }
+\subsubsection*{Designing \attack specific cost function and selecting the range intervals for inputs and outputs. }
 APS DNN is an architecture where K (the number of hidden layers) is 2, and the vector input $x$ consists of 74 inputs. Our attack model is that we want to perturb the inputs by the least amounts and cause deviations in the output that are not above a certain threshold. The threshold value is determined based on the specifications of the system as described in Section III. 
  Hence, our challenge here is how we design our cost function and add a range limit to the perturbations to ensure that the perturbation does not exceed the input values above or below the bounds. 
 

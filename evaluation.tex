@@ -114,7 +114,7 @@ Table 1 shows the sizes of the different networks we have used to evaluate our t
 We chose safety-critical applications for evaluating our approach. Our first application was inspired by the open-source system called openAPS.
 Dutta et al. \cite{10.1007/978-3-319-99429-1_11} proposed a DNN for APS that takes in 74 inputs by discretizing time. This is a data-driven model and hence, finding attacks in such modeling is particularly interesting because it allows us to understand changing what values at a particular time will cause a change in the final output. We demonstrate this in more detail below. The second and third systems are modeling a collision avoidance (CA) system. The researchers proposed ACAS Xu standards that are tailored for threat CA logic and horizontal logic \cite{7778055}. There are 45 DNNs that together make up the collision avoidance system \cite{Julian_2019}.  Julian et al. proposed a DNN compression for ACAS by representing large data tables in the form of DNNs. ACAS Xu dataset is currently proprietary and hence we did not have access to it. But for our tool, the trained model is enough to synthesize FDI attacks. HCAS is an open-source model created for collision avoidance. The reason we test our approach on ACAS and HCAS is that the sizes of these systems are different. The cost functions designed are the same in both cases. However, we wanted to test our systems for three differently trained DNN models.
 
-\subsection{APS}
+\section{APS}
 %The APS model designed by Kushner et al. \cite{Dutta_Others__2018__Robust}\smi{add space here}is a data-driven model. The goal of the model is to predict future blood glucose values for the patients.
 APS is the running example that we have used throughout the paper. 
 APS model predicts the glucose value at a "lookahead" time $t + T$, using the history of the past $N$ glucose values with a step size of $h$. The step size implies that the data is recorded after every $h$ seconds from the starting time. The inputs contain the past insulin values and glucose values by keeping the step size $h$ as 5 and the neural network builds the mapping between input and output values. It is a network with two hidden layers (with 8 neurons per layer), 74 inputs and one output that predicts the future glucose values as shown in Figure 1. 
@@ -123,7 +123,7 @@ APS model predicts the glucose value at a "lookahead" time $t + T$, using the hi
 Using our modeling we can successfully synthesize attacks in less than a minute.
 %The experiments that we conduct
 We incrementally conduct attack synthesis. 
-\subsubsection{Attacks}
+\section{Attacks}
 The goal is to minimize the input perturbations such that the output is perturbed by amounts such that it remains between the user-specified lower and the upper bounds. The reason we evaluate for such attacks is that in APS, even small deviations from the original outputs can cause damage. Injecting more than the required amounts even if within the bounds is undesirable.
 
 %Randomly changing inputs can trigger alarms in the system because it will raise the levels above the bounds enforced by specifications. We want to perturb the inputs in a stealthy way. The stealthiness is induced by finding the exact perturbations and to find those exact perturbations we need \tool. Brute force would require to search through the entire search space. We model the attack by including a $delta$ function in the inputs. 
@@ -145,10 +145,10 @@ To locate the critical inputs we first perturb the inputs one at a time to induc
 
 
 
-%\subsubsection{FDI attack 2}
+%\section{FDI attack 2}
 %In our next set of attacks we maximize the output deviation and minimize the input deviations. We do so to cause the maximum damage possible to a patient by perturbing inputs within bounds yet we want it to perturb by maximum amounts within those bounds. As shown in Table 2  in the lower half we conduct a similar analysis by keeping everything constant but perturbing on 1, 2 and then finally all inputs together. We conduct these experiments to show that our technique is capable of identifying one critical input and also a set of critical inputs that can cause output deviations. 
 
-\subsection{ACAS Xu and HCAS}
+\section{ACAS Xu and HCAS}
 We test our approach on two other available systems that are collision avoidance (CA) as explained in the above section. The ACAS Xu and HCAS are different in terms of their architectures and parameters as described in Table 1. Apart from the difference between the weights, bias and the number of layers, the datasets used to produce the two are also quite different.  
 
 %We conduct two random and targeted \attack \smi{this is singular but should perhaps be plural; good idea to skim the rest of the paper where \attack is used} in these systems, to understand how the systems\smi{this sentence is incomplete}
@@ -165,7 +165,7 @@ The reason it takes Gurobi more time to solve the constraints in targeted attack
 %Explain about the normalization layer
 The one feature about these systems that are different from the previous system which is the APS is that these systems consist of inputs and outputs normalization. These normalizations are used to place bounds on how much the inputs can be perturbed by. To accommodate the normalization layer, we introduce certain heuristics that are deep network specific. %The normalization depends on the conditions that are introduced by the neural network.
 
-\subsection{Targeted attack} 
+\section{Targeted attack} 
 In the first attack, we minimize the input perturbations by keeping all but $1$, $2$ and $n$ inputs constant in the three sets of experiments that we conduct as shown in Table II for HCAS and ACAS Xu. We minimize the input perturbations but the goal is not to maximize the outputs in this case but to change the values of the inputs in a way that the output changes from slightly left to slightly right or changes from slightly right to strictly left. To find the input perturbations for such attacks the modeling has to be more precise.
 
 For example: Consider a set of five inputs for which the output is slightly left. The output is slightly left implies that out of the five output values in the DNN, the least value is of the output that signifies slightly left which is the Output four. The network is trained in a way such that the least value signifies the output that should be taken next. Our goal is to change the output in a way such that the minimum value changes from slightly left to slightly right. To model this, we first add a delta value to the inputs as in our previous evaluation. Our goal is to minimize the deltas values, however, our goal is to not minimize or maximize the outputs but change the values of the outputs such that the smallest output is switched with the output we want it to have. To do so, we add constraints that specify that in the modeling $Output 4 > Output 5$. This would mean that the $Output 4$ now has a greater value than $Output 5$ and hence, ideally we would consider that the constraint modeling is solved. However, since this is a targeted attack we want the value of $Output 5$ to be minimized with respect to all the other outputs and not only $Output 4$. To do so, we have to add more constraints to specify that Output 5 should be the smallest among all the other output values.
@@ -177,7 +177,7 @@ For example: Consider a set of five inputs for which the output is slightly left
 	\label{fig:acasxudnn}
 \end{figure}
 
-\subsection{FDI random attack} 
+\section{FDI random attack} 
 Constructing random FDI attacks is slightly less effort as compared to targeted attacks.
 Building on the previous example, if we have 5 inputs that give us the result as output 4. We need to perturb the inputs such that the output changes to any of the other possibilities such as output 1, output 2, output 3 and output 5.
 %There are two layers to this attack: First, since it's a random attack we don't have specific constraints with respect to the outputs relative changes and second we change the input

@@ -1,5 +1,88 @@
-\chapter{Motivating Example}
+\chapter{Ripple Attacks}
 \label{ch:Chapter2}
+
+
+%Intro to the DNN structure
+To explain the DNN model in a simple way, we consider a feed-forward neural network with fully-connected layers. A The feedforward neural network was the first and simplest type of artificial neural network devised \cite{feedforward} In this network, the information moves in only one direction, forward, from the input nodes, through the hidden nodes (if any) and to the output nodes. There are no cycles or loops in the network \cite{Zell}.
+ %The attack synthesis technique, however, will scale to other classes of DNNs such as recurrent DNNs or CNNs with some optimizations and modeling changes. 
+
+%What does a DNN controller represent?
+%What is a DNN made of?
+The DNN controller maps the inputs that are the $x1$ and $x2$ to the output $y$ as per Figure 2.4. A DNN consists of multiple layers in the architecture that allows us to create the input-output mappings. The main components of the DNN are inputs, hidden layers, neurons in each hidden layer, the activation function applied to each layer in the network and the output. \textit{For our purposes to synthesize an attack we consider a trained neural network.} This means that all the components of the DNN are fixed.
+
+%Formal modeling of a DNN for later use when explaining the modeling in MILP
+The DNN consists of K layers numbered from 1 to K excluding the input layer.  The input layer can be numbered as K=0 and the final layer or the output is the K$^{th}$ layer.
+The architecture can be represented as a function F defined as $F: X \rightarrow Y$ where the inputs X are mapped to the output Y and are composed of multiple layers. 
+
+\begin{align*}
+F(x) &= F_K \circ F_{K-1} \circ F_{K-2} ....... \circ F_1(x),    (1) \\
+or \\
+F(x) &= F_K ( F_{K-1}( F_{K-2} .......  (F_1(x)))),    (1) \\
+\end{align*} 
+
+$F_K$ represents the K$^{th}$ layer of the network. Each layer K$_{i}$, 
+$i$ $\epsilon$ \{1,.,.,.,.,K\} consists of the smallest elements of a DNN called neurons as demonstrated in Figure 2.4.  Each neuron has a bias associated with it. Every neuron from the previous layer is connected to every neuron in the next layer. This is the property of a fully-connected network. 
+
+Each output layer computes its output through the following formula. 
+%\aarti{Check the consistency of symbols one more time. }
+
+\begin{align*}
+F_i(x) &= \upsigma(W_iX + b_i) ,  i = 1,.....,K, (2)  \\
+\end{align*}
+
+$\upsigma$ is the abstraction for different activation functions that can be used to model the DNN. There are multiple types of activation functions which all come with different modeling capabilities such as ReLU ($f(x) = max {0,x}$) as shown in Figure 2.3, logistic $f(x)=1/(1+ exp(-e))$
+ Our tool focuses on using Rectified Linear Unit (ReLU) as shown in Figure 2.3 since it is empirically seems to work well and converged much more quickly than a Sigmoid  activation function as shown by Krizhevsky et al. in \cite{10.1145/3065386}.  %It is also piecewise linear so we can model it using MILP encoding. 
+
+\begin{align*}
+F_i(x) &= ReLU(W_ix + b_i) ,  i = 1,.....,K , (3) \\
+\end{align*}
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Images/ReLU}
+	\caption[Activation functions]{ReLU activation function}
+	\label{fig:ReLU}
+\end{figure}
+where, for a real vector x, ReLU(x):= max\{0,x\} (per layer).
+
+%During the training of the network, the parameters (weights and bias) are determined; we know those values when we are trying to find attacks on the CPS.
+
+\section{Mapping DNNs to MILP}
+The above mentioned formalism allows us to easily map the DNNs to a MILP model. The reason is that the DNN representation can be defined as a set of equations. The notion of non-linearity is introduced in these through the activation functions such as ReLU. The trick here is to define the non-linear activation functions as series of linear functions as shown in Figure 2.6. 
+
+The rest of the equations are directly modeled as a set of constraints for a MILP model and the non-linear activation functions are modeled as a set of linear equations in the MILP model. 
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Images/ReLUbreakdown}
+	\caption{ReLU can be broken down into two linear units as shown in the figure for x < 0 and x => 0. This allows us to easily map the DNN equations in MILP models by breaking down the non-linearity inducing function.}
+	\label{fig:relubreakdown}
+\end{figure}
+
+
+
+
+
+\section{Problem Statement}
+%Given that we have the trained DNN model available, in the above section, we identify two problems that we are interested in solving. The first one is identifying the critical inputs in DNN based CPS and the second is synthesizing \attack with minimal cost. 
+
+Given we have a trained DNN with fixed parameters our goal is to understand if the well-known FDI attacks in classical control theory are also valid in the DNN based CPS.
+\begin{problem}
+	How can we identify the critical inputs in a DNN?
+\end{problem}
+
+%Problem 2 is a follow up to the first problem. 
+
+\begin{problem}
+	What is the smallest perturbation to the critical input(s) that can result in ripple attacks in a limited time?
+\end{problem}
+%\smi{\attack is no longer in italics here, do we want to fix this? - interesting}
+
+\begin{approach*}
+	We abstract the DNN to a MILP problem using the DNN representation as explained above to recognize the critical inputs to synthesize the \attack. We further model \attack specific cost functions to generate the new perturbed inputs for the attacks. 
+\end{approach*}
+
 \section{Motivating system: APS}
 
 \begin{figure}
@@ -59,10 +142,10 @@ We can obtain the above values through the following means
 	\item The attacker does not modify the code but only the inputs to the model.
 \end{enumerate}
 
-\subsection{Dumb attacker}
+\subsection{Strawman attacker}
 The first way to attack the system would be to change all the 74 values that are the inputs to the DNN. If all the inputs are changed, the final output prediction is going to be wrong. The problem in this particular scenario is that these inputs are collected every five minutes from the sensors attached to the patient as explained above. This means that the attacker will have to conduct false data injection every five minutes when the data is being collected to cause a change in the output. Doing this is not feasible in a practical scenario and hence, the attacker needs a better way of attacking the system. 
 
-\subsection{Smart Attacker}
+\subsection{Sophisticated Attacker}
 A more sophisticated approach for the attacker to attack the system would be by perturbing one or two inputs out of the 74 inputs that cause a change in the output. There are two ways to proceed when the attacker tries to change just one or two inputs at a time. 
 
 \subsubsection{Attack 1}
