@@ -17,8 +17,9 @@ Understanding this new class of attacks sets the stage for developing methods to
 
 Our attack synthesis technique is based on model the attack as an optimization problem using \ac{MILP}.
 We define an abstraction for \ac{DNN} based \ac{CPS} that allows us to automatically: 1) identify the critical inputs, and 2) find the smallest perturbations. 
-We demonstrate our technique three practical \ac{CPS} with two mission-critical applications in increasing order of complexity: Medical systems (\ac{APS}) and aircraft control management systems (\ac{HCAS} and \ac{ACAS-Xu}). 
-Our key observation for scaling our technique to complex systems such as \ac{ACAS-Xu} was defining appropriate intervals for the inputs and the outputs for the \ac{DNN}s.
+We demonstrate our technique on three practical \ac{CPS} with two mission-critical applications in increasing order of complexity: Medical systems (\ac{APS}) and aircraft control management systems (\ac{HCAS} and \ac{ACAS-Xu}). 
+Our key observations for scaling our technique to complex systems such as \ac{ACAS-Xu} were to define: 1) appropriate intervals for their inputs and the outputs, and 2) attack specific objective (cost) functions in the abstraction.  
+ 
 
 
 
