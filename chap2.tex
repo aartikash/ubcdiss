@@ -2,8 +2,8 @@
 \label{ch:Chapter2}
 
 We begin with different roles that people play to design, implement and attack a \ac{CPS}. We use the different categories to explain the attack model in Chapter 3 clearly. 
-We provide a summary to \ac{CPS} after which we introduce conventional controller designs and their limitations. 
-We then define \ac{DNN} based models and describe the open problems that exist in them. 
+We provide a summary of \ac{CPS} after which we introduce conventional controller designs and their limitations. 
+We further define \ac{DNN} based models and describe the open problems that exist in them. 
 We finally end the section with the formal description of our problem statement.
 
 \section{Roles description}
@@ -11,7 +11,7 @@ There are three roles involved in designing and attacking \ac{CPS}. These are im
 
 \begin{enumerate}
 	\item \textbf{Specification Designer/Domain Expert:} The domain expert is responsible for designing the specification documents. 
-	For an \ac{APS} the domain expert specifies the safe thresholds for the amount of insulin injected in a patient. The domain expert also indicates values that should trigger alarms, e.g., in case of a high blood glucose reading. 
+	For an \ac{APS} the domain expert specifies the safe thresholds for the amount of insulin injected in a patient. The domain expert also indicates values that should trigger alarms, e.g., in case of a high blood glucose reading in \ac{APS}.
 	\item \textbf{System Developer:} These are the people or the designers who
 	build the \ac{DNN} architectures for e.g., an architect can use different types of \ac{ML} models such as decision trees, or \ac{DNN} to implement the system.
 	\item \textbf{Attacker:} The attacker is trying to make the system misbehave by attacking the implementation of the \ac{CPS} without triggering safety alarms specified by the domain expert . 
@@ -44,28 +44,28 @@ There are three roles involved in designing and attacking \ac{CPS}. These are im
 
 
 \section{Cyber-Physical Systems}
-\ac{CPS} are systems that consist of two parts: the cyber which performs the computations and the physical part where the computations are reflected in the real world.  
+\ac{CPS} are systems that perform computations in the cyber part to reflect changes in the physical  part.   
 As shown in Figure 2.1 the sensors and actuators are the physical parts of the system. 
 The sensors gather the data from the physical environment and send it to the computational unit. 
 The decision is taken at the computational unit which is also the cyber part of the \ac{CPS} called the controller.
 The decision is sent to the actuator which then physically performs the action.
-The physical and virtual contexts can either be humans in the loop or some automated mechanism. 
+The physical and virtual contexts can either be humans in the loop or some automated mechanism or nothing at all.
 
-For eg. in an \ac{APS} shown in Figure 2.2 the sensor is the \ac{CGM} that is attached to the back of a patient to report the blood glucose levels.  
+In an \ac{APS} shown in Figure 2.2 the sensor is the \ac{CGM} that is attached to the back of a patient to report the blood glucose levels.  
 \ac{RPi} is the computational part of the \ac{APS} and the insulin pump is the actuator. 
 
 There are two types of CPS based on the decision making process: open feedback and closed-loop feedback.
-In open feedback systems, there is human intervention during the decision making process; as shown in Figure 2.1 (top diagram) the human is a part of the loop where the human keeps a track of the decisions being taken by the controller. 
-In closed-loop systems, there is no regular human interventions as shown in Figure 2.1 (below diagram). 
+In open feedback systems, there is human intervention during the decision making process; as shown in Figure 2.3 (top diagram) the human is a part of the loop where the human keeps a track of the decisions being taken by the controller. 
+In closed-loop systems, there is no regular human interventions as shown in Figure 2.3 (below diagram). 
  In the latter case understanding different types of security attacks becomes a necessity. 
  In the case of stealthy (or subtle) attacks as described in Chapter 3, the closed loop systems are more vulnerable because existing error-detection mechanisms are not designed to detect small perturbations from the original inputs under a constrained setting that can cause ripples. 
 
 \section{Conventional Controllers for CPS}
 
 A conventional controller takes in the sensors readings and processes the input based on the different sets of differential equations for the controller. 
- For e.g., a quadcopter contains multiple flight modes in it's controller based on the weather such as windy or normal day. 
+ For instance, a quadcopter contains multiple flight modes in it's controller based on the weather conditions such as windy or normal day. 
  These modes are important because during a windy weather the decision making model for stable quadcopter flights will be different from a normal weather flight. 
- Based on the inputs or data collected from the sensors, the appropriate selected and the decision is calculated. 
+ Based on the inputs or data collected from the sensors, the appropriate  mode selected and the decision is calculated. 
  Every mode consists of a different set of equations because every mode represents a different scenario.
   Figure 2.4 shows a position control system of a quadcopter \cite{inbook}. The input values use the derived version of the equations that are used in decision making. 
 
@@ -79,18 +79,23 @@ A conventional controller takes in the sensors readings and processes the input 
 
 
 %How are they modeled
-These modes are modeled using classical control theory that is represented as a set of equations designed by domain experts.
- For e.g., the model for a medical system such as \ac{APS} can be designed only if the specifications are known for the medical system. 
+These modes are modeled using classical control theory that is represented as a set of equations designed by domain experts
+ for instance, the model for a medical system such as \ac{APS} can be designed only if the specifications are known for the medical system. 
  A part of the specifications such as the important parameters (insulin, blood glucose etc. in APS) and their threshold values are be provided by domain (in this case medical) experts. 
  Another important aspect for designing control systems is the  modeling precise relations between the parameters. 
- This is possible in systems such as APS because it is a small systems. However, designing the precise mathematical relations for systems such as self-driving cars can be tedious \cite{article23}. 
+ This is possible in systems such as APS because it is a simpler system as compared to self-driving cars. 
+ However, designing the precise mathematical relations for systems such as self-driving cars can be tedious \cite{article23} which we elaborate below.
 
  The move towards DNNs over control theory models for modeling \ac{CPS} behaviour can be justified by the following observations:
  \begin{enumerate}
  	\item CPS behaviour is controlled using a lot of input data from the many sensors a system might have. The self-learning nature of DNNs lends itself well to model behaviour that is driven by the sensor input. This is considered easier than formulating the control theoretic differential equations, which need domain and mathematical expertise \cite{Aamir_2013}.
+ 	
+ 	
  	To look at a more concrete example, let's turn to a medical system such as \ac{APS}, which uses conventional control theory to build models. Forming the model here requires the programmer to be aware of not only the intended system behaviour, but also the mathematical rigor needed to get the desired result. DNNs, on the other hand, can automatically build models with data.
  	Training DNNs is implicitly dependent on the quality of available training data, and it is a known problem in the field \cite{jabbar2015methods}. It does not, however, require the system designers to model precise control equations like in control theory.
- 	\item  There are limitations on the behaviors that can be modeled using the standard control-theoretic approaches. They do not, for instance, work well for building dynamic models \cite{article23}. Building such dynamic models is important in many systems such as in autonomous vehicles, which are essentially composed of multiple interacting control systems. Conventional control systems are not designed to work in an interactive, plug-and-play manner with other control systems because they are built to model only one behaviour. DNNs, by their very nature,  provide this dynamic capability. Due to the data driven modeling using DNNs, it is relatively easier to build models for autonomous vehicles that have multiple models interacting within it. Models for image recognition to detect and lane detection, for instance, can interact continuously with each other to decide the next best course of action.
+ 	\item  There are limitations on the behaviors that can be modeled using the standard control-theoretic approaches. They do not, for instance, work well for building dynamic models \cite{article23}. Building such dynamic models is important in many systems such as in autonomous vehicles, which are essentially composed of multiple interacting control systems. Conventional control systems are not designed to work in an interactive, plug-and-play manner with other control systems because they are built to model only one behaviour. DNNs, by their very nature,  provide this dynamic capability. 
+ 	Due to the data driven modeling using DNNs, it is relatively easier to build models for autonomous vehicles that have multiple models interacting within it, for instance, they contain separate models for image recognition and lane detection that continuously interact with each other to decide the next best course of action.
+
  	\item Sarabakha et al. \cite{sarabakha2019online} in their work show that using \ac{DNN} based controller for a quadcopter leads to better decision making in un specified cases as compared to control theory models.
  	 This is due to the learning nature of \ac{DNN}s in contrast to the fixed nature of conventional control theory. 
  	 Hence, in cases when the trajectories or situations are not precisely modeled the \ac{DNN} comes closer to taking good decisions.
@@ -100,7 +105,7 @@ These modes are modeled using classical control theory that is represented as a 
 
   
 \section{DNN Based Controller}
-The classical controller model is being replaced by DNN based controllers for CPS as shown in  Figure 2.6.
+
 
 A \ac{NN} is an algorithm that is modeled after the human brain.
 A \ac{NN} consists of input, output and hidden layers. 
@@ -109,17 +114,24 @@ In the base case, there is a single neuron that takes all the inputs to produce 
 All inputs to the node in Figure 2.5 are summed and are passed through an activation function. 
 The activation function introduces non-linearity in the network. 
 The node determines upto what extent the signal must be progressed to calculate the final output. 
-The final output depends on the application and how the network was trained. 
+The final output depends on the network and can be in binary form or have a value associated with it. 
 
 
 A \ac{DNN} consists of multiple hidden layers as apposed to our base case  as shown in Figure 2.7.
 This is an e.g., of a feed-forward \ac{DNN} which is the simplest type of artificial neural network devised \cite{feedforward}.
 In this network, the information flows only forward from inputs, through layers, to outputs \cite{Zell}. 
 
-
+The classical controller model is being replaced by such DNN based controllers for CPS as shown in  Figure 2.6.
 The \ac{DNN} for \ac*{CPS} is trained using the data gathered from conventional control equations. 
+One example is the DNN based controller designed by Dutta et al. \cite{Dutta_Others__2018__Robust}. 
+Dutta et al. model robust DNN using available patient data to predict the output for an insulin pump.
+Their controller design is for providing a data-driven approach for an artificial pancreas system (APS) which is also our first system for evaluation. 
+Another system that we evaluate our work on is an \ac{CA} system for unmanned vehicles \cite{7778055} called ACAS-Xu. This system is considerably bigger in size and complexity as compared to \ac{APS}. 
 
-One example is the DNN based controller designed by Dutta et al. \cite{Dutta_Others__2018__Robust}. Dutta et al. model robust DNN using available patient data to predict the output in real-time for an insulin pump. Their controller design is for providing a data-driven approach for an artificial pancreas system (APS) which is also our first system for evaluation. 
+However,  there are certain  problems associated with \ac{DNN} based controller models. 
+Since these systems are complex as in \ac{ACAS-Xu}, the inner workings and the behavior is not completely understood. 
+The complexity depends on  two main factors: the size and the architecture. Adding a new hidden layer to the network increases the size that has  significant impact on the systems.  
+There are different types of architectures for \ac{DNN} that can introduce different problems. In this work we focus specifically on controllers designed  using feed-forward architectures.  
 
 \begin{figure}
 	\centering
