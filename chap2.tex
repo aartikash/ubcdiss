@@ -4,6 +4,7 @@
 We begin with different roles that people play to design, implement and attack a \ac{CPS}. We use the different categories to explain the attack model in Chapter 3 clearly. 
 We provide a summary of \ac{CPS} after which we introduce conventional controller designs and their limitations. 
 We further define \ac{DNN} based models and describe the open problems that exist in them. 
+We then introduce the  general structure for \ac{MILP} modeling which we will later use in Chapter 5. 
 We finally end the section with the formal description of our problem statement.
 
 \section{Roles description}
@@ -28,7 +29,7 @@ There are three roles involved in designing and attacking \ac{CPS}. These are im
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/APSrig}
 	\caption{Artifical Pancreas System components \\
-     Source: www.openAPS.org}
+		Source: www.openAPS.org}
 	\label{fig:apsrig}
 \end{figure}
 
@@ -38,7 +39,7 @@ There are three roles involved in designing and attacking \ac{CPS}. These are im
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/closedvsopen}
 	\caption{General structure of a open and closed-loop systems 
-	             Source:https://instrumentationtools.com/open-loop-and-closed-loop-animation/ }
+		Source:https://instrumentationtools.com/open-loop-and-closed-loop-animation/ }
 	\label{fig:closedvsopen}
 \end{figure}
 
@@ -57,17 +58,17 @@ In an \ac{APS} shown in Figure 2.2 the sensor is the \ac{CGM} that is attached t
 There are two types of CPS based on the decision making process: open feedback and closed-loop feedback.
 In open feedback systems, there is human intervention during the decision making process; as shown in Figure 2.3 (top diagram) the human is a part of the loop where the human keeps a track of the decisions being taken by the controller. 
 In closed-loop systems, there is no regular human interventions as shown in Figure 2.3 (below diagram). 
- In the latter case understanding different types of security attacks becomes a necessity. 
- In the case of stealthy (or subtle) attacks as described in Chapter 3, the closed loop systems are more vulnerable because existing error-detection mechanisms are not designed to detect small perturbations from the original inputs under a constrained setting that can cause ripples. 
+In the latter case understanding different types of security attacks becomes a necessity. 
+In the case of stealthy (or subtle) attacks as described in Chapter 3, the closed loop systems are more vulnerable because existing error-detection mechanisms are not designed to detect small perturbations from the original inputs under a constrained setting that can cause ripples. 
 
 \section{Conventional Controllers for CPS}
 
 A conventional controller takes in the sensors readings and processes the input based on the different sets of differential equations for the controller. 
- For instance, a quadcopter contains multiple flight modes in it's controller based on the weather conditions such as windy or normal day. 
- These modes are important because during a windy weather the decision making model for stable quadcopter flights will be different from a normal weather flight. 
- Based on the inputs or data collected from the sensors, the appropriate  mode selected and the decision is calculated. 
- Every mode consists of a different set of equations because every mode represents a different scenario.
-  Figure 2.4 shows a position control system of a quadcopter \cite{inbook}. The input values use the derived version of the equations that are used in decision making. 
+For instance, a quadcopter contains multiple flight modes in it's controller based on the weather conditions such as windy or normal day. 
+These modes are important because during a windy weather the decision making model for stable quadcopter flights will be different from a normal weather flight. 
+Based on the inputs or data collected from the sensors, the appropriate  mode selected and the decision is calculated. 
+Every mode consists of a different set of equations because every mode represents a different scenario.
+Figure 2.4 shows a position control system of a quadcopter \cite{inbook}. The input values use the derived version of the equations that are used in decision making. 
 
 \begin{figure}
 	\centering
@@ -80,30 +81,30 @@ A conventional controller takes in the sensors readings and processes the input 
 
 %How are they modeled
 These modes are modeled using classical control theory that is represented as a set of equations designed by domain experts
- for instance, the model for a medical system such as \ac{APS} can be designed only if the specifications are known for the medical system. 
- A part of the specifications such as the important parameters (insulin, blood glucose etc. in APS) and their threshold values are be provided by domain (in this case medical) experts. 
- Another important aspect for designing control systems is the  modeling precise relations between the parameters. 
- This is possible in systems such as APS because it is a simpler system as compared to self-driving cars. 
- However, designing the precise mathematical relations for systems such as self-driving cars can be tedious \cite{article23} which we elaborate below.
+for instance, the model for a medical system such as \ac{APS} can be designed only if the specifications are known for the medical system. 
+A part of the specifications such as the important parameters (insulin, blood glucose etc. in APS) and their threshold values are be provided by domain (in this case medical) experts. 
+Another important aspect for designing control systems is the  modeling precise relations between the parameters. 
+This is possible in systems such as APS because it is a simpler system as compared to self-driving cars. 
+However, designing the precise mathematical relations for systems such as self-driving cars can be tedious \cite{article23} which we elaborate below.
 
- The move towards DNNs over control theory models for modeling \ac{CPS} behaviour can be justified by the following observations:
- \begin{enumerate}
- 	\item CPS behaviour is controlled using a lot of input data from the many sensors a system might have. The self-learning nature of DNNs lends itself well to model behaviour that is driven by the sensor input. This is considered easier than formulating the control theoretic differential equations, which need domain and mathematical expertise \cite{Aamir_2013}.
- 	
- 	
- 	To look at a more concrete example, let's turn to a medical system such as \ac{APS}, which uses conventional control theory to build models. Forming the model here requires the programmer to be aware of not only the intended system behaviour, but also the mathematical rigor needed to get the desired result. DNNs, on the other hand, can automatically build models with data.
- 	Training DNNs is implicitly dependent on the quality of available training data, and it is a known problem in the field \cite{jabbar2015methods}. It does not, however, require the system designers to model precise control equations like in control theory.
- 	\item  There are limitations on the behaviors that can be modeled using the standard control-theoretic approaches. They do not, for instance, work well for building dynamic models \cite{article23}. Building such dynamic models is important in many systems such as in autonomous vehicles, which are essentially composed of multiple interacting control systems. Conventional control systems are not designed to work in an interactive, plug-and-play manner with other control systems because they are built to model only one behaviour. DNNs, by their very nature,  provide this dynamic capability. 
- 	Due to the data driven modeling using DNNs, it is relatively easier to build models for autonomous vehicles that have multiple models interacting within it, for instance, they contain separate models for image recognition and lane detection that continuously interact with each other to decide the next best course of action.
+The move towards DNNs over control theory models for modeling \ac{CPS} behaviour can be justified by the following observations:
+\begin{enumerate}
+	\item CPS behaviour is controlled using a lot of input data from the many sensors a system might have. The self-learning nature of DNNs lends itself well to model behaviour that is driven by the sensor input. This is considered easier than formulating the control theoretic differential equations, which need domain and mathematical expertise \cite{Aamir_2013}.
+	
+	
+	To look at a more concrete example, let's turn to a medical system such as \ac{APS}, which uses conventional control theory to build models. Forming the model here requires the programmer to be aware of not only the intended system behaviour, but also the mathematical rigor needed to get the desired result. DNNs, on the other hand, can automatically build models with data.
+	Training DNNs is implicitly dependent on the quality of available training data, and it is a known problem in the field \cite{jabbar2015methods}. It does not, however, require the system designers to model precise control equations like in control theory.
+	\item  There are limitations on the behaviors that can be modeled using the standard control-theoretic approaches. They do not, for instance, work well for building dynamic models \cite{article23}. Building such dynamic models is important in many systems such as in autonomous vehicles, which are essentially composed of multiple interacting control systems. Conventional control systems are not designed to work in an interactive, plug-and-play manner with other control systems because they are built to model only one behaviour. DNNs, by their very nature,  provide this dynamic capability. 
+	Due to the data driven modeling using DNNs, it is relatively easier to build models for autonomous vehicles that have multiple models interacting within it, for instance, they contain separate models for image recognition and lane detection that continuously interact with each other to decide the next best course of action.
+	
+	\item Sarabakha et al. \cite{sarabakha2019online} in their work show that using \ac{DNN} based controller for a quadcopter leads to better decision making in un specified cases as compared to control theory models.
+	This is due to the learning nature of \ac{DNN}s in contrast to the fixed nature of conventional control theory. 
+	Hence, in cases when the trajectories or situations are not precisely modeled the \ac{DNN} comes closer to taking good decisions.
+\end{enumerate}
 
- 	\item Sarabakha et al. \cite{sarabakha2019online} in their work show that using \ac{DNN} based controller for a quadcopter leads to better decision making in un specified cases as compared to control theory models.
- 	 This is due to the learning nature of \ac{DNN}s in contrast to the fixed nature of conventional control theory. 
- 	 Hence, in cases when the trajectories or situations are not precisely modeled the \ac{DNN} comes closer to taking good decisions.
- \end{enumerate}
 
 
 
-  
 \section{DNN Based Controller}
 
 
@@ -153,6 +154,37 @@ There are different types of architectures for \ac{DNN} that can introduce diffe
 	\caption[DNN structure]{DNN controller structure with two hidden layers K=1,2, two inputs x1 and x2 and one output y. This is an example of a fully connected network.}
 	\label{fig:dnn-controller}
 \end{figure}
+
+\section{Modeling Mixed-Integer Linear Programming Problems}
+
+We present a general structure that is required for building a \ac{LP} \ac{MILP} models. 
+
+A \ac{LP} contains a set of decision variables, which are the unknown quantities or decisions that are to be optimized. 
+The function that assess the quality of the solution is called as an objective function or the cost function.
+\ac{LP}'s goal is to minimize or maximize the value of an objective function. 
+The decisions that are to be made depends on the requirements, and restrictions of the  system modeled as \ac{LP}.
+A  solution that satisfies all constraints is called a feasible solution. 
+Feasible solutions that achieve the the best cost function value, depending on weather one is minimizing or maximizing are called as optimal solutions. 
+
+
+The general form of a \ac{LP} looks as shown in Equations 2.1. 
+Values of $c$ denote the objective coefficients, and are often associated with their corresponding decisions minimization problems. 
+$x_i$ denotes the set of our decision variables.
+$b_i$ denotes the requirements of the constraints. 
+A very important point here is that nonlinear terms are not allowed in the model. 
+Hence, something as simple as multiplication of two decision variables is prohibited in the model representation. 
+\begin{equation}
+\begin{aligned}
+& \underset{x}{\text{min/max}}
+& & c^T x \\
+& \text{subject to} & &  Ax \leq b_i \\
+& & &  \sum_{i=1}^{n} x_i =1 \\
+& & &  x_j, \; \forall j \in N. \\
+\end{aligned}
+\end{equation}
+
+A \ac{MILP} is a \ac{LP} with a restriction that some of the variables in the model must be integer-valued. 
+We define a \ac{DNN} as a \ac{MILP} model due to the complex structure of a \ac{DNN} which we will elaborate more in Chapter 5. 
 
 
 

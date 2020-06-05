@@ -1,24 +1,55 @@
 \chapter{Challenges}
 We face  the following challenges during  the design of the technique. 
 
-\section{ Mapping DNNs to MILP}
-What do I want to say ?
-- DNNs when with brute force take time since we cannot keep solving every solution space. 
-- Define DNN solution space mathematically
-- 
-DNNs are complex algorithms 
-It is is difficult to use b
+\section{ Mapping  Mixed-Integer Linear Programming Model to Deep Neural Networks}
+
+DNN architecture is quite complex and researchers have used experimental means to understand the security scenarios in the DNN. 
+Their  mathematical structure contains multiple layers and the non-linearity introduced due to the activation functions within the network add another layer of complication for modeling in \ac{MILP}.
+There are two main complications that arise here:
+\begin{enumerate}
+	\item Modeling each layer as a set of constraints to build a \ac{MILP} model.
+	\ac{APS} has two layers as explained in Chapter 3 and has 50 neurons each. 
+	We use that to 
+	\item Non-linear terms are not allowed in \ac{MILP} modeling. Hence the big question here is how can we model the activation functions. 
+\end{enumerate}
+
+We formalize the \ac{DNN} to represent the entire network as a set of linear constraints. 
+We tackle the non-linearity of activation functions by defining them as piece-wise linear which we demonstrate for one activation function ReLU.
+We chose ReLU because are three evaluation systems have ReLU in their models. 
+
+\section{Modeling cost function}
+The goal of the cost function is to minimize or maximize the linear constraints that represents the \ac{DNN} architecture. 
+However, our requirement is different in the traditional sense of using minimization and maximization which is usually used in terms of resource utilization. 
+Based on our attack model we want to minimize the input perturbations and maximize the output deviations in a \ac{DNN}.
+We do so to find the optimal solutions which we have defined in Section 2.5
+There are two main problems that can arise based on our cost function modeling:
+\begin{enumerate}
+	\item There is a possibility that there are no solutions. 
+	This happens if the \ac{MIP} is infeasible and we need to redefine our cost function. 
+	\item If the \ac{MIP} is feasible, then there is a possibility that there is no optimal solution since there are infinitely many good cost function values. 
+	This makes our solution space unbounded and can lead to state space explosions. 
+\end{enumerate}
+
+We demonstrate both the problems in our experimentation and show how we tackle the state space problem that can arise thereby scaling our approach for big sized systems by designing clever heuristics. 
 
 
-\section{\textbf{C1}: Finding the critical inputs}
-For the sophisticated attacker to conduct \attack as described in Chapter 3, the attackers require two vital pieces. The first one is finding the critical inputs. We explain this with our motivating example of the APS system from Chapter 3. APS has 74 inputs. It is not feasible to change all inputs by False Data Injection since the attacker will have to keep changing the inputs every five minutes. Therefore, if the model architecture is known to the attacker, the goal of the attacker is to quickly locate the critical inputs. Given this is a DNN based system, it is not possible to test it for every possible input-output combination in minimal amount of time to figure out the patterns for finding the critical inputs. 
+\section{Interval analysis for bounding the problem}
+
+
+
+
+
+
+
+
+
 
 \subsubsection*{Selecting  the automated technique}
 The first part is choosing a technique that allows the attacker to model a DNN and find the critical inputs through the modeling. There are multiple means of modeling the DNN, some of which are using SMT solvers, symbolic execution, MILP and many more. 
 Our goal is twofold: 
 \begin{enumerate}
-    \item generality
-    \item scalability
+	\item generality
+	\item scalability
 \end{enumerate}
 
 APS has a  feed-forward architecture with 74 inputs whereas the other systems on which we test our technique have completely different architectures as can be observed from Table 6.1 in Chapter 6. This is due to the difference in the application domain. APS is a medical system that is much easier to reason about as compared to our other test systems that are collision avoidance systems for air traffic control management.
@@ -30,5 +61,5 @@ After locating the critical inputs, the next part of the challenge is to find th
 
 \subsubsection*{Designing \attack specific cost function and selecting the range intervals for inputs and outputs. }
 APS DNN is an architecture where K (the number of hidden layers) is 2, and the vector input $x$ consists of 74 inputs. Our attack model is that we want to perturb the inputs by the least amounts and cause deviations in the output that are not above a certain threshold. The threshold value is determined based on the specifications of the system as described in Section III. 
- Hence, our challenge here is how we design our cost function and add a range limit to the perturbations to ensure that the perturbation does not exceed the input values above or below the bounds. 
+Hence, our challenge here is how we design our cost function and add a range limit to the perturbations to ensure that the perturbation does not exceed the input values above or below the bounds. 
 
