@@ -66,7 +66,7 @@ In the case of stealthy (or subtle) attacks as described in Chapter 3, the close
 A conventional controller takes in the sensors readings and processes the input based on the different sets of differential equations for the controller. 
 For instance, a quadcopter contains multiple flight modes in it's controller based on the weather conditions such as windy or normal day. 
 These modes are important because during a windy weather the decision making model for stable quadcopter flights will be different from a normal weather flight. 
-Based on the inputs or data collected from the sensors, the appropriate  mode selected and the decision is calculated. 
+Based on the inputs or data collected from the sensors, the appropriate  mode is selected and the decision is calculated. 
 Every mode consists of a different set of equations because every mode represents a different scenario.
 Figure 2.4 shows a position control system of a quadcopter \cite{inbook}. The input values use the derived version of the equations that are used in decision making. 
 
@@ -129,10 +129,21 @@ Dutta et al. model robust DNN using available patient data to predict the output
 Their controller design is for providing a data-driven approach for an artificial pancreas system (APS) which is also our first system for evaluation. 
 Another system that we evaluate our work on is an \ac{CA} system for unmanned vehicles \cite{7778055} called ACAS-Xu. This system is considerably bigger in size and complexity as compared to \ac{APS}. 
 
+%Normalization layers in DNN
+\ac{DNN}s also consist of a feature called normalization in their layers. 
+This feature exist mostly in \ac{DNN}s as compared to other \ac{ML} models since \ac{DNN}s consist less feature engineering as compared to other models. 
+Feature engineering is the automatic means to extract features automatically from raw data. 
+Normalization is the process of bringing all the inputs to a standard scale since different set of inputs can be in different ranges. 
+This is considered quite important in \ac{DNN}s for reasons explained by  LeCun et al.  \cite{10.5555/645754.668382}.
+Our other two evaluation systems are air craft  control management systems \cite{10.1007/978-3-319-63387-9_5} that consist of a normalization layer that we have to consider in our abstraction modeling. 
+
+
+
 However,  there are certain  problems associated with \ac{DNN} based controller models. 
 Since these systems are complex as in \ac{ACAS-Xu}, the inner workings and the behavior is not completely understood. 
 The complexity depends on  two main factors: the size and the architecture. Adding a new hidden layer to the network increases the size that has  significant impact on the systems.  
-There are different types of architectures for \ac{DNN} that can introduce different problems. In this work we focus specifically on controllers designed  using feed-forward architectures.  
+There are different types of architectures for designing \ac{DNN} one with standard layers and some include normalization in the layers. 
+
 
 \begin{figure}
 	\centering

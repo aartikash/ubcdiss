@@ -10,14 +10,17 @@ The first part is choosing a technique that allows the attacker to model a DNN a
 There are multiple means of modeling the DNN to synthesize attacks some of which are using SMT solvers, symbolic execution and MILP.
 Our goal is twofold: 
 \begin{enumerate}
-	\item generality
-	\item scalability
+	\item Generality: \ac{APS} has an architecture that is despite being similar to our other evaluated systems is quite different from air control traffic management systems (\ac{ACAS-Xu} and \ac{HCAS}) as observed from Table 6.1.
+	This is due to the difference in the application domain and the \ac{DNN} architecture design. 
+	\ac{APS} is a medical system that consists of a standard feed-forward network with no exotic features such as normalization in the network unlike \ac{ACAS-Xu}
+	Hence, we want an abstraction technique that supports such different architectures. 
+	\item Scalability: \ac{APS} consists of 2 hidden layers with 50 neurons each which basically means that there are $2800$ ($50x5 + 50x50 + 50x1$) connections in total.
+	\ac{ACAS-Xu} consists of 5 hidden layers with 50 neurons each which means the total connections are $10,500$. 
+	Hence, we need a technique that is scalable to bigger systems. 
+	
 \end{enumerate}
 
-\ac{APS} has a  feed-forward architecture with 74 inputs whereas the other systems on which we test our technique have completely different architectures as can be observed from Table 6.1 in Chapter 6. 
-This is due to the difference in the application domain. APS is a medical system that is much easier to reason about as compared to our other test systems that are collision avoidance systems for air traffic control management.
-APS has two layers and is the smallest system that we tested our technique for but we want our technique to be valid for much bigger systems as shown in Table 1. 
-We show that MILP fulfills these two criteria by providing us generality and scalability. 
+ We show that \ac{MILP} fulfills these two criteria by providing us generality and scalability. 
 
 
 \section{ Mapping  Mixed-Integer Linear Programming Model to Deep Neural Networks}
