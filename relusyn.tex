@@ -1,90 +1,171 @@
 \chapter{ReLUSyn}
-% To automate the FDI attacks, we follow a three-step approach.
-%1. We first abstract the CPS DNN in a generalizable format developed by Dutta et al. \cite{10.1007/978-3-319-99429-1_11} that allows us to represent a trained network. 
-%2. Using the trained network values we pass it through the MILP modeling that we have constructed. 
-%3. We then find the optimal FDI values for the network. 
-
-%{Explain in detail these three steps and explain the mathematical modeling here}
-Our goal is to automate the attack synthesis for complex systems such as CPS that can handle the two challenges C1 and C2. This section illustrates how \tool helps achieve these goals by providing an approach for building automated attack synthesizers. We start with the illustration of attack synthesis workflow \ref{section:overview}, followed by an example of how to use \tool with a continuation of our motivating example, APS \ref{section:attacks}. In the next section, we describe the modeling of the cost function for conducting the attacks and how we were able to find the critical inputs \ref{section:costfunction}. %We end the section with a discussion of the limitations \ref{section:limitations}. 
-
+In this section we explain the inner workings of our tool ReLUSyn. 
+We provide formal models for a \ac{DNN}s that we use to create \ac{MILP} models. 
+We use a generic representation and describe the modeling of cost functions that we use to generate \ac{RFDIA}.
+We then show how this allows us to identify critical inputs and find the perturbations. 
+We finally explain how we map this to real systems. 
+We build on the approach proposed by Fischetti et al. \cite{fischetti2017deep} where they propose a 0-1 MILP model. 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.1]{"Images/Methodology"}
+	\includegraphics[scale=0.1]{Images/Methodology}
 	\caption[Methodology]{The rounded boxes depict the information provided by the users and the sharp corners is the information provided by us that integrates the first layer into the solver layer.}
-	\label{fig:methodology-2}
+	\label{fig:methodology}
 \end{figure}
-
-
-
-\section{Overview}
-\label{section:overview}
-%This section introduces the different layers and how the framework is designed. It talks about how MILP allows us to model the DNN. Where is the cost function placed? What happens when a user enters an infeasible model. 
-
-%This para talks about the first layer from out figure, where the user provides the DNN values in form of the weights and the bias. Also, the reason we expect weights and bias is coz its a trained model for deployment. 
-Figure 4 shows the \tool synthesizer stack. With \tool, developers/users can synthesize attacks for different domains of CPS built using DNNs. They provide the weights and bias of the trained DNN for the CPS. \tool will automatically infer the critical inputs and the perturbations to conduct \attack.
-%\tool is not built to train secure models but in fact, it is used to find \attack in a trained model. %\tool provides an interface to provide the DNN in a simplified way.
-
-%This paragraph is for explaining the cost function and the MILP modeling layer in layer 2 of our framework.  
-The MILP modeling converts the DNN into linear constraints that are comprehensible for MILP solvers. Different cost functions can be modeled to integrate with the framework to generate different types of attacks. These cost functions guide the model to minimize and maximize \cite{Williams2013} perturbations. %We leverage the MILP capabilities to generate inputs that cause FDI.
-
-%This explains the final layer which after taking in the MILP modeling and the cost function pass it through an optimizer which in this case we use is the gurobi optimizer. 
-After the cost function and the DNN model have been defined we run it through the state-of-the-art backed solver Gurobi \cite{gurobi} that solves and returns optimal solutions if they exist. Otherwise, it returns an infeasible model to show the non-existence of ripples.
-
-%Conclusion for the overview
-In this section, we explain how \tool tackles the challenges we have described in the previous sections. %Our methodology focuses on designing an appropriate technique for our use case that is the attack synthesis; this includes finding the critical inputs and the appropriate perturbations. 
-% modeling cost functions that provide that can be mapped back to the real system and, finally, how we dealt with state-space explosions.
-
-%Finally, we emphasize two benefits of \tool. First, it allows the user (attacker in this case) to use the tool as a black box for producing FDI attacks by making the process automated. The attacker needs to just produce the parameters for the network that she is trying to attack. Given the parameters, \tool generates the appropriate FDI attacks. %There is currently no other tool/system that allows the attackers to attack this easily on DNN based systems. They require multiple attempts before they can successfully do an attack. Second, the technique ensures the production of results if they exist since we model the constraints in a way that utilizes Gurobi's power of optimization. 
-\section{DNN formalism}
-The DNN controller maps the inputs that are the $x1$ and $x2$ to the output $y$ as per Figure 2.4. A DNN consists of multiple layers in the architecture that allows us to create the input-output mappings. The main components of the DNN are inputs, hidden layers, neurons in each hidden layer, the activation function applied to each layer in the network and the output. \textit{For our purposes to synthesize an attack we consider a trained neural network.} This means that all the components of the DNN are fixed.
-
-%Formal modeling of a DNN for later use when explaining the modeling in MILP
-The DNN consists of K layers numbered from 1 to K excluding the input layer.  The input layer can be numbered as K=0 and the final layer or the output is the K$^{th}$ layer.
-The architecture can be represented as a function F defined as $F: X \rightarrow Y$ where the inputs X are mapped to the output Y and are composed of multiple layers. 
-
-\begin{align*}
-F(x) &= F_K \circ F_{K-1} \circ F_{K-2} ....... \circ F_1(x),    (1) \\
-or \\
-F(x) &= F_K ( F_{K-1}( F_{K-2} .......  (F_1(x)))),    (1) \\
-\end{align*} 
-
-$F_K$ represents the K$^{th}$ layer of the network. Each layer K$_{i}$, 
-$i$ $\epsilon$ \{1,.,.,.,.,K\} consists of the smallest elements of a DNN called neurons as demonstrated in Figure 2.4.  Each neuron has a bias associated with it. Every neuron from the previous layer is connected to every neuron in the next layer. This is the property of a fully-connected network. 
-
-Each output layer computes its output through the following formula. 
-%\aarti{Check the consistency of symbols one more time. }
-
-\begin{align*}
-F_i(x) &= \upsigma(W_iX + b_i) ,  i = 1,.....,K, (2)  \\
-\end{align*}
-
-$\upsigma$ is the abstraction for different activation functions that can be used to model the DNN. There are multiple types of activation functions which all come with different modeling capabilities such as ReLU ($f(x) = max {0,x}$) as shown in Figure 2.3, logistic $f(x)=1/(1+ exp(-e))$
-Our tool focuses on using Rectified Linear Unit (ReLU) as shown in Figure 2.3 since it is empirically seems to work well and converged much more quickly than a Sigmoid  activation function as shown by Krizhevsky et al. in \cite{10.1145/3065386}.  %It is also piecewise linear so we can model it using MILP encoding. 
-
-\begin{align*}
-F_i(x) &= ReLU(W_ix + b_i) ,  i = 1,.....,K , (3) \\
-\end{align*}
-
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\linewidth]{Images/ReLU}
-	\caption[Activation functions]{ReLU activation function}
-	\label{fig:ReLU}
+	\includegraphics[width=0.7\linewidth]{Images/DNNstructure}
+	\caption[DNN structure]{DNN controller structure with two hidden layers K=1,2, two inputs x1 and x2 and one output y. This is an example of a fully connected network.}
+	\label{fig:dnn-controller}
 \end{figure}
-where, for a real vector x, ReLU(x):= max\{0,x\} (per layer).
 
-%During the training of the network, the parameters (weights and bias) are determined; we know those values when we are trying to find attacks on the CPS.
 
-\section{Mapping DNNs to MILP}
-The above mentioned formalism allows us to easily map the DNNs to a MILP model. The reason is that the DNN representation can be defined as a set of equations. The notion of non-linearity is introduced in these through the activation functions such as ReLU. The trick here is to define the non-linear activation functions as series of linear functions as shown in Figure 2.6. 
+\section{ReLUSyn: Overview}
+ReLUSyn is the technique that allows the attacker to generate \ac{RFDIA} attacks directly from the \ac{DNN} model. 
+Our technique is shown in Figure 5.1.
+The \ac{DNN} is made available from the systems which can be diirectly passed through ReLUSyn. 
+It automatically synthesizes a \ac{MILP} model from the \ac{DNN} model which also contains the cost or objective functions. 
+The cost function and bounds have a plug-gable functionality. 
+Everything inside the blue box is automatically synthesized.
+The orange parts can be easily changed to extend the technique for different systems and applications in the future. 
+The models along with the cost functions and bounds are passed through the solver that synthesize the attacks if they exist else shows an infeasible model that implies that no attacks exist. 
+\section{DNN formalism}
+We follow the formalism based on the general architecture that we explain in Chapter 2. 
+The \ac{DNN} controller maps the inputs that are the $x1$ and $x2$ to the output $y$ as shown in  Figure 5.2.   
+We now begin with the formal modeling of the \ac{DNN}.
 
-The rest of the equations are directly modeled as a set of constraints for a MILP model and the non-linear activation functions are modeled as a set of linear equations in the MILP model. 
+
+%Formal modeling of a DNN for later use when explaining the modeling in MILP  
+The architecture can be represented as a function F defined as $F: X \rightarrow Y$ where the inputs X are mapped to the output Y and are composed of multiple layers. 
+We consider \ac{DNN} to be made up of $K + 1$ layers, numbered from 0 to K.
+Layer 0 does not really exist since it is the input layer of the network.
+The last layer K corresponds to the output of the \ac{DNN}.
+Every individual layer in the \ac{DNN} $k$ $\epsilon$ $\{0,1,....,K\}$ is made by $n_k$ nodes or neurons in the network.
+Each neuron has a bias associated with it. 
+Every neuron from the previous layer is connected to every neuron in the next layer. 
+The neurons are labeled starting from $1$ to $n_k$ in the network. 
+We denote every neuron by $NODE(i,k)$ which corresponds to $ith$ node for the layer k. 
+
+We denote the output vector of the layer k as $F_k(x)$.
+The output for every $NODE(i,k)$ denoted as $F_{ik}(k)$ where $i$ $\epsilon$ $\{0,1,....,n_k\}$ 
+
+The output for layer 0 which is the \ac{DNN} input is represented as $F_k(0)$.
+The output for every layer $k \geq 1$ the output vector is represented as  the following. 
+
+\begin{equation}
+\begin{aligned}
+F_k(x) &= \upsigma(W^{k-1}x^{k-1} + b^{k-1}) \\
+\end{aligned}
+\end{equation}
+
+$\upsigma$ is the abstraction for different activation functions that can be used to model the DNN. 
+There are multiple types of activation functions which all come with different modeling capabilities such as ReLU ($f(x) = max {0,x}$) as shown in Figure 5.3, logistic $f(x)=1/(1+ exp(-e))$
+Our tool focuses on using Rectified Linear Unit (ReLU) since it is one of the commonly used activation functions in \ac{DNN}s as Krizhevsky et al. \cite{10.1145/3065386}. 
+Hence, our equation now looks  something like where, for a real vector x, ReLU(x):= max\{0,x\} (per layer).
+
+\begin{equation}
+\begin{aligned}
+F_k(x) &= ReLU(W^{k-1}x^{k-1} + b^{k-1}) \\
+\end{aligned}
+\end{equation}
+
+Since a network consists of multiple layers, the general \ac{DNN} representation looks like a composition function as shown below. 
+\begin{equation}
+	\begin{aligned}
+	F(x) &= F_K \circ F_{K-1} \circ F_{K-2} ....... \circ F_1(x),    \\
+	or \\
+	F(x) &= F_K ( F_{K-1}( F_{K-2} .......  (F_1(x)))),    \\
+	\end{aligned}
+\end{equation}
+
+This ends  our \ac{DNN} formalism. In the next section we use the formalism to create a \ac{MILP} model. 
+
+\section{MILP Model}
+To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture. 
+
+\begin{equation}
+\begin{aligned}
+y &= ReLU(w^Ty + b) \\
+\end{aligned}
+\end{equation}
+
+This equation can be represented as a set of linear constraints in the \ac{MILP} model. 
+To do so we use a $max$ operation that models the ReLU behavior. 
+
+\begin{equation}
+\begin{aligned}
+w^Ty + b = x - s, x \geq 0, s \geq 0 \\
+\end{aligned}
+\end{equation}
+
+The reason we represent it as above is to first separate the equation from it's non-linear component such that we can convert it to it's linear component. 
+As the ReLU behavior is graphically explained in Figure 5.3 that the ReLU function can be broken in two parts which are the positive and the negative parts.  
+To implement such behavior we define a activation variable $ac$ that imposes the logical implications. 
+
+\begin{equation}
+\begin{aligned}
+ac =  1 \rightarrow x \leq 0  \\
+ac =  0 \rightarrow s \leq 0  \\
+ac \epsilon  \{0,1\} \\
+\end{aligned}
+\end{equation}
+
+This maps to the \ac{MILP} solvers and converts them into proper linear inequalities. 
+The final \ac{MILP} model looks of the form
+\begin{equation}
+\begin{aligned}
+& \underset{}{\text{min/max}}
+& &  \sum_{k=0}^{K} \sum_{i=i}^{n_k}F_{jk}(x)   + \sum_{k=0}^{K} \sum_{i=i}^{n_k}F_{jk}(z)  \\
+\end{aligned}
+\end{equation}
+%ReLU
+ReLU constraints
+\begin{equation}
+\begin{aligned}
+& \text{subject to} & &  \sum_{j=0}^{n_k} w_{ij}^{k-1}x_{j}^{k-1} + b_i^{k-1} = x_i^k - s_i^k  \\
+& & & x_i^k \geq 0, \\
+& & & s_i^k \geq 0 \\
+& & & ac_i^k  \epsilon  \{0,1\} \\
+& & & ac_i^k  =  1 \rightarrow  x_i^k \leq 0  \\
+& & & ac_i^k =  0 \rightarrow s_i^k  \leq 0   \\
+\end{aligned}
+\end{equation}
+Upper and lower bounds for range analysis
+%Lower and upper bounds on the model
+\begin{equation}
+\begin{aligned}
+& & & lb \geq x_i^k \geq up, \\
+& & &  lb \geq s_i^k \geq up \\
+& & & lb \geq z_i^k \geq up, \\
+\end{aligned}
+\end{equation}
+
+We have divided our \ac{MILP} model in three main parts. 
+Equation 5.7 represents the cost functions that are to be minimized and maximized.
+These cost functions depend on different applications and requirements.  
+We will show in the next section how we model cost functions for \ac{RFDIA}
+attack synthesis. 
+
+Equations 5.8 represents the ReLU modeling for each layer in the network. 
+We showed in Equation 5.6 how we can represent ReLU units as a set of linear constraints in \ac{MILP} solvers. 
+We expand on it and apply it to all the layers in the modeling. 
+
+Equations 5.9 add lower bounds ($lb$) and upper bounds ($up$) in the  model for different variables that we will  require to add limits to our search space.  
+
+
+
+
+
+
+
+
+
+
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/ReLUbreakdown}
-	\caption{ReLU can be broken down into two linear units as shown in the figure for x < 0 and x => 0. This allows us to easily map the DNN equations in MILP models by breaking down the non-linearity inducing function.}
+	\caption{ReLU can be broken down into two linear units as shown in the figure for x $<$ 0 and x $\geq$ 0. This allows us to easily map the DNN equations in MILP models by breaking down the non-linearity inducing function.}
 	\label{fig:relubreakdown}
 \end{figure}
 
