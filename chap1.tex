@@ -4,54 +4,53 @@
 %\section{Introduction}
 %Para-1 - What are safety-critical cps? Some egs. of their existance in different applications. What are the damages they are capable of causing?
 \ac{CPS} are systems that perform computations by continuous interactions with the physical environment, and perform actions in the physical environment based on the computations.   
-They are increasingly being deployed for applications \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465} such as medical devices (e.g., insulin pumps and robotic surgery equipment) which are sensitive to failures and need high reliability. 
-The mission-critical aspect of \ac{CPS} suggests that they are usually target systems for attackers to cause damage. 
-There have been multiple attacks demonstrated in the control systems in the past but the information of most attacks is not publicly available \cite{doi:10.1080/13518040590969785}.
+They are increasingly being deployed for applications \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465} such as medical devices (e.g., insulin pumps and robotic surgery equipment), which are sensitive to failures and need high reliability. 
+The mission-critical aspect of \ac{CPS} means that they are usually target systems for attackers to cause damage. 
+There have been multiple attacks demonstrated in the control systems in the past, though the information of most attacks is not publicly available \cite{doi:10.1080/13518040590969785}.
 The first reported targeted attack was on a Supervisory Control and Data Acquisition (SCADA) system \cite{article22} at the Maroochy Shire Council’s sewage control system in Queensland, Australia where the attacker caused more than 750,000 gallons of untreated sewage water to be released into parks, resulting in clean up damages of more than \$200,000 \cite{10.1016/j.adhoc.2009.04.012}.
 There have also been targeted attacks demonstrated on surgical robots \cite{7579758}, pacemakers\cite{4531149}, airplanes \cite{217595} and  cars \cite{10.5555/1929820.1929848}.
 Attackers have also utilized the glitches in the software to induce attacks without getting detected \cite{242054}. 
 
 
-Traditionally, \ac{CPS} have used classical control theory-based models  \cite{1337806} \cite{10.1145/2038642.2038667} \cite{6051465} to calculate the next output. 
+Traditionally, \ac{CPS} have used classical control theory-based models  \cite{1337806} \cite{10.1145/2038642.2038667} \cite{6051465} to calculate the next output \karthik{Of what?}. 
 Control theory frames differential equations on variables such as wind and friction for self-driving cars to model system behaviors. 
 Such models have low tolerance for perturbations in the values of these parameters, and are therefore vulnerable to attacks that exploit this limitation \cite{10.1145/1952982.1952995}. 
-In an adversarial setting, for e.g., by targeting the way the input to these differential equations are collected, an attacker can inject a false reading, and force incorrect actions or unintended behavior that is only marginally different from the original reading. 
+In an adversarial setting, for example, by targeting the way the input to these differential equations are collected, an attacker can inject a false reading, and force incorrect actions or unintended behavior that is only marginally different from the original reading. 
 Such attacks are called \ac{FDIA}. In an \ac{FDIA}, an attacker compromises the measurements from the sensors in a way that undetected errors are introduced in the outputs \cite{7438916}. 
 
 
 Recently,  \ac{DNN} based controllers have replaced classical control-theory based controllers \cite{xiang18} \cite{Kocic2019} \cite{bechtel2017deeppicar}.  
-Techniques used to generate inputs to mount an FDIA attack for classical control theory based controllers are not directly applicable for DNNs. Perturbations in the input get propagated through the many layers of a DNN  and cause an output deviation from the expected output. 
+Techniques used to generate inputs to mount an FDIA attack for classical control theory based controllers are not directly applicable for DNNs. 
+Perturbations in the input get propagated through the many layers of a DNN  and cause an output deviation from the expected output. \karthik{Is this the reason?}
  
 This work introduces a technique to synthesize \ac{RFDIA} for DNN based controllers. 
-We call these \ac{RFDIA} as they are transmitted through the DNN's layers in the CPS like ripples in large puddle of water. 
+We call these \ac{RFDIA} as they are transmitted through the DNN's layers in the CPS like ripples in large puddles of water. 
 Much like the outward motion of waves in water when disturbed by dropping a stone, the perturbations introduced to the inputs to a DNN ripple through the layers until they reach the output layer. 
-To mount a successful attack on a DNN based controller, we need to distort an input to the extent that the effects of its perturbation reach the final layer in a DNN. 
+To mount a successful attack on a DNN based controller, we need to distort an input to the extent that the effects of its perturbation reach the final layer in a DNN. \karthik{While not trigerring any alarms, correct?}
 
 To mount a \ac{RFDIA}, the attacker needs to identify two things: 
 \begin{enumerate}
-	\item \textbf{The critical inputs}: To introduce a ripple an attacker must identify such inputs, which when perturbed (either together or in isolation), cause the most desirable change to the output.
-	\item \textbf{Perturbations for each critical input}: To mount an \ac{RFDIA} the smallest perturbations for the critical inputs needs to calculated.   
+	\item \textbf{The critical inputs}: To introduce a ripple an attacker must identify such inputs, which when perturbed (either together or in isolation), cause the most desirable change to the output \karthik{for the attacker?}.
+	\item \textbf{Perturbations for each critical input}: To mount an \ac{RFDIA} the smallest perturbations for the critical inputs needs to calculated. \karthik{why smallest?}   
 \end{enumerate}
 
 
-We investigate whether { \ac{RFDIA} \em can be mounted on DNN-based controllers, and if so, whether it is possible to find the attacks automatically}
+In this thesis, we investigate whether { \ac{RFDIA} \em can be mounted on DNN-based controllers, and if so, whether it is possible to find the attacks automatically}
                                                    
-Our technique finds the \textit{critical inputs} and the minimal perturbations to cause a successful \ac{RFDIA}. We model attack synthesis as an optimization problem using \ac{MILP} and build an automated tool called \tool that identifies the critical inputs and finds the perturbations to conduct \ac{RFDIA}. 
-
-
+Our technique finds the \textit{critical inputs} and the minimal perturbations to cause a successful \ac{RFDIA}. We model attack synthesis as an optimization problem using \ac{MILP}, and build an automated tool called \tool that identifies the critical inputs and finds the perturbations to conduct \ac{RFDIA}. 
 To the best of our knowledge, we are the first to  propose an automated approach to systematically locate the critical inputs and find the minimum perturbations to conduct a \ac{RFDIA} for DNN-based controller systems.
 
 The main contributions in this work are as follows:
 
 \begin{enumerate}
 	\item Define and demonstrate a new class of attacks called \ac{RFDIA} for \ac{DNN} based \ac{CPS}. 
-	\item Model attack synthesis as an optimization problem (specifically as a \ac{MILP}). 
-	\item We demonstrate \ac{RFDIA} on three \ac{DNN} based \ac{CPS}:  An \ac{APS} and two air traffic control management systems called \ac{ACAS-Xu} and \ac{HCAS}.
-	\item Evaluate \tool's performance and show that it can synthesize \ac{RFDIA} in a short time period.  
+	\item Model attack synthesis as an optimization problem (specifically as a \ac{MILP}). \karthik{syntehsis of RFDIA attacks?}
+	\item We demonstrate \ac{RFDIA} on three \ac{DNN} based \ac{CPS}:  An \ac{APS}\karthik{Expand} and two air traffic control management systems called \ac{ACAS-Xu} and \ac{HCAS}.
+	\item Evaluate \tool's performance \karthik{In terms of execution time?} and show that it can synthesize \ac{RFDIA} in a short time period.  
 \end{enumerate}
  
 We show models for different types of RFDIA in three different systems and show that the framework can be easily adopted for other \ac{DNN} based systems for synthesizing attacks. 
-
+\karthik{Summarize your results and thesis organization}
 
 
 

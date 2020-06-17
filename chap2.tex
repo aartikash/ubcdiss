@@ -1,11 +1,11 @@
 \chapter{Background}
 \label{ch:Chapter2}
 
-We begin with different roles that people play to design, implement and attack a \ac{CPS}. We use the different categories to explain the attack model in Chapter 3 clearly. 
+We begin with different roles in the design, implementation and attack of a \ac{CPS}. We use the different categories to explain the attack model in Chapter 3 clearly. 
 We provide a summary of \ac{CPS} after which we introduce conventional controller designs and their limitations. 
 We further define \ac{DNN} based models and describe the open problems that exist in them. 
 We then introduce the  general structure for \ac{MILP} modeling which we will later use in Chapter 5. 
-We finally end the section with the formal description of our problem statement.
+We end with the formal description of our problem statement.
 
 \section{Roles description}
 There are three roles involved in designing and attacking \ac{CPS}. These are important to understand the different pieces of information an attacker needs to gather for attacking a system.
@@ -14,7 +14,7 @@ There are three roles involved in designing and attacking \ac{CPS}. These are im
 	\item \textbf{Specification Designer/Domain Expert:} The domain expert is responsible for designing the specification documents. 
 	For an \ac{APS} the domain expert specifies the safe thresholds for the amount of insulin injected in a patient. The domain expert also indicates values that should trigger alarms, e.g., in case of a high blood glucose reading in \ac{APS}.
 	\item \textbf{System Developer:} These are the people or the designers who
-	build the \ac{DNN} architectures for e.g., an architect can use different types of \ac{ML} models such as decision trees, or \ac{DNN} to implement the system.
+	build the \ac{DNN} architectures \karthik{Did you expand this?}, e.g., an architect can use different types of \ac{ML} models such as decision trees, or \ac{DNN} to implement the system.
 	\item \textbf{Attacker:} The attacker is trying to make the system misbehave by attacking the implementation of the \ac{CPS} without triggering safety alarms specified by the domain expert . 
 \end{enumerate}
 
@@ -50,22 +50,27 @@ As shown in Figure 2.1 the sensors and actuators are the physical parts of the s
 The sensors gather the data from the physical environment and send it to the computational unit. 
 The decision is taken at the computational unit which is also the cyber part of the \ac{CPS} called the controller.
 The decision is sent to the actuator which then physically performs the action.
-The physical and virtual contexts can either be humans in the loop or some automated mechanism or nothing at all.
+The physical and virtual contexts can either be humans in the loop or some automated mechanism or nothing at all. \karthik{How can it be nothing?}
 
-In an \ac{APS} shown in Figure 2.2 the sensor is the \ac{CGM} that is attached to the back of a patient to report the blood glucose levels.  
-\ac{RPi} is the computational part of the \ac{APS} and the insulin pump is the actuator. 
+In an \ac{APS} shown in Figure 2.2, the sensor is the \ac{CGM} that is attached to the back of a patient to report the blood glucose levels.  
+\ac{RPi} is the computational part of the \ac{APS}, and the insulin pump is the actuator. 
 
 There are two types of CPS based on the decision making process: open feedback and closed-loop feedback.
-In open feedback systems, there is human intervention during the decision making process; as shown in Figure 2.3 (top diagram) the human is a part of the loop where the human keeps a track of the decisions being taken by the controller. 
-In closed-loop systems, there is no regular human interventions as shown in Figure 2.3 (below diagram). 
-In the latter case understanding different types of security attacks becomes a necessity. 
-In the case of stealthy (or subtle) attacks as described in Chapter 3, the closed loop systems are more vulnerable because existing error-detection mechanisms are not designed to detect small perturbations from the original inputs under a constrained setting that can cause ripples. 
+In open feedback systems, there is human intervention during the decision making process. 
+As shown in Figure 2.3 (top diagram), the human is a part of the loop where he/she keeps track of the decisions being taken by the controller. 
+In closed-loop systems, there are no regular human interventions \karthik{What is 'regular'?} 
+as shown in Figure 2.3 (below diagram). 
+In the latter case, understanding different types of security attacks becomes a necessity. \karthik{Why?}
+In the case of stealthy (or subtle) attacks as described in Chapter 3, 
+the closed loop systems are more vulnerable because existing error-detection mechanisms are not designed to detect small perturbations from the original 
+inputs under a constrained setting that can cause ripples. \karthik{This is a controversial statement, and quite unnecessary for your work.}
 
 \section{Conventional Controllers for CPS}
 
 A conventional controller takes in the sensors readings and processes the input based on the different sets of differential equations for the controller. 
-For instance, a quadcopter contains multiple flight modes in it's controller based on the weather conditions such as windy or normal day. 
-These modes are important because during a windy weather the decision making model for stable quadcopter flights will be different from a normal weather flight. 
+For instance, a quadcopter contains multiple flight modes in its controller based on the weather conditions such as windy or normal day. 
+These modes are important because during windy weather, the decision making model for stable quadcopter flights will be different from a normal weather flight. 
+\karthik{Provide citation} 
 Based on the inputs or data collected from the sensors, the appropriate  mode is selected and the decision is calculated. 
 Every mode consists of a different set of equations because every mode represents a different scenario.
 Figure 2.4 shows a position control system of a quadcopter \cite{inbook}. The input values use the derived version of the equations that are used in decision making. 
@@ -80,12 +85,12 @@ Figure 2.4 shows a position control system of a quadcopter \cite{inbook}. The in
 
 
 %How are they modeled
-These modes are modeled using classical control theory that is represented as a set of equations designed by domain experts
-for instance, the model for a medical system such as \ac{APS} can be designed only if the specifications are known for the medical system. 
+These modes are modeled using classical control theory that is represented as a set of equations designed by domain experts.
+For instance, the model for a medical system such as \ac{APS} can be designed only if the specifications are known for the medical system. 
 A part of the specifications such as the important parameters (insulin, blood glucose etc. in APS) and their threshold values are be provided by domain (in this case medical) experts. 
-Another important aspect for designing control systems is the  modeling precise relations between the parameters. 
+Another important aspect for designing control systems is modeling the precise relations between the parameters. 
 This is possible in systems such as APS because it is a simpler system as compared to self-driving cars. 
-However, designing the precise mathematical relations for systems such as self-driving cars can be tedious \cite{article23} which we elaborate below.
+However, designing the precise mathematical relations for systems such as self-driving cars can be tedious \cite{article23}, as we elaborate below.
 
 The move towards DNNs over control theory models for modeling \ac{CPS} behaviour can be justified by the following observations:
 \begin{enumerate}
