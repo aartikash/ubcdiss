@@ -15,7 +15,7 @@ Our approach is similar to that proposed by Fischetti et al. \cite{fischetti2017
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/DNNstructure}
-	\caption[DNN structure]{DNN controller structure with two hidden layers K=1,2, two inputs x1 and x2 and one output y. This is an example of a fully connected network.}
+	\caption[DNN structure]{DNN controller structure with two hidden layers K=1,2, two inputs x1 and x2 and one output y. This is an example of a fully connected network. \textcolor{red}{You should clarify the weight subscripts in my opinion.}}
 	\label{fig:dnn-controller}
 \end{figure}
 
@@ -50,11 +50,11 @@ Every neuron from the previous layer is connected to every neuron in the next la
 The neurons are labeled starting from $1$ to $n_k$ in the network. 
 We denote every neuron by $NODE(i,k)$ which corresponds to $ith$ node for the layer k. 
 
-We denote the output vector of the layer k as $F_k(x)$.
-The output for every $NODE(i,k)$ denoted as $F_{ik}(k)$ where $i$ $\epsilon$ $\{0,1,....,n_k\}$ 
+We denote the output vector of the layer $k$ as $F_k(x)$.
+The output for every $NODE(i,k)$ denoted as $F_{ik}(k)$ \textcolor{red}{This should be $F_{ik}(x)$} where $i$ $\epsilon$ $\{0,1,....,n_k\}$ 
 
-The output for layer 0 which is the \ac{DNN} input is represented as $F_k(0)$.
-The output for every layer $k \geq 1$ the output vector is represented as  the following. 
+The output for layer 0 which is the \ac{DNN} input is represented as $F_k(0)$ \textcolor{red}{This should be $F_{0}(x)$}.
+For every layer $k \geq 1$, the output vector is given by: 
 
 \begin{equation}
 \begin{aligned}
@@ -62,10 +62,10 @@ F_k(x) &= \upsigma(W^{k-1}x^{k-1} + b^{k-1}) \\
 \end{aligned}
 \end{equation}
 
-$\upsigma$ is the abstraction for different activation functions that can be used to model the DNN. 
-There are multiple types of activation functions which all come with different modeling capabilities such as ReLU ($f(x) = max {0,x}$) as shown in Figure 5.3, logistic $f(x)=1/(1+ exp(-e))$
-Our tool focuses on using Rectified Linear Unit (ReLU) since it is one of the commonly used activation functions in \ac{DNN}s as Krizhevsky et al. \cite{10.1145/3065386}. 
-Hence, our equation now looks  something like where, for a real vector x, ReLU(x):= max\{0,x\} (per layer).
+where $\upsigma$ represents the activation function being used in the DNN under consideration.
+There are several different activation functions which are all modelled differently such as \texttt{ReLU} ($f(x) = max {0,x}$) as shown in Figure 5.3 and the \texttt{logistic} activation function ($f(x)=1/(1+ exp(-e))$).
+Our tool focuses on using \texttt{ReLU} since it is one of the most commonly used activation functions in \ac{DNN}s as Krizhevsky et al. \cite{10.1145/3065386} and it is easy to model as a piecewise linear function. 
+Hence, our equation now looks  something like where, for a vector $x$, \texttt{ReLU}($x$):= $\sum_{i=1}^{n} e_{i}\max(0, x_{i})$ (per layer).
 
 \begin{equation}
 \begin{aligned}
@@ -82,7 +82,7 @@ Since a network consists of multiple layers, the general \ac{DNN} representation
 	\end{aligned}
 \end{equation}
 
-This ends our \ac{DNN} formalism. In the next section we use the formalism to create a \ac{MILP} model. 
+This ends our \ac{DNN} formalism. We use this formalism in the next section to create a \ac{MILP} model. 
 
 \section{MILP Model}
 To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture. 
