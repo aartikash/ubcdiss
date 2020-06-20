@@ -1,14 +1,14 @@
 \chapter{ReLUSyn}
 In this section we explain the inner workings of our tool ReLUSyn. 
-We provide formal models for a \ac{DNN}s that we use to create \ac{MILP} models. 
-We use a generic representation and describe the modeling of cost functions that we use to generate \ac{RFDIA}.
+We show how fully connected feedforward \ac{DNN}s can be formulated as \ac{MILP} models. 
+We use a generic representation and describe the modeling of cost functions that are used to generate \ac{RFDIA}.
 We then show how this allows us to identify critical inputs and find the perturbations. 
-We finally explain how we map this to real systems. 
-We build on the approach proposed by Fischetti et al. \cite{fischetti2017deep} where they propose a 0-1 MILP model. 
+We finally explain how we map this to real systems.
+Our approach is similar to that proposed by Fischetti et al. \cite{fischetti2017deep} where they propose a 0-1 MILP model for DNN modelling.
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.1]{Images/Methodology}
-	\caption[Methodology]{The rounded boxes depict the information provided by the users and the sharp corners is the information provided by us that integrates the first layer into the solver layer.}
+	\caption[Methodology]{The rounded boxes depict the information provided by the users and the sharp corners is the information provided by us that integrates the first layer into the solver layer. \textcolor{red}{TODO: Add a red rectangle with dotted outline with 'input values' as text (in the blue box). This represents inputs that can be optionally provided by the attacker}}
 	\label{fig:methodology}
 \end{figure}
 
@@ -21,14 +21,18 @@ We build on the approach proposed by Fischetti et al. \cite{fischetti2017deep} w
 
 
 \section{ReLUSyn: Overview}
+\textcolor{red}{Why is 'bounds' in the blue rectangle? Aren't these the bounds on the input values (in which case, they would be part of the supplied DNN)?}
+
 ReLUSyn is the technique that allows the attacker to generate \ac{RFDIA} attacks directly from the \ac{DNN} model. 
 Our technique is shown in Figure 5.1.
-The \ac{DNN} is made available from the systems which can be diirectly passed through ReLUSyn. 
-It automatically synthesizes a \ac{MILP} model from the \ac{DNN} model which also contains the cost or objective functions. 
-The cost function and bounds have a plug-gable functionality. 
+The \ac{DNN} is made available from the system under attack; this DNN is passed directly into ReLUSyn. 
+It automatically synthesizes a \ac{MILP} model from the \ac{DNN} model, which also contains the input value bounds. 
+The attacker can specify a cost function if they possess the relevant domain-specific knowledge to make such a decision. The cost function determines the kind of attack to be launched on the system.
 Everything inside the blue box is automatically synthesized.
 The orange parts can be easily changed to extend the technique for different systems and applications in the future. 
-The models along with the cost functions and bounds are passed through the solver that synthesize the attacks if they exist else shows an infeasible model that implies that no attacks exist. 
+The models along with the cost functions and bounds are passed through a MILP solver; the solver finds an optimal solution for the MILP model, and this optimal solution corresponds to an attack. If the solver determines the model is infeasible, then no attacks exist.
+Each feasible solution of the model corresponds to a particular attack and the optimal solution corresponds to the preferred attack as specified by the user's cost function. We discuss the concept of using cost functions to launch specific attacks later in this chapter.
+
 \section{DNN formalism}
 We follow the formalism based on the general architecture that we explain in Chapter 2. 
 The \ac{DNN} controller maps the inputs that are the $x1$ and $x2$ to the output $y$ as shown in  Figure 5.2.   
@@ -78,7 +82,7 @@ Since a network consists of multiple layers, the general \ac{DNN} representation
 	\end{aligned}
 \end{equation}
 
-This ends  our \ac{DNN} formalism. In the next section we use the formalism to create a \ac{MILP} model. 
+This ends our \ac{DNN} formalism. In the next section we use the formalism to create a \ac{MILP} model. 
 
 \section{MILP Model}
 To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture. 
@@ -150,7 +154,7 @@ Equations 5.8 represents the ReLU modeling for each layer in the network.
 We showed in Equation 5.6 how we can represent ReLU units as a set of linear constraints in \ac{MILP} solvers. 
 We expand on it and apply it to all the layers in the modeling. 
 
-Equations 5.9 add lower bounds ($lb$) and upper bounds ($up$) in the  model for different variables that we will  require to add limits to our search space.  
+Equations 5.9 add lower bounds ($lb$) and upper bounds ($up$) in the  model for different variables that we will  require to add limits to our search space.
 
 
 
@@ -291,4 +295,3 @@ If the attacker wants to locate one input that on perturbing by the smallest amo
 \section{Synthesizing attacks}
 The final part is synthesizing the inputs that can be used to conduct \attack without triggering any alarms in the system. To do so we introduce the final constraints that put lower and upper bounds on the output of the networks. This is important for the optimization to return useful results. The reason the optimization approach wins here is that if we provide the proper constraints it gives us results in less than a second per attack. This precise modeling is the secret sauce that scales up our technique significantly and provides us \attack based on the scenario. Due to the proper ranges, the state space is handles well by our technique and does not result in blowups. 
 %\aarti{Should I add more here and also the algorithm for the synthesizing attack aspect?}              
-
