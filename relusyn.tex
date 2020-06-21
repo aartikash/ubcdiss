@@ -4,7 +4,9 @@ We show how fully connected feedforward \ac{DNN}s can be formulated as \ac{MILP}
 We use a generic representation and describe the modeling of cost functions that are used to generate \ac{RFDIA}.
 We then show how this allows us to identify critical inputs and find the perturbations. 
 We finally explain how we map this to real systems.
-Our approach is similar to that proposed by Fischetti et al. \cite{fischetti2017deep} where they propose a 0-1 MILP model for DNN modelling.
+%Our approach is similar to that proposed by Fischetti et al. \cite{fischetti2017deep} where they propose a 0-1 MILP model for DNN modelling.
+We also include a section on how \texttt{ReLU} (the non-linear activation function) might be modeled internally by MILP solvers based on work by Fischetti et al. \cite{fischetti2017deep}, where they propose a 0-1 MILP model for DNN modelling.
+This section is included for completeness as the solver we use for our evaluation is able to handle the $\max$ function automatically.
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.1]{Images/Methodology}
@@ -65,7 +67,7 @@ F_k(x) &= \upsigma(W^{k-1}x^{k-1} + b^{k-1}) \\
 where $\upsigma$ represents the activation function being used in the DNN under consideration.
 There are several different activation functions which are all modelled differently such as \texttt{ReLU} ($f(x) = max {0,x}$) as shown in Figure 5.3 and the \texttt{logistic} activation function ($f(x)=1/(1+ exp(-e))$).
 Our tool focuses on using \texttt{ReLU} since it is one of the most commonly used activation functions in \ac{DNN}s as Krizhevsky et al. \cite{10.1145/3065386} and it is easy to model as a piecewise linear function. 
-Hence, our equation now looks  something like where, for a vector $x$, \texttt{ReLU}($x$):= $\sum_{i=1}^{n} e_{i}\max(0, x_{i})$ (per layer).
+Hence, our equation now looks something like where, for a vector $x$, \texttt{ReLU}($x$):= $\sum_{i=1}^{n} e_{i}\max(0, x_{i})$ (per layer).
 
 \begin{equation}
 \begin{aligned}
@@ -85,7 +87,11 @@ Since a network consists of multiple layers, the general \ac{DNN} representation
 This ends our \ac{DNN} formalism. We use this formalism in the next section to create a \ac{MILP} model. 
 
 \section{MILP Model}
-To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture. 
+The \texttt{ReLU} activation function cannot be modelled directly by MILP solvers. This section presents an
+equivalent formulation that is accepted by such solvers. The solver we use (\texttt{Gurobi}) handles this conversion
+internally without exposing the user to the details. We have decided to include it here for the purpose of completeness.
+
+To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture.
 
 \begin{equation}
 \begin{aligned}
@@ -93,8 +99,11 @@ y &= ReLU(w^Ty + b) \\
 \end{aligned}
 \end{equation}
 
-This equation can be represented as a set of linear constraints in the \ac{MILP} model. 
-To do so we use a $max$ operation that models the ReLU behavior. 
+%This equation can be represented as a set of linear constraints in the \ac{MILP} model.
+%To do so we use a $max$ operation that models the ReLU behavior.
+
+We cannot apply the $f(X) = \max(0, x)$ operator directly because it is non-linear. Instead, we
+can rewrite the equation given above as follows:
 
 \begin{equation}
 \begin{aligned}
@@ -102,34 +111,44 @@ w^Ty + b = x - s, x \geq 0, s \geq 0 \\
 \end{aligned}
 \end{equation}
 
-The reason we represent it as above is to first separate the equation from it's non-linear component such that we can convert it to it's linear component. 
-As the ReLU behavior is graphically explained in Figure 5.3 that the ReLU function can be broken in two parts which are the positive and the negative parts.  
-To implement such behavior we define a activation variable $ac$ that imposes the logical implications. 
+The $y$ here represents the input from the previous layer and the $x$ represents the output of the current layer within the context of the DNN.
+%We have elected to use different symbols for clarity..
+The choice to use different symbols was made in the interest of clarity. The equation in this rewritten form is linear, and it does model
+\texttt{ReLU} functionality (see Figure 5.3 for a visual representation) correctly as $x$ will always be non-negative. The problem with this formulation
+is that it does not admit a unique solution. One way to account for this is to add indicator constraints of the form shown below. Modern MILP solvers can
+handle these constraints directly.
+
+%The reason we represent it as above is to first separate the equation from it's non-linear component such that we can convert it to it's linear component. 
+%As the ReLU behavior is graphically explained in Figure 5.3 that the ReLU function can be broken in two parts which are the positive and the negative parts.  
+%To implement such behavior we define a activation variable $ac$ that imposes the logical implications.
 
 \begin{equation}
 \begin{aligned}
-ac =  1 \rightarrow x \leq 0  \\
-ac =  0 \rightarrow s \leq 0  \\
-ac \epsilon  \{0,1\} \\
+ac = 1 \rightarrow x \leq 0  \\
+ac = 0 \rightarrow s \leq 0  \\
+ac \in \{0,1\} \\
 \end{aligned}
 \end{equation}
 
-This maps to the \ac{MILP} solvers and converts them into proper linear inequalities. 
-The final \ac{MILP} model looks of the form
-\begin{equation}
-\begin{aligned}
-& \underset{}{\text{min/max}}
-& &  \sum_{k=0}^{K} \sum_{i=i}^{n_k}F_{jk}(x)   + \sum_{k=0}^{K} \sum_{i=i}^{n_k}F_{jk}(z)  \\
-\end{aligned}
-\end{equation}
+%This maps to the \ac{MILP} solvers and converts them into proper linear inequalities.
+The $x \leq 0$ constraint in conjunction with $x \geq 0$ forces $x$ to zero. The other case forces $s$ to be zero.
+This opens the door for a formulation that leads to unique solutions for $x$ and $s$ while enforcing the constraint $x \geq 0$
+Extending this scalar example to the DNN case leads to a \ac{MILP} model of the form:
+%The final \ac{MILP} model looks of the form
+%\begin{equation}
+%\begin{aligned}
+%& \underset{}{\text{min/max}}
+%& &  \sum_{k=0}^{K} \sum_{i=i}^{n_k}F_{jk}(x)   + \sum_{k=0}^{K} \sum_{i=i}^{n_k}F_{jk}(z)  \\
+%\end{aligned}
+%\end{equation}
 %ReLU
-ReLU constraints
+%ReLU constraints
 \begin{equation}
 \begin{aligned}
-& \text{subject to} & &  \sum_{j=0}^{n_k} w_{ij}^{k-1}x_{j}^{k-1} + b_i^{k-1} = x_i^k - s_i^k  \\
+& \sum_{j=0}^{n_k} w_{ij}^{k-1}x_{j}^{k-1} + b_i^{k-1} = x_i^k - s_i^k  \\
 & & & x_i^k \geq 0, \\
 & & & s_i^k \geq 0 \\
-& & & ac_i^k  \epsilon  \{0,1\} \\
+& & & ac_i^k  \in  \{0,1\} \\
 & & & ac_i^k  =  1 \rightarrow  x_i^k \leq 0  \\
 & & & ac_i^k =  0 \rightarrow s_i^k  \leq 0   \\
 \end{aligned}
@@ -138,32 +157,28 @@ Upper and lower bounds for range analysis
 %Lower and upper bounds on the model
 \begin{equation}
 \begin{aligned}
-& & & lb \geq x_i^k \geq up, \\
-& & &  lb \geq s_i^k \geq up \\
-& & & lb \geq z_i^k \geq up, \\
+& & & lb_i^k \leq x_i^k \leq ub_i^k, \\
+& & &  \overline{lb_i^k} \leq s_i^k \leq \overline{up_i^k} \\
+%& & & lb \leq z_i^k \leq up, \\
 \end{aligned}
 \end{equation}
 
-We have divided our \ac{MILP} model in three main parts. 
-Equation 5.7 represents the cost functions that are to be minimized and maximized.
-These cost functions depend on different applications and requirements.  
-We will show in the next section how we model cost functions for \ac{RFDIA}
-attack synthesis. 
+%We have divided our \ac{MILP} model in three main parts.
 
-Equations 5.8 represents the ReLU modeling for each layer in the network. 
-We showed in Equation 5.6 how we can represent ReLU units as a set of linear constraints in \ac{MILP} solvers. 
-We expand on it and apply it to all the layers in the modeling. 
+%Equation 5.7 represents the cost functions that are to be minimized and maximized.
+%These cost functions depend on different applications and requirements.  
+%We will show in the next section how we model cost functions for \ac{RFDIA}
+%attack synthesis.
 
-Equations 5.9 add lower bounds ($lb$) and upper bounds ($up$) in the  model for different variables that we will  require to add limits to our search space.
+Equations 5.7 represents the ReLU modeling for each layer in the network. 
+We showed in Equation 5.6 how we can represent ReLU units as a set of linear constraints in \ac{MILP} solvers.
+%We expand on it and apply it to all the layers in the modeling.
 
+Equations 5.8 adds lower bounds ($lb$) and upper bounds ($up$) in the model. These will be 0 and $+\infty$ respectively except for the first input layer
+where the bounds would depend on what is valid input for the DNN application.
 
-
-
-
-
-
-
-
+Our MILP modelling applies the $f(x) = \max(0, x)$ operation directly to the output of layers because our MILP solver linearizes this internally when solving the model.
+This section serves to illustrate how the solver could be handling this linearization internally. The next section describes how we build our model.
 
 
 \begin{figure}
