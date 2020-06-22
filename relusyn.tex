@@ -1,5 +1,5 @@
 \chapter{ReLUSyn}
-In this section we explain the inner workings of our tool ReLUSyn. 
+In this section we explain the inner workings of our tool ReLUSyn. \karthik{Is ReluSyn a tool or an approach ? What does it do ?}
 We provide formal models for a \ac{DNN}s that we use to create \ac{MILP} models. 
 We use a generic representation and describe the modeling of cost functions that we use to generate \ac{RFDIA}.
 We then show how this allows us to identify critical inputs and find the perturbations. 
@@ -23,7 +23,7 @@ We build on the approach proposed by Fischetti et al. \cite{fischetti2017deep} w
 \section{ReLUSyn: Overview}
 ReLUSyn is the technique that allows the attacker to generate \ac{RFDIA} attacks directly from the \ac{DNN} model. 
 Our technique is shown in Figure 5.1.
-The \ac{DNN} is made available from the systems which can be diirectly passed through ReLUSyn. 
+The \ac{DNN} is made available from the systems which can be diirectly passed through ReLUSyn \karthik{Run a spell checker, seriously !}. 
 It automatically synthesizes a \ac{MILP} model from the \ac{DNN} model which also contains the cost or objective functions. 
 The cost function and bounds have a plug-gable functionality. 
 Everything inside the blue box is automatically synthesized.
@@ -38,18 +38,19 @@ We now begin with the formal modeling of the \ac{DNN}.
 %Formal modeling of a DNN for later use when explaining the modeling in MILP  
 The architecture can be represented as a function F defined as $F: X \rightarrow Y$ where the inputs X are mapped to the output Y and are composed of multiple layers. 
 We consider \ac{DNN} to be made up of $K + 1$ layers, numbered from 0 to K.
-Layer 0 does not really exist since it is the input layer of the network.
-The last layer K corresponds to the output of the \ac{DNN}.
-Every individual layer in the \ac{DNN} $k$ $\epsilon$ $\{0,1,....,K\}$ is made by $n_k$ nodes or neurons in the network.
+Layer 0 %does not really exist since it 
+is the input layer of the network, while
+the last layer K corresponds to the output of the \ac{DNN}.
+Every individual layer in the \ac{DNN} $k$ $\epsilon$ $\{0,1,....,K\}$ consists of $n_k$ nodes or neurons in the network.
 Each neuron has a bias associated with it. 
 Every neuron from the previous layer is connected to every neuron in the next layer. 
 The neurons are labeled starting from $1$ to $n_k$ in the network. 
-We denote every neuron by $NODE(i,k)$ which corresponds to $ith$ node for the layer k. 
+We denote every neuron by $NODE(i,k)$ which corresponds to the $ith$ node for the layer k. 
 
 We denote the output vector of the layer k as $F_k(x)$.
 The output for every $NODE(i,k)$ denoted as $F_{ik}(k)$ where $i$ $\epsilon$ $\{0,1,....,n_k\}$ 
 
-The output for layer 0 which is the \ac{DNN} input is represented as $F_k(0)$.
+The output for layer 0 is represented as $F_k(0)$.
 The output for every layer $k \geq 1$ the output vector is represented as  the following. 
 
 \begin{equation}
@@ -59,9 +60,10 @@ F_k(x) &= \upsigma(W^{k-1}x^{k-1} + b^{k-1}) \\
 \end{equation}
 
 $\upsigma$ is the abstraction for different activation functions that can be used to model the DNN. 
-There are multiple types of activation functions which all come with different modeling capabilities such as ReLU ($f(x) = max {0,x}$) as shown in Figure 5.3, logistic $f(x)=1/(1+ exp(-e))$
-Our tool focuses on using Rectified Linear Unit (ReLU) since it is one of the commonly used activation functions in \ac{DNN}s as Krizhevsky et al. \cite{10.1145/3065386}. 
-Hence, our equation now looks  something like where, for a real vector x, ReLU(x):= max\{0,x\} (per layer).
+There are multiple types of activation functions with different modeling capabilities, such as ReLU ($f(x) = max {0,x}$) as shown in Figure 5.3, logistic $f(x)=1/(1+ exp(-e))$
+\karthik{Incomplete sentence?}/
+Our tool\karthik{Use name} focuses on using Rectified Linear Unit (ReLU) since it is one of the commonly used activation functions in \ac{DNN}s as Krizhevsky et al. \cite{10.1145/3065386}. 
+Hence, our equation looks something like where\karthik{too informal}, for a real vector x, ReLU(x):= max\{0,x\} (per layer).
 
 \begin{equation}
 \begin{aligned}
@@ -78,9 +80,10 @@ Since a network consists of multiple layers, the general \ac{DNN} representation
 	\end{aligned}
 \end{equation}
 
-This ends  our \ac{DNN} formalism. In the next section we use the formalism to create a \ac{MILP} model. 
+%This ends  our \ac{DNN} formalism. In the next section we use the formalism to create a \ac{MILP} model. 
 
 \section{MILP Model}
+In this section we use the formalism to create a \ac{MILP} model. \karthik{For what purpose?}
 To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture. 
 
 \begin{equation}
@@ -90,7 +93,7 @@ y &= ReLU(w^Ty + b) \\
 \end{equation}
 
 This equation can be represented as a set of linear constraints in the \ac{MILP} model. 
-To do so we use a $max$ operation that models the ReLU behavior. 
+To do so, we use a $max$ operation that models the ReLU behavior. 
 
 \begin{equation}
 \begin{aligned}
@@ -98,9 +101,10 @@ w^Ty + b = x - s, x \geq 0, s \geq 0 \\
 \end{aligned}
 \end{equation}
 
-The reason we represent it as above is to first separate the equation from it's non-linear component such that we can convert it to it's linear component. 
-As the ReLU behavior is graphically explained in Figure 5.3 that the ReLU function can be broken in two parts which are the positive and the negative parts.  
-To implement such behavior we define a activation variable $ac$ that imposes the logical implications. 
+The reason we represent it as above is to first separate the equation from its non-linear component such that we can convert it to its linear component. 
+\karthik{I don't  understand this sentence}
+As explained in Figure 5.3, the ReLU function can be broken in two parts, namely positive and negative parts.  
+To implement such behavior\karthik{what behavior?}, we define an activation variable $ac$ that imposes the logical implications. 
 
 \begin{equation}
 \begin{aligned}
