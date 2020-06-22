@@ -203,7 +203,7 @@ As an example, we use a toy Artificial pancreas system (toyAPS) and then explain
 
 \begin{algorithm}
 	%\DontPrintSemicolon % Some LaTeX compilers require you to use \dontprintsemicolon    instead
-	\KwIn{weight, bias, num\_layers, num\_neurons}
+	\KwIn{weight matrices, bias vectors, num\_layers, num\_neurons}
 	\KwOut{DNN input, DNN output}
 	Take the weight, bias, number of layers, and the number of neurons per layer. \\
 	
@@ -216,7 +216,7 @@ As an example, we use a toy Artificial pancreas system (toyAPS) and then explain
 	%\item 
 	(II) Applying activation function to every layer's output,
 	\linebreak
-	Constraints: $ReLU\_output_k = max(0, output_k)$ (component-wise) \\,
+	Constraints: $ReLU\_output_k = max(0, output_k)$ (component-wise) \
 	\linebreak
 	The final layer's rectified output is the DNN output.
 	
@@ -238,68 +238,88 @@ The above equation represents the toyAPS. We convert the equations above into a 
 \section{Modeling cost functions for attacks}
 \label{section:costfunction}
 %Why is modeling cost function important
-After representing the pictorial representation of a network as shown in Figure 5 to Algorithm 1, the next step is to model the cost or objective function. The cost function is what decides on the smallest perturbations of the inputs for generating a ripple. 
+Now that we have formulated the DNN as a MILP model, the next step is to add a cost or objective function to launch a specific kind of attack. This function allows the user to specify which inputs should be preferentially perturbed to generate a ripple.
 
-In our toyAPS we have two inputs $x_1$ and $x_2$ that map to an output $y$. To conduct \attack the goal is to change the inputs in a way that the alarms are not triggered and yet it leads to an output change. These small changes lead the system to end up in a bad state eventually. In toyAPS, every small increase is a bad consequence of the system. Since the output determines the amount of insulin to be injected inside the body, small increases in the output can cause the diabetic patient harm \cite{ZHANG2019403} and can lead to cancer. 
-Therefore in toyAPS the attacker's goal is to change the output to $y'$, where $y' = y + a$. $a$ is some constant. %She needs to find the deviations in the input that would help her to change the outputs. 
-However, the catch here is that the inputs perturbations should be very small such that the new input now provides her the output $y'$.  The reason she wants the input perturbations to be small is that there are accompanying neural networks that determine the upper and lower bounds for inputs and outputs at every stage. The reason for these accompanying networks is to ensure the patients' safety as explained in Section IV.%Hence, we have to minimize the perturbations. 
+Our toyAPS has two inputs $x_1$ and $x_2$ that map to an output $y$. The \attack causes minor changes in the inputs in a way that leads to a meaningful output change while avoiding detection through the input monitoring systems. These small changes cause the system to end up in a bad state eventually. In toyAPS, every small increase is a bad consequence of the system. Since the output determines the amount of insulin to be injected inside the body, small increases in the output can cause the diabetic patient harm \cite{ZHANG2019403} and can lead to cancer. 
+Therefore in toyAPS the attacker's goal is to change the output to $y'$, where $y' = y + a$ with $a$ being some constant. %She needs to find the deviations in the input that would help her to change the outputs. 
+However, the catch here is that the input perturbations should be very small such that the new input now provides the attacker with the output $y'$. The reason the attacker wants the input perturbations to be small is that there are accompanying neural networks that determine the upper and lower bounds for inputs and outputs at every stage. The reason for these accompanying networks is to ensure the patients' safety as explained in Section IV.%Hence, we have to minimize the perturbations. 
 %This paragraph is explaining the subtlety of how we model our inputs for minimizing the perturbations. 
 %We are hence minimizing the perturbations and not the inputs directly. Since minimizing the inputs directly will provide us with the smallest set of inputs that cause a deviation in the output. However, we want the smallest possible perturbations from the original image that change the output by the amount we want it to deviate. To find the smallest perturbations, we introduce a new variable delta for every input in the system. The new input is the addition of the original value and the minimized delta that ReLUSyn produces. 
 
-Algorithm 1 describes the process of modeling a neural network in a MILP format. It does not consist of the cost function since the function will be different for systems depending on what the attacker wants to minimize and/or maximize. We model the objective function by introducing a new variable called $input\_delta$. Hence now the equation (1) in this section can be redefined as:
+Algorithm 1 describes the process of modeling a neural network in a MILP format. It does not mention a cost function since the function will be different for different systems depending on how the attacker wants to compromise said systems. We model the objective function by introducing a new variable that we denote $\Delta x$. This variable (which is actually a vector) represents the perturbations to the inputs in the synthesized attack. Equation (1) can therefore be rewritten as:
 
 \begin{align}
-Y &=  ReLU(W(x + \bigtriangleup  x ) + b) ...... (5)
+Y &=  ReLU(W(x + \Delta x ) + b) ...... (5)
 \end{align}
 
 %The new cost modeling adds one layer of extension to our previous algorithm which is the objective function. Modeling any DNN can be done in the way presented in Algorithm 1 so long the activation function can be described as piecewise linear. 
 %\smi{for MILP, this is only true if the activation function is piecewise linear}.
-Algorithm 2 shows how to include the cost functions for different attacks as a part of the MILP model. The cost function can be changed based on the attack requirements. 
+Algorithm 2 shows how to include the cost functions for different attacks as a part of the MILP model. The cost function can be changed based on the attack requirements.
 \begin{algorithm}
 	%\DontPrintSemicolon % Some LaTeX compilers require you to use \dontprintsemicolon    instead
-	\KwIn{ weight, bias, num\_layers, num\_neurons}
-	\KwOut{input, input\_delta layer\_output, ReLU\_output,}
+	\KwIn{input ($x$), weight matrices, bias vectors, num\_layers, num\_neurons}
+	\KwOut{input\_delta ($\Delta x$), layer\_output, ReLU\_output,}
 	Take the weight, bias, number of layers and number of neurons per layer. \\
 	
+	%\textbf{Model}, \linebreak
+	%%\renewcommand{\labelenumi}{(\Roman{enumi})}
+	%%\begin{enumerate}[noitemsep,nolistsep]
+	%%\item
+	%(I) For every  layer,  $expr = input * weight + bias$
+	%\linebreak 
+	%defining the linear expression
+	%\linebreak
+	%$layer\_output = expr$
+	%\linebreak
+	%%\item 
+	%(II) Define the non-linear activation function 
+	%\linebreak 
+	%\qquad Constraint: $ReLU(x) = max (0,x)$
+	%\linebreak
+	%(III) Adding non-linearity to every layer,
+	%\linebreak
+	%Constraints: $ReLU\_output = ReLU(0, layer\_output)$\\, 
+	%Repeat Step 2 until all layers are modeled 
+	%\linebreak
+	%$num\_layers < = 0$   $ \&\& $ 
+	%$ num\_neurons < = 0 $.\\
+
 	\textbf{Model}, \linebreak
 	%\renewcommand{\labelenumi}{(\Roman{enumi})}
 	%\begin{enumerate}[noitemsep,nolistsep]
 	%\item
-	(I) For every  layer,  $expr = input * weight + bias$
-	\linebreak 
-	defining the linear expression
+	(I) For the first layer $k = 0$ (with weight matrix $W_0$ and bias vector $b_0$), $output_0 = W_0 * (x + \Delta x) + b_k$
 	\linebreak
-	$layer\_output = expr$
+	(II) For every subsequent layer $k \geq 1$ (with weight matrix $W_k$ and bias vector $b_k$), $output_k = W_k * input_k + b_k$
 	\linebreak
 	%\item 
-	(II) Define the non-linear activation function 
-	\linebreak 
-	\qquad Constraint: $ReLU(x) = max (0,x)$
+	(III) Applying activation function to every layer's output,
 	\linebreak
-	(III) Adding non-linearity to every layer,
+	Constraints: $ReLU\_output_k = max(0, output_k)$ (component-wise) \
 	\linebreak
-	Constraints: $ReLU\_output = ReLU(0, layer\_output)$\\, 
-	Repeat Step 2 until all layers are modeled 
+	(IV) Applying constraints to the DNN output to force the desired deviation
 	\linebreak
-	$num\_layers < = 0$   $ \&\& $ 
-	$ num\_neurons < = 0 $.\\
+	The final layer's rectified output is the DNN output.
 	
 	\textbf{Cost/Attack Function} \linebreak
-	$Minimize $  $input\_delta$
-	\caption{Modeling neural network in MILP}
+	$\min |\Delta x|$
+	%$Minimize $  $input\_delta$
+	\caption{Modeling neural network in MILP with perturbation variables and a cost function}
 	\label{algo:b}
 \end{algorithm}
 
-If there are two inputs as in our toyAPS, we can either try to minimize the delta values for both the inputs or only one of the inputs. The reason it is important to understand this is because, in general, APS, there are inputs that come from two different sensors as explained in the motivating example section. %The first sensor is attached to the back of the patient that captured the blood-glucose levels of the patient and the second input is from the insulin pump to get the measure of the insulin level in the pump.
-The attacker might want to make changes to only one of the sensor readings. Hence, considering different scenarios, we can minimize the values depending on which input we are interested in conducting an FDI attack. 
+If there are two inputs as in our toyAPS, we can either try to minimize the delta values for both the inputs or only one of the inputs. The reason it is important to understand this is because, in general, within APS there are inputs that come from two different sensors as explained in the motivating example section. %The first sensor is attached to the back of the patient that captured the blood-glucose levels of the patient and the second input is from the insulin pump to get the measure of the insulin level in the pump.
+The attacker might want to make changes to only one of the sensor readings. Hence, considering different scenarios, we can minimize the values depending on which inputs we are interested in targeting with an FDI attack. Our example cost function in Algorithm 2 minimizes the absolute values of the perturbations to both inputs.
+The solver can minimize the cost function despite it not being linear by introducing an extra variable for each input and adding two additional constraints per input that bound the input's value using this newly introduced variable. This would essentially linearize the cost function.
 
 \section{Finding critical inputs}
-In our running example of APS, in reality, there are 74 inputs collected from two sensors every five minutes. The goal of the attacker is to locate the critical inputs such that they can conduct FDI at the right time. To do so, as described in the previous two sections, the tool can be used to chose the index of inputs to be perturbed. 
-
-If the attacker wants to locate one input that on perturbing by the smallest amounts can lead to the output change, they can specifically choose those inputs for conducting \attack.
+In our running example of APS, in reality, there are 74 inputs collected from two sensors every five minutes. The attacker's goal is to locate the critical inputs such that they can conduct FDI with minimal computational effort. To do so, as described in the previous two sections, the tool can be used to chose the index of inputs to be perturbed.
+If we prefer all inputs equally, as we would be expected to in our initial attack, the solver implicitly indicates which inputs are more critical than others. The inputs with larger perturbations are clearly more important than those with smaller perturbations for changing the DNN's output.
+We can relaunch attacks with those inputs specifically and further expanding the allowable bounds on the perturbations to narrow our search to the more promising sections of the search space.
+We can specifically choose those inputs for conducting \attack.
 
 %Depending on the attack model of the attacker, they can choose input(s) they are interested in finding the minimum perturbations for. We have implemented a framework that allows the users to pass the input index for inputs to be perturbed as a parameter. We will show this in the Evaluation section in more detail. 
 \label{section:cost function}
 \section{Synthesizing attacks}
-The final part is synthesizing the inputs that can be used to conduct \attack without triggering any alarms in the system. To do so we introduce the final constraints that put lower and upper bounds on the output of the networks. This is important for the optimization to return useful results. The reason the optimization approach wins here is that if we provide the proper constraints it gives us results in less than a second per attack. This precise modeling is the secret sauce that scales up our technique significantly and provides us \attack based on the scenario. Due to the proper ranges, the state space is handles well by our technique and does not result in blowups. 
+The final part is synthesizing the inputs that can be used to conduct \attack without triggering any alarms in the system. We introduce the final constraints that put lower and upper bounds on the output of the networks. This is important for the optimization to return useful results. The reason the optimization approach wins here is that if we provide the proper constraints it gives us results in less than a second per attack. The state space is pruned appropriately by our technique through prudent decision variable bounds, and we experience state space explosions infrequently.
 %\aarti{Should I add more here and also the algorithm for the synthesizing attack aspect?}              
