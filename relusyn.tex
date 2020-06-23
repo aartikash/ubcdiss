@@ -260,7 +260,9 @@ Y &=  ReLU(W(x + \bigtriangleup  x ) + b) ...... (5)
 
 %The new cost modeling adds one layer of extension to our previous algorithm which is the objective function. Modeling any DNN can be done in the way presented in Algorithm 1 so long the activation function can be described as piecewise linear. 
 %\smi{for MILP, this is only true if the activation function is piecewise linear}.
-Algorithm 2 shows how to include the cost functions for different attacks as a part of the MILP model. The cost function can be changed based on the attack requirements. 
+Algorithm 2 shows how to include the cost functions for different attacks \karthik{Are these RFDIA attacks ? }as a part of the MILP model. 
+The cost function can be changed based on the attack requirements. \karthik{This is very vague. How do you change the models ?}
+ 
 \begin{algorithm}
 	%\DontPrintSemicolon % Some LaTeX compilers require you to use \dontprintsemicolon    instead
 	\KwIn{ weight, bias, num\_layers, num\_neurons}
@@ -296,17 +298,22 @@ Algorithm 2 shows how to include the cost functions for different attacks as a p
 	\label{algo:b}
 \end{algorithm}
 
-If there are two inputs as in our toyAPS, we can either try to minimize the delta values for both the inputs or only one of the inputs. The reason it is important to understand this is because, in general, APS, there are inputs that come from two different sensors as explained in the motivating example section. %The first sensor is attached to the back of the patient that captured the blood-glucose levels of the patient and the second input is from the insulin pump to get the measure of the insulin level in the pump.
-The attacker might want to make changes to only one of the sensor readings. Hence, considering different scenarios, we can minimize the values depending on which input we are interested in conducting an FDI attack. 
+If there are two inputs as in our toyAPS, we can either try to minimize the delta values for both the inputs or only one of the inputs. The reason it is important to understand this is because, in general, APS, there are inputs that come from two different sensors as explained in the motivating example section. \karthik{I'm not sure what I'm supposed to understand quite frankly}
+%The first sensor is attached to the back of the patient that captured the blood-glucose levels of the patient and the second input is from the insulin pump to get the measure of the insulin level in the pump.
+The attacker might want to make changes to only one of the sensor readings. Hence, considering different scenarios, we can minimize the values depending on which input we are interested in conducting an FDI attack. \karthik{Again, who's we here ? The attacker, defender or you, the researcher?} 
 
 \section{Finding critical inputs}
-In our running example of APS, in reality, there are 74 inputs collected from two sensors every five minutes. The goal of the attacker is to locate the critical inputs such that they can conduct FDI at the right time. To do so, as described in the previous two sections, the tool can be used to chose the index of inputs to be perturbed. 
+In our running example of APS, in reality, there are 74 inputs collected from two sensors every five minutes. The goal of the attacker is to locate the critical inputs such that they can conduct FDI at the right time. To do so, as described in the previous two sections, the tool can be used to chose the index of inputs to be perturbed. \karthik{I'd switch the order here. First say what the general goal is, and then explain with the example.}
 
 If the attacker wants to locate one input that on perturbing by the smallest amounts can lead to the output change, they can specifically choose those inputs for conducting \attack.
-
+ \karthik{I don't understand the point of this sentence.}
 %Depending on the attack model of the attacker, they can choose input(s) they are interested in finding the minimum perturbations for. We have implemented a framework that allows the users to pass the input index for inputs to be perturbed as a parameter. We will show this in the Evaluation section in more detail. 
+
+
 \label{section:cost function}
 \section{Synthesizing attacks}
-The final part is synthesizing the inputs that can be used to conduct \attack without triggering any alarms in the system. To do so we introduce the final constraints that put lower and upper bounds on the output of the networks. This is important for the optimization to return useful results. The reason the optimization approach wins here is that if we provide the proper constraints it gives us results in less than a second per attack. This precise modeling is the secret sauce that scales up our technique significantly and provides us \attack based on the scenario. Due to the proper ranges, the state space is handles well by our technique and does not result in blowups. 
+The final part is synthesizing the inputs that can be used to conduct \attack without triggering any alarms in the system. To do so we introduce the final constraints that put lower and upper bounds on the output of the networks \karthik{What do you mean 'put'?}. This is important for the optimization to return useful results \karthik{useful to whom?}. The reason the optimization approach wins here\karthik{too informal} is that if we provide the proper constraints\karthik{What on earth is a proper constraint?}, it gives us results in less than a second per attack \karthik{regardless of the platform ? I'm surprised we're talking in absolutes}. This precise modeling is the secret sauce \karthik{for heaven's sake, I said this to you informally - not what you put into a thesis !} that scales up our technique significantly, and provides us \karthik{us as in the attacker?} \attack based on the scenario. Due to the proper ranges, the state space is handles well by our technique \karthik{Duh?} and does not result in blowups \karthik{Of what?}.
+
+\karthik{The above paragraph is poorly written. I have no idea what you're trying to say here} 
 %\aarti{Should I add more here and also the algorithm for the synthesizing attack aspect?}              
 
