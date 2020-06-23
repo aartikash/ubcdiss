@@ -1,17 +1,32 @@
 \chapter{Discussion}
-In this section we discuss how to model our insights into modeling robhust DNNs by two approaches. We also discuss some limitations in our approach.
+In this section we discuss how to model our insights into modeling robhust \karthik{Spell Check Fail!} 
+DNNs by two approaches. \karthik{Did you mean leverage insights ? Also, what're the approaches for ?} 
+We also discuss some limitations in our approach.
+
 \section{Designing Robust DNNs}
 From our experience in working with three different types of DNN based CPS to attack the systems, we realized that there are two ways to construct or build robust DNN based systems. 
+\karthik{Can you say a little bit about how you came to this realization ? Was it based on the experimental results ?}
+
 \section{Designing Robust DNN from scratch}
-The biggest difference between APS and ACAS Xu apart from the DNN size was the robustness of the DNN. APS had a simple feed-forward architecture, where the network took the inputs, applied the non-linearity to the equations and calculated the outputs. Whereas ACAS Xu applied normalization to its inputs. 
-APS had accompanying DNNs that kept did a range check to ensure that the output prediction lies within certain bounds. This was easier to break as per our attack model as compared to ACAS Xu. In ACAS Xu due to the normalization of the inputs, the perturbations had to be carefully designed since one input perturbation did not easily perturb the outputs easily. We can also observe the percentage of successful attacks from Table II in APS and ACAS Xu. Hence, we believe that applying techniques while training and modeling DNN architecture can significantly help prevent \attack. 
+The biggest difference between APS and ACAS Xu apart from the DNN size was the robustness of the DNN. APS had a simple feed-forward architecture, where the network took the inputs, applied the non-linearity to the equations \karthik{non-linearity is not an action !},
+ and calculated the outputs. Whereas ACAS Xu applied normalization to its inputs. \karthik{This is a phrase, not a sentence}
+
+APS had accompanying DNNs that kept\karthik{Duh ?} did a range check to ensure that the output prediction lies within certain bounds \karthik{Did you mean specified bounds ?}. 
+This was easier to break as per our attack model as compared to ACAS Xu\karthik{Can we quantify easier? Also, by break, I guess you mean attack?}. 
+In ACAS Xu, due to the normalization of the inputs, the perturbations had to be carefully designed since one input perturbation did not easily perturb the outputs easily \karthik{Too many easilys!}. 
+We can also observe the percentage of successful attacks from Table II \karthik{Symbolic ref.?} in APS and ACAS Xu. \karthik{What did you observed about them?}
+Hence, we believe that applying techniques while training and modeling DNN architecture can significantly help prevent \attack. \karthik{This is a vacuous statement. What techniques are these ? How does one go about designing such a DNN?}
+
 \section{Debugging existing DNN using \tool}
 Given there exists a system with DNN similar to that of APS without inbuilt mechanisms, we believe that our tool can help in debugging the DNN by constructing a comprehensive list of cost functions and running the model for different scenarios. This might not provide complete coverage but can certainly help in the falsification process. 
-
+\karthik{So what's falsification here. Also, it seems like an overly restrictive statement to make about the similarity with APR. What's inbuilt mechanism here ?}
 
 \section{ Limitations}
-In our work we are assuming that the attacker has access to the weights and the bias. However, in a more ideal attack scenario, if we can find a way to  attack the system without knowing the weights and bias of the system, that would be really interesting. %Figuring out FDI attacks in that scenario would be challenging yet rewarding. 
-For bigger systems such as ACAS Xu, we observed that running all combinations was taking a lot of time (approx 13 hrs) only to tell us that no attack exists. We think there is scope of improvement to provide speedups by applying clever heuristics to the model. 
+
+There are 2 limitations in our work.
+First, we are assuming that the attacker has access\karthik{Read or write ? Be specific !} to the weights and the bias. However, in a more ideal attack scenario \karthik{for the attacker ?}, if we \karthik{Who's we?} can find a way to  attack the system without knowing the weights and bias of the system, that would be really interesting \karthik{Please avoid weasel words like interesting - make it clear what is of interest}. %Figuring out FDI attacks in that scenario would be challenging yet rewarding. 
+Second, for bigger systems such as ACAS Xu, we observed that running all combinations was taking a lot of time (approx 13 hours), only to tell us that no attack exists \karthik{I suppose us is we as the researcher here. Also, is the time taken a function of the attacks or the network ?}. We think there is scope of improvement to provide speedups by applying clever heuristics to the model. \karthik{Perhaps give 1-2 examples of heuristics here.}
+
 
 %The limitation of our work is that we do not evaluate the completeness of our approach. We show experimentally that our technique always provides us a solution if the model is properly modeled and if there are attacks possible. Otherwise, it returns an infeasible model.  Since the modeling of the network is represented as a set of well-defined equations it is always going to return a solution if it exists. If no solution exists then it will return the model is infeasible. 
 %The interesting part of our approach is that we are not trying to verify but instead we are trying to find feasible FDI attacks for the system. 
