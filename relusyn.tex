@@ -115,7 +115,7 @@ ac \epsilon  \{0,1\} \\
 \end{equation}
 
 This maps to the \ac{MILP} solvers and converts them into proper linear inequalities. 
-The final \ac{MILP} model looks of the form
+The final \ac{MILP} model is of the form
 \begin{equation}
 \begin{aligned}
 & \underset{}{\text{min/max}}
@@ -144,9 +144,10 @@ Upper and lower bounds for range analysis
 \end{aligned}
 \end{equation}
 
+\karthik{Can you replace equation nos. with symbolic refs. please?}
 We have divided our \ac{MILP} model in three main parts. 
-Equation 5.7 represents the cost functions that are to be minimized and maximized.
-These cost functions depend on different applications and requirements.  
+Equation 5.7 represents the cost functions that are to be minimized and maximized\karthik{should be either or, correct ?}.
+These cost functions are different for different applications.  
 We will show in the next section how we model cost functions for \ac{RFDIA}
 attack synthesis. 
 
@@ -176,8 +177,8 @@ Equations 5.9 add lower bounds ($lb$) and upper bounds ($up$) in the  model for 
 \section{Building the model}
 \label{section:attacks}
 %This section focuses on how we build the model using MILP and some background insights about DNN along with that. 
-\tool comes with automated attack synthesizers for Artificial Pancreas System, Aircraft Collision Avoidance systems ACAS Xu and Horizontal CAS. %Writing a new attack synthesizer into \tool boils down to defining the attack model as a function that can be easily plugged in our framework.
-As an example, we use a toy Artificial pancreas system (toyAPS) and then explain APS. A toyAPS as shown in Figure 5 consists of two sensor inputs that predict the amount of insulin as the output at some time $t$. 
+As part of \tool, we provide automated attack synthesizers for the Artificial Pancreas System, Aircraft Collision Avoidance systems ACAS Xu and Horizontal CAS. %Writing a new attack synthesizer into \tool boils down to defining the attack model as a function that can be easily plugged in our framework.
+As an example, we use a toy Artificial pancreas system (toyAPS), \karthik{is this the same example used earlier ? Refer to it then} and then explain APS. A toyAPS as shown in Figure 5 \karthik{Do not hardcode figure numbers} consists of two sensor inputs that predict the amount of insulin as the output at some time $t$. 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/ToyAPS}
@@ -220,25 +221,38 @@ As an example, we use a toy Artificial pancreas system (toyAPS) and then explain
 \end{algorithm}
 
 
-The system can be represented as a MILP model through pseudo-code in Algorithm 1. This converts the neural network structure into a set of linear equations that can be mapped directly into a back-end MILP solver (we use Gurobi). %For our work we model our networks in Gurobi. 
+The system can be represented as a MILP model through pseudo-code in Algorithm 1. This converts the neural network structure into a set of linear equations that can be mapped directly into a back-end MILP solver (we use Gurobi). \karthik{Do we devise algo 1 for this network specifically ? I don't understand why we introduce it here.}
+%For our work we model our networks in Gurobi. 
 
 \begin{align*}
 Y &=  ReLU(Wx + b) ...... (4)
 %Y &= ReLU(w_{11} x_1 + b_{11}  + w_{12} x_1 + b_{12} + w_{13} x_1 + b_{11}   )   \\
 \end{align*}
-The above equation represents the toyAPS. We convert the equations above into a MILP model as shown in Algorithm 1. Every layer is initially modeled as a linear equation. The activation function is represented as piecewise linear. Our approach will work for any representation of a piece-wise linear function. However, in our work we specifically focus on ReLU as explained in the problem formulation section. 
+The above equation represents the toyAPS. We convert the equations above into a MILP model as shown in Algorithm 1. Every layer is initially modeled as a linear equation. The activation function is represented as piecewise linear. Our approach will work for any representation of a piece-wise linear function \karthik{Seems too strong a statement to make without evidence (or did you provide any?) }. However, in our work, we focus on ReLU as explained in the problem formulation section. 
+
 \section{Modeling cost functions for attacks}
 \label{section:costfunction}
 %Why is modeling cost function important
-After representing the pictorial representation of a network as shown in Figure 5 to Algorithm 1, the next step is to model the cost or objective function. The cost function is what decides on the smallest perturbations of the inputs for generating a ripple. 
+After representing the pictorial representation of a network as shown in Figure 5 to Algorithm 1 \karthik{I'm confused; does the approach do this or do you ? If it's the former, how ?}, 
+the next step is to model the cost or objective function. The cost function is what decides on the smallest perturbations of the inputs for generating a ripple. \karthik{Wait a sec. I thought cost function models the cost of the attack.}
 
-In our toyAPS we have two inputs $x_1$ and $x_2$ that map to an output $y$. To conduct \attack the goal is to change the inputs in a way that the alarms are not triggered and yet it leads to an output change. These small changes lead the system to end up in a bad state eventually. In toyAPS, every small increase is a bad consequence of the system. Since the output determines the amount of insulin to be injected inside the body, small increases in the output can cause the diabetic patient harm \cite{ZHANG2019403} and can lead to cancer. 
-Therefore in toyAPS the attacker's goal is to change the output to $y'$, where $y' = y + a$. $a$ is some constant. %She needs to find the deviations in the input that would help her to change the outputs. 
-However, the catch here is that the inputs perturbations should be very small such that the new input now provides her the output $y'$.  The reason she wants the input perturbations to be small is that there are accompanying neural networks that determine the upper and lower bounds for inputs and outputs at every stage. The reason for these accompanying networks is to ensure the patients' safety as explained in Section IV.%Hence, we have to minimize the perturbations. 
+In our toyAPS, we have two inputs $x_1$ and $x_2$ that map to an output $y$. To conduct \attack, the goal is to change the inputs in a way that the alarms are not triggered and yet it leads to an output change \karthik{We said this before, correct ? Say recall that}. 
+These small changes lead the system to end up in a bad state eventually \karthik{Do we define bad state?}. 
+In toyAPS, every small increase is a bad consequence of the system \karthik{Is bad consequence == bad state?}. 
+Since the output determines the amount of insulin to be injected inside the body, 
+small increases in the output can cause the patient harm \cite{ZHANG2019403} and can lead to cancer \karthik{Do we need to say this latter phrase ? Seems a bit dramatic}.
+Therefore, the attacker's goal is to change the output to $y'$, where $y' = y + a$. $a$ is some constant. \karthik{This is not specific to toyAPS, is it ?}
+%She needs to find the deviations in the input that would help her to change the outputs. 
+However, the catch here is that the inputs perturbations should be very small such that the new input now provides her the output $y'$.  The reason she wants the input perturbations to be small is that there are accompanying neural networks that determine the upper and lower bounds for inputs and outputs at every stage. The reason for these accompanying networks is to ensure the patients' safety as explained in Section IV. \karthik{Use symbolic references. What section are you talking about?}
+
+\karthik{The above paragraph just seems to rehash the earlier content, but is presented as something new. This is very confusing.}
+%Hence, we have to minimize the perturbations. 
 %This paragraph is explaining the subtlety of how we model our inputs for minimizing the perturbations. 
 %We are hence minimizing the perturbations and not the inputs directly. Since minimizing the inputs directly will provide us with the smallest set of inputs that cause a deviation in the output. However, we want the smallest possible perturbations from the original image that change the output by the amount we want it to deviate. To find the smallest perturbations, we introduce a new variable delta for every input in the system. The new input is the addition of the original value and the minimized delta that ReLUSyn produces. 
 
-Algorithm 1 describes the process of modeling a neural network in a MILP format. It does not consist of the cost function since the function will be different for systems depending on what the attacker wants to minimize and/or maximize. We model the objective function by introducing a new variable called $input\_delta$. Hence now the equation (1) in this section can be redefined as:
+Algorithm 1 describes the process of modeling a neural network in a MILP format \karthik{Is this the same Algo 1, which you told me was for converting the pictoral representation of toyAPS to an algo? Also, what is MILP format? }. It does not consist of the cost function since the function will be different for different systems, depending on what the attacker wants to minimize and/or maximize \karthik{So does it depend on the attacker as well ? Or just the system ?}. 
+We model the objective function by introducing a new variable called $input\_delta$ \karthik{We, as in the researchers?}. Hence, the equation (1) \karthik{symbolic references}
+in this section can be redefined as:
 
 \begin{align}
 Y &=  ReLU(W(x + \bigtriangleup  x ) + b) ...... (5)
