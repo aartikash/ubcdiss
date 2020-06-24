@@ -132,7 +132,8 @@ ac \in \{0,1\} \\
 
 %This maps to the \ac{MILP} solvers and converts them into proper linear inequalities.
 The $x \leq 0$ constraint in conjunction with $x \geq 0$ forces $x$ to zero. The other case forces $s$ to be zero.
-This opens the door for a formulation that leads to unique solutions for $x$ and $s$ while enforcing the constraint $x \geq 0$
+This opens the door for a formulation that leads to unique solutions for $x$ and $s$ while enforcing the constraint $x \geq 0$.
+The uniqueness may be achieved by adding a regularization term in the objective function that encourages most entries in $ac$ to be zero.
 Extending this scalar example to the DNN case leads to a \ac{MILP} model of the form:
 %The final \ac{MILP} model looks of the form
 %\begin{equation}
