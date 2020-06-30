@@ -1,4 +1,4 @@
-\chapter{Challenges}
+\section{Challenges}
 There are 3 challenges in the design of the technique. 
 (1) choosing a mathematical abstraction technique that works best for our use case, 
 (2) mapping the \ac{DNN}  model to the abstraction, and 
@@ -6,7 +6,7 @@ There are 3 challenges in the design of the technique.
 We elaborate on them below. 
 
 
-\section{Selecting  the automated technique}
+\subsection{Selecting  the automated technique}
 The first part is choosing a technique that allows the attacker to model a DNN and find the critical inputs through the modeling. 
 There are multiple means of modeling the DNN to synthesize attacks, e.g., SMT solvers, symbolic execution and MILP.
 Our goal is twofold: 
@@ -26,7 +26,7 @@ Our goal is twofold:
  We show that \ac{MILP} satisfies these goals, which is why we choose it in our work. % by providing us generality and scalability. 
 
 
-\section{ Mapping  Mixed-Integer Linear Programming Model to Deep Neural Networks}
+\subsection{ Mapping  Mixed-Integer Linear Programming Model to Deep Neural Networks}
 
 DNN architecture is quite complex \karthik{in terms of what? Be precise}, and researchers have used experimental means to understand the security scenarios in the DNN \karthik{Citation?}. 
 Their  mathematical structure contains multiple layers, and the non-linearity introduced due to the activation functions within the network add another layer of complication for modeling in \ac{MILP}.\karthik{Is it the layering or the non-linearity that adds complications?}
@@ -43,7 +43,7 @@ We tackle the non-linearity of activation functions by defining them as piece-wi
 which we demonstrate for one activation function ReLU.
 We chose ReLU because are three evaluation systems \karthik{Did you mean our benchmarks ? Btw, please be consistent in how you refer to them} have ReLU in their models. 
 
-\section{Modeling cost function}
+\subsection{Modeling cost function}
 The goal of the cost function is to minimize or maximize the linear constraints that represents the \ac{DNN} architecture. 
 However, our requirement is different in the traditional sense of using minimization and maximization which is usually used in terms of resource utilization. \karthik{Cite} 
 Based on our attack model we want to minimize the input perturbations, and maximize the output deviations in a \ac{DNN}.
@@ -60,7 +60,7 @@ We demonstrate both the problems in our experimental evaluation,
 and show how we tackle the state space problem that can arise, thereby scaling our approach for big sized systems. 
 We use interval analysis, which we elaborate in Chapter 5. \karthik{Use symbolic references}
 
-\karthik{Like I said, this chapter should be combined with the previous one}
+
 
 
 
