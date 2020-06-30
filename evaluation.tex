@@ -116,19 +116,27 @@ Dutta et al. \cite{10.1007/978-3-319-99429-1_11} proposed a DNN for APS that tak
 \section{APS}
 %The APS model designed by Kushner et al. \cite{Dutta_Others__2018__Robust}\smi{add space here}is a data-driven model. The goal of the model is to predict future blood glucose values for the patients.
 A stripped down APS model is the running example that we have used throughout the paper. 
-The APS model predicts the glucose value at a "lookahead" time $t + T$, using a history of the past $N$ glucose values with a step size of $h$. Data is recorded after every $h$ seconds once the system is started. The inputs consist of the past insulin values and glucose values which are recorded every $h$ seconds, and the neural network builds the mapping between input and output values. It is a network with two hidden layers (with 8 neurons per layer), 74 inputs and one output that predicts the future glucose values as shown in Figure 1 (\textcolor{red}{There is no Figure 1}).
+The APS model predicts the glucose value at a "lookahead" time $t + T$, using a history of the past $N$ glucose values with a step size of $h$. Data is recorded after every $h$ seconds once the system is started. The inputs consist of the past insulin values and glucose values which are recorded every $h$ seconds, and the neural network builds the mapping between input and output values. It is a network with two hidden layers (with 8 neurons per layer), 74 inputs and one output that predicts the future glucose values as shown in Figure 1 (\textcolor{red}{TODO: There is no Figure 1}).
 
 %Attacks in the APS system.
 %Using our modeling we can successfully synthesize attacks in less than a minute.
 %The experiments that we conduct
 %We incrementally conduct attack synthesis.
-% \textcolor{red}{This is not the place to explain the results IMO. We should describe specifically what attacks are being conducted. The analysis of the results should be its own separate section}
+% \textcolor{red}{TODO: This is not the place to explain the results IMO. We should describe specifically what attacks are being conducted. The analysis of the results should be its own separate section}
 
 \section{FDIA Random and Targeted Attacks for APS}
 The goal is to minimize the input perturbations such that the output is sufficiently perturbed but remains within the user-specified lower and upper bounds. The reason for such attacks is that, in APS, even small deviations from the original output can cause damage. Injecting more or less than the required amounts, even if within the bounds, is undesirable.
 
-%Randomly changing inputs can trigger alarms in the system because it will raise the levels above the bounds enforced by specifications. We want to perturb the inputs in a stealthy way. The stealthiness is induced by finding the exact perturbations and to find those exact perturbations we need \tool. Brute force would require to search through the entire search space. We model the attack by including a $delta$ function in the inputs. 
-To locate the critical inputs we first perturb the inputs one at a time to induce small perturbations in the outputs as shown in Table II under the APS section. We find that for different ranges of outputs, the critical inputs vary as shown in Table III. We have included the critical inputs when we perturb only one input at a time since these are the most useful from an attackers' perspective.
+%Randomly changing inputs can trigger alarms in the system because it will raise the levels above the bounds enforced by specifications. We want to perturb the inputs in a stealthy way. The stealthiness is induced by finding the exact perturbations and to find those exact perturbations we need \tool. Brute force would require to search through the entire search space. We model the attack by including a $delta$ function in the inputs.
+Our FDIA attacks fall under two categories called 'Random' and 'Targeted'. A Random FDIA imposes little to no constraints on the DNN output(s), whereas a Targeted FDIA has stronger requirements on the output(s).
+For APS, a Random FDIA attack would only require that the DNN output fall in a specific interval. Any input perturbation that produces an output value in this interval would be considered successful.
+Out Targeted FDIA for APS would, on the other hand, require that the output value be as close to the left or right boundary of that interval as possible. We evaluate the success of our technique in synthesizing both kinds of attacks.
+Our tool is more easily able to find (and is often more successful) when synthesizing Random FDIAs compared to Targeted FDIAs. This is expected, as targeted FDIAs are a harder class of attacks and they map to more difficult optimization problems.
+The tool is still able to find Targeted FDIAs, albeit not as easily and often.
+
+
+%\textcolor{red}{TODO: This is not the place to mention critical inputs IMO. We should mention this in an analysis of the tables you have presented as a subsection at the end of this chapter}
+%To locate the critical inputs we first perturb the inputs one at a time to induce small perturbations in the outputs as shown in Table II under the APS section. We find that for different ranges of outputs, the critical inputs vary as shown in Table III. We have included the critical inputs when we perturb only one input at a time since these are the most useful from an attackers' perspective.
 
 %, For example, we find that when we perturb one input for an output range of 194-197, changing any one of these (40, 50, 61, 63, 66, 67, 72, 73) inputs by certain amounts will result in a successful  FDI \attack. Due to space reasons, we provide a summary of all combinations of attacks in Table II for APS. 
 %Along with the critical inputs, we also obtain the perturbations that will lead to an output deviation. 
