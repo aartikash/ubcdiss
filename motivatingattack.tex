@@ -32,13 +32,13 @@ During the training phase, there are three \ac{DNN}s that are trained in an \ac{
 The first \ac{DNN} is used to predict the next outcome. 
 The accompanying two \ac{DNN}s are for the purpose of designing defense mechanisms such that the patient is not overdosed with insulin.  
 The two \ac{DNN}s are separate from its main decision making controller. 
-These \ac{DNN}s are trained based on the latest 30-day patient data to understand the standard injections for a patient over time. 
+These \ac{DNN}s are trained based on the latest 30-day patient data which is collected from monitoring the patient, to understand the standard injections for a patient over time. 
 
 One \ac{DNN} learns a lower threshold on injection amount; the other learns an upper bound on injection amount. 
 Hence, for every time of the day based on the previous patient characteristic, the minimum and the maximum values are known. 
-However, the system will not detect  an adversary  who manages to always administer the maximum allowed dosage. 
+However, the system will not detect  an adversary  who manages to always administer the maximum allowed dosage through \ac{RFDIA}. 
 Hence, the attacker needs to identify inputs and  perturb them  such that the output changes the maximum allowed dosage for every injection,
-  while being lower than the upper threshold to avoid detection. 
+  while being lower than the upper threshold to avoid detection and cause maximum damage. 
 
 
 \section{Attack Model}
