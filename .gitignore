@@ -15,5 +15,6 @@
 *.pyc
 *.vrb
 *.dblite
+diss.synctex.gz 
 *~
 diss.pdf
