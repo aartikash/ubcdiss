@@ -219,11 +219,15 @@ Hence, something as simple as multiplication of two decision variables is prohib
 \end{equation}
 
 A \ac{MILP} is a \ac{LP} with a restriction that some of the variables in the model must be integer-valued. 
-We define a \ac{DNN} as a \ac{MILP} model due to the complex structure of a \ac{DNN} which we will elaborate more in Chapter 5. 
+We define a \ac{DNN} as a \ac{MILP} model due to the complex structure of a \ac{DNN} which we will elaborate more in Chapter ~\ref{evaluation}. 
+
+There are multiple tools that provide an interface to build \ac{MILP} models such as Cplex ~\cite{cplex}, and Gurobi ~\cite{gurobi}.
+Both are high-performing tools however, we specifically use Gurobi for our purpose due to usability purposes. 
 
 
 
 \section{Problem Statement}
+\label{problemstatement}
 
 Given a trained DNN with fixed parameters our goal is to understand if the well-known \ac*{FDIA} in classical control theory are also valid in the DNN based CPS.
 \begin{problem}
