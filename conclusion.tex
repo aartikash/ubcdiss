@@ -25,37 +25,34 @@ This happens because the small perturbations during the \ac{FDIA} get masked due
 This means that we have to perturb by values large enough such that after normalization the change is significant enough to generate ripples. 
 We also observed that in a lot of cases despite large enough perturbation we were unable to generate \ac{RFDIA} in \ac{HCAS} and \ac{ACAS-Xu} as shown in Chapter ~\ref{evaluation}.
 Intuitively due to the nature of the attacks based on the sizes of \ac{APS} and \ac{ACAS-Xu} we should have been able to generate significantly more \ac{RFDIA}; instead we observe that despite the bigger search space in \ac{HCAS} and \ac{ACAS-Xu} we found very few \ac{RFDIA} as compared to \ac{APS}. 
-Hence, our conclusion based on this observation is that including features such as normalization can significantly help in designing 
+
+
+Hence, our conclusion based on this observation is that including features such as normalization when designing a \ac{DNN} architecture can help by making it difficult for the attacker to attack the system. 
+It will not eliminate the possibilities of conducting attacks entirely but will relatively make the system more secure. 
+
 \subsection{Effects of DNN size and attacks}
 \ac{APS} was relatively a much smaller system as compared to \ac{ACAS-Xu} and \ac{HCAS}.
 We observe that due to the smaller and much less complex nature of \ac{APS}, we are able to try out more combinations and hence are able to find more attacks. 
-Every attack in \ac{APS} takes less than a minute to generate if it exists or tell us if it does not; \ac{HCAS} and \ac{ACAS-Xu} on the other hand 
+Every attack in \ac{APS} takes less than a minute to generate if it exists or tell us if it does not; \ac{HCAS} and \ac{ACAS-Xu} on the other hand can take hours just to tell us that there is no attack. 
+This restricts and allows us to conduct a limited number of combinations to find attacks. 
+Hence, comparing between small systems such as \ac{APS}, and relatively bigger systems such as \ac{HCAS} and \ac{ACAS-Xu} we observe that due to the small system size we are able to generate more attacks and cover more combinations. 
+When we compare between \ac{HCAS} and \ac{ACAS-Xu} we observe a similar behavior; \ac{HCAS} took less time per attack and hence we were able to explore more space and find successful instances of attacks. 
+The reason we consider time an important factor is because if it takes 100 days to find an attack, the question there would be if it is really useful?
+Hence, our focus is not to generate the attack in seconds but our goal is to come to a reasonable trade-off between time and size to generate attacks. 
+
+Thus, based on our observations we can say that designing bigger systems can help make systems more secure but this is true given they are well trained since if a network is poorly trained no matter how big it is will not help secure it. 
 
 
 
 
-
-
-APS had accompanying DNNs that kept\karthik{Duh ?} did a range check to ensure that the output prediction lies within certain bounds \karthik{Did you mean specified bounds ?}. 
-This was easier to break as per our attack model as compared to ACAS Xu\karthik{Can we quantify easier? Also, by break, I guess you mean attack?}. 
-In ACAS Xu, due to the normalization of the inputs, the perturbations had to be carefully designed since one input perturbation did not easily perturb the outputs easily \karthik{Too many easilys!}. 
-We can also observe the percentage of successful attacks from Table II \karthik{Symbolic ref.?} in APS and ACAS Xu. \karthik{What did you observed about them?}
-Hence, we believe that applying techniques while training and modeling DNN architecture can significantly help prevent \attack. \karthik{This is a vacuous statement. What techniques are these ? How does one go about designing such a DNN?}
+\subsection{Summary}
+Thus keeping the above two principles in mind, adding normalization and having certain level of complexity in the \ac{DNN} can significantly help the \ac{DNN}s be more secure. 
+This will obviously not work in every situation because the \ac{DNN} might have other flaws but it is good to keep this in mind when designing networks especially for safety-critical systems. 
 
 \section{Debugging existing DNN using \tool}
-Given there exists a system with DNN similar to that of APS without inbuilt mechanisms, we believe that our tool can help in debugging the DNN by constructing a comprehensive list of cost functions and running the model for different scenarios. This might not provide complete coverage but can certainly help in the falsification process. 
-\karthik{So what's falsification here. Also, it seems like an overly restrictive statement to make about the similarity with APR. What's inbuilt mechanism here ?}
-
-\section{ Limitations}
-
-There are 2 limitations in our work.
-First, we are assuming that the attacker has access\karthik{Read or write ? Be specific !} to the weights and the bias. However, in a more ideal attack scenario \karthik{for the attacker ?}, if we \karthik{Who's we?} can find a way to  attack the system without knowing the weights and bias of the system, that would be really interesting \karthik{Please avoid weasel words like interesting - make it clear what is of interest}. %Figuring out FDI attacks in that scenario would be challenging yet rewarding. 
-Second, for bigger systems such as ACAS Xu, we observed that running all combinations was taking a lot of time (approx 13 hours), only to tell us that no attack exists \karthik{I suppose us is we as the researcher here. Also, is the time taken a function of the attacks or the network ?}. We think there is scope of improvement to provide speedups by applying clever heuristics to the model. \karthik{Perhaps give 1-2 examples of heuristics here.}
-
-
-%The limitation of our work is that we do not evaluate the completeness of our approach. We show experimentally that our technique always provides us a solution if the model is properly modeled and if there are attacks possible. Otherwise, it returns an infeasible model.  Since the modeling of the network is represented as a set of well-defined equations it is always going to return a solution if it exists. If no solution exists then it will return the model is infeasible. 
-%The interesting part of our approach is that we are not trying to verify but instead we are trying to find feasible FDI attacks for the system. 
-\label{section:limitations}
+In our work we used \tool to generate attacks for trained \ac{DNN}s that also tell us if in a particular setting an attack does not exist. 
+However, instead of trying to find attacks in the \ac{DNN} we can also use \tool in a slightly different way which is for debugging; it means that we can conduct an input-output pair generation to study if there are some abnormal pairs that are being generated. 
+This can be seen as trying to generate the datasets from a trained model that can be used to understand the corner cases; cases can help the designers or researchers to understand how to modify the training data such that they can improve a \ac{DNN} performance by adding or removing from the datasets. 
 
 
 
@@ -63,33 +60,63 @@ Second, for bigger systems such as ACAS Xu, we observed that running all combina
 
 
 
+\section{ Limitations  and Future Work}
 
-We demonstrate \tool, which is based on generating \attack as an optimization problem using MILP \karthik{Does using MILP apply to optimization problem or to the tool ?}. We address the two main challenges in synthesizing \attack: 1) locating the critical inputs and, 2) finding the smallest perturbations for critical inputs to conduct \attack. To locate the critical inputs, we model a cost function and add $delta$ variable to the inputs and minimize the $delta$. This tells the attacker changing precisely which inputs will result in wrong output predictions. \karthik{I think you should mention changing the minimal set of inputs by the smallest possible amounts}
-(This guides the attacker to minimize the inputs to mazimize\karthik{Spell check} the outputs 
-
-%Insights
-% - smaller systems easier to attack due to sizes
-% - ACAS more robust due to the normalization layer that we discuss in Eva, and hence it is possible to make systems more robust
-%- cost function affects the state explosion of the system. When we add a minimize delta, it takes longer because it has to find the smallest delta, whereas if we do not minimize the deltas and add general ranges, it returns the first feasible solution. 
-
-Based on our experiments, we conclude that:
-
+There are 2 limitations that also paves way for future work based on our work. 
 \begin{enumerate}
-    \item The first well-known observation\karthik{If it's well known, then why do you say it is your finding?} is that it is easier (in terms of time) to find attacks on small-sized DNN based CPS. APS took less than a second for finding an attack whereas ACAS Xu took as high as 5 hours in some specific cases \karthik{For which cases}. 
-
-\item We found fewer attacks in ACAS Xu as compared to APS indicating  that ACAS Xu is a more robustly designed network due to the existence of normalization that makes it difficult to generate ripples. Hence, it is possible to design robust DNN while designing the architectures. \karthik{The second sentence doesn't follow from the first in an obvious way}
-
-\item Finally, we observe that the choice of the cost function affects the state explosion of the system. If there is a minimization function on the input perturbations, it takes much longer to compute and can also lead to explosions \karthik{I'm guessing you mean state-space, not the real kind !} in certain cases as compared to having no minimization function. \karthik{I think the better way to phrase this is comapring with other functions}
+	\item First, we are assuming that the attacker has read access to the weights and the bias of a \ac{DNN}.
+	However, in an ideal scenario it is difficult to obtain read access to weights and bias of safety-critical systems such as \ac{CA} systems since they protect their systems by security by obscurity for an attacker. 
+	Therefore, the attacker might need tools or techniques that allows them to attack the system without having knowledge about the internals of the network; also called as a black-box approach. 
+	This would mean that with a short amount (preferably a couple of hours) the attacker is able to attack a black box system and conduct \ac{RFDIA} or other attacks. 
+	\item Second, we observed that in complex \ac{DNN}s of our three systems, there were many cases when  \ac{ACAS-Xu} timed out and did not return us any results. 
+	The time out occurred because the search space for the appropriate input-output pair was very huge; also called as a state space explosion. 
+	However, we believe by adding more precise bounds and limiting the search space can significantly scale our approach. 
+	There is a possibility of designing clever heuristics for domain specific systems such as removing non required layers, pruning the \ac{DNN} appropriately, using algorithmic approaches to decrease time complexity of \ac{MILP} solvers. 
+	
+	\label{section:limitations}
+	
 \end{enumerate}
 
 
 
 
+Finally, we believe that there are many more extensions that can be done with \tool. 
+\begin{enumerate}
+	\item First, it can be extended for multiple different application domains to find attacks.
+	For instance \ac{AV} have multiple stacks of \ac{DNN}s to compute the output and \tool can be utilized to find attacks in multiple \ac{DNN}s.
+	\item Second, one can try and model cost functions for an attack model different from ours and use our insights to generate attacks.
+	This is because the modeling of the \ac{DNN} and \tool can be easily reused by integrating with different attack specific cost functions. 
+\end{enumerate}
 
 
-\karthik{I think you should include discussion here and merge it with the future work below}
-%Future work
-Finally, we believe that there are many more extensions that can be done with \tool. First, it can be extended for multiple different application domains to find attacks. For eg. \karthik{'ve told you that you can't use e.g. this way} Autonomous Vehicles have multiple stacks of DNNs to compute the output and \tool can be utilized to find attacks in multiple DNNs. Second, one can try and model cost functions for an attack model different from ours and use our insights to generate attacks. Third, we observe that in some ACAS Xu attack scenarios, we were getting a time-out \karthik{I guess you mean that \tool timed out ?}, which tells us that there is the scope of improvement in the heuristics we have currently proposed for a speedup. \karthik{Not sure I understand how this follows - if you improved it, will  you be guaranteed there are no time-outs?}
+\section{Conclusion}
+We demonstrate \tool, which is based on generating \attack using backend \ac{MILP} solvers. 
+
+We address the two main challenges in synthesizing \attack: 
+\begin{enumerate}
+	\item Locating the critical inputs: 
+	
+	\item finding the smallest perturbations for critical inputs to conduct \attack.
+	
+\end{enumerate}
+To locate the critical inputs, we model a cost function and add $delta$ variable to the inputs and minimize the $delta$. 
+This tells the attacker changing the minimal set of inputs by smallest possible amounts will result in wrong output predictions.
+
+Based on our experiments, we conclude that:
+
+\begin{enumerate}
+	\item The first observation is that it is easier (in terms of time) to find attacks on small-sized DNN based CPS. 
+	APS took less than a second for finding an attack whereas ACAS Xu took as high as 5 hours and timed out for certain constraints. 
+	
+	\item We found fewer attacks in ACAS Xu as compared to APS indicating  that ACAS Xu is a more robustly designed network due to the existence of normalization that makes it difficult to generate ripples. 
+	Hence, it is possible to design robust \ac{DNN} while designing the architectures by integrating such features. 
+	
+	\item Finally, we observe that the choice of the cost function and the intervals affects the state explosion of the system. 
+	If there is a minimization function on the input perturbations, it takes much longer to compute and can also lead to state-space in certain cases as comparing with other function. 
+\end{enumerate}
+
+
+
 
 \iffalse
 We have addressed security as an optimization problem by modeling the Deep Neural Network as a Mixed Integer Linear model. This is the first step to automatically synthesize attacks called ripple attacks that on small perturbations to the input propagate further to cause output perturbations. 
