@@ -31,12 +31,14 @@ The \ac{DNN} is made available from the systems which can be directly passed thr
 It automatically synthesizes a \ac{MILP} model from the \ac{DNN} model which also contains the input value bounds.
 The attacker can specify a cost function if they possess the relevant domain-specific knowledge to make such a decision. 
 The cost function determines the kind of attack to be launched on the system.
+\karthik{Please say who does the synthesis in the next 2 sentences}
 Everything inside the blue box is automatically synthesized in Figure ~\ref{fig:methodology}.
-The cost function and bounds have a plug-gable functionality. 
-Everything inside the blue box is automatically synthesized.
-The orange parts can be easily changed to extend the technique for different systems and applications in the future. 
+The cost function and bounds have a plug-gable \karthik{no hyphen} functionality. 
+Everything inside the blue box is automatically synthesized. \karthik{Duh ! Didn't you just say this ?}
+The orange parts can be easily changed to extend the technique for different systems and applications in the future. \karthik{What are these parts again?}
 The models along with the cost functions and bounds are passed through a MILP solver; the solver finds an optimal solution for the MILP model, and this optimal solution corresponds to an attack. If the solver determines the model is infeasible, then no attacks exist.
-Each feasible solution of the model corresponds to a particular attack and the optimal solution corresponds to the preferred attack as specified by the user's cost function. We discuss the concept of using cost functions to launch specific attacks later in this chapter.
+Each feasible solution of the model corresponds to a particular attack \karthik{How's this different from what you told me 2 sentences back?}
+and the optimal solution corresponds to the preferred attack as specified by the user's cost function. We discuss the concept of using cost functions to launch specific attacks later in this chapter.
 	
 \section{DNN formalism}
 We follow the formalism based on the general architecture that we explain in Chapter ~\ref{background}. 
@@ -72,7 +74,7 @@ F_k(x) &= \upsigma(W^{k-1}x^{k-1} + b^{k-1}) \\
 where $\upsigma$ represents the activation function being used in the DNN under consideration. 
 There are multiple types of activation functions with different modeling capabilities, such as ReLU ($f(x) = max {0,x}$) as shown in Figure 	\ref{fig:relubreakdown} and logistic (or sigmoid) activation function $f(x)=1/(1+ exp(-e))$.
 \tool focuses on using Rectified Linear Unit (ReLU) since it is one of the commonly used activation functions in \ac{DNN}s as Krizhevsky et al. \cite{10.1145/3065386}. 
-Hence, our equation now looks something like where, for a vector $x$, \texttt{ReLU}($x$):= $\sum_{i=1}^{n} e_{i}\max(0, x_{i})$ (per layer).
+Hence, our equation now \karthik{as opposed to in the past ? Please avoid words like now} looks something like where, for a vector $x$, \texttt{ReLU}($x$):= $\sum_{i=1}^{n} e_{i}\max(0, x_{i})$ (per layer).
 
 
 
@@ -98,13 +100,12 @@ Since a network consists of multiple layers, the general \ac{DNN} representation
 \section{MILP Model}
 The ReLU activation function cannot be modeled directly by MILP solvers. 
 This section presents an
-equivalent formulation that is accepted by such solvers which we use to locate critical inputs and find the minimum perturbations as explained in ~\ref{problemstatement}. 
-The solver we use Gurobi handles this conversion
-internally without exposing the user to the details. 
-We have decided to include it here for the purpose of completeness.
+equivalent formulation that is accepted by such solvers, which we use to locate critical inputs and find the minimum perturbations as explained in ~\ref{problemstatement}. 
+The solver we use, Gurobi, handles this conversion
+internally without exposing the details to the user. 
+However, we include the details for the purpose of completeness.
 
- 
-To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture. 
+ To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture. 
 
 \begin{equation}
 \label{4}
@@ -195,7 +196,7 @@ These will be 0 and $+\infty$ respectively except for the first input layer
 where the bounds would depend on what is valid input for the DNN application.
 
 Our MILP modeling applies the $f(x) = \max(0, x)$ operation directly to the output of layers because our MILP solver linearizes this internally when solving the model.
-This section serves to illustrate how the solver could be handling this linearization internally. The next section describes how we build our model.
+This section illustrated how the solver could be handling this linearization internally. The next section describes how we build our model.
 
 
 
@@ -211,8 +212,7 @@ This section serves to illustrate how the solver could be handling this lineariz
 \label{section:attacks}
 
 As part of \tool, we provide automated attack synthesizers for the Artificial Pancreas System, Aircraft Collision Avoidance systems ACAS Xu and Horizontal CAS. 
-As an example, we use a \ac{APS}.  
-A \ac{APS} as shown in \label{fig:toyaps} consists of two sensor inputs that predict the amount of insulin as the output at some time $t$. 
+As an example, we use an \ac{APS} shown in \label{fig:toyaps}, which consists of two sensor inputs that predict the amount of insulin as the output at some time $t$. 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/ToyAPS}
@@ -245,25 +245,23 @@ A \ac{APS} as shown in \label{fig:toyaps} consists of two sensor inputs that pre
 \end{algorithm}
 
 
-
 The system can be represented as a MILP model through pseudo-code in Algorithm ~\ref{algo:b}. 
 The model generated by this procedure is directly accepted by Gurobi (the solver we use for our experiments).
 This converts the neural network structure into a set of linear equations that can be mapped directly into a back-end MILP solver.
 
 An interesting point to note is that the DNN input is an output of Algorithm  ~\ref{algo:b}. 
-This is because our procedure does not require an input to the DNN. 
-This is because the resulting model can be solved to produce a valid input-output pair.
+This is because our procedure does not require an input to the DNN, as the resulting model can be solved to produce a valid input-output pair.
  Bounds can be enforced on the input variables by the user to ensure only
 valid inputs are generated by the MILP solver. 
 This is a positive consequence of using a constraint solving approach.
  The attacker does not need to have an input in hand when trying to compromise the system using \tool. 
- It also means that we can enumerate many such input-output pairs by repeatedly solving the model
+ It also means that we can enumerate many such input-output pairs by repeatedly solving the model,
 and adding constraints to exclude previously seen solutions.
 
 This is the general algorithm for converting any \ac{DNN} into a \ac{MILP} model. 
 The difference in our evaluated systems and this system is only the difference between the number of layers and nodes in each layer that can be easily extended.
 Our \tool  takes in a \ac{DNN} and automatically synthesizes \ac{MILP} models for it. 
-Following the same algorithm we successfully synthesize models for \ac{APS}, \ac{ACAS-Xu}, and \ac{HCAS} within a minute. 
+Following the same algorithm, we successfully synthesize models for \ac{APS}, \ac{ACAS-Xu}, and \ac{HCAS} within a minute. 
 
 \begin{equation}
 \label{10}
@@ -275,28 +273,27 @@ Equation ~\ref{10} represents an \ac{APS}.
 We convert the equations above into a MILP model as shown in Algorithm ~\ref{algo:b}. 
 Every layer is initially modeled as a linear equation. 
 The activation function is represented as piecewise linear.
-Our approach will work for any representation of a piece-wise linear function contingent to the fact that a non-linear function can be broken down into linear components.
-Since we have abstracted away the details that represents non-linearity the future work would be representing non-linear functions as linear functions. 
+Our approach will work for any representation of a piece-wise linear function contingent on the assumption that a non-linear function can be broken down into linear components.
+Since we have abstracted away the details that represent non-linearity, the future work\karthik{Do you mean you would consider this in future work?} would be representing non-linear functions as linear functions. 
  However, in our work, we focus on ReLU as explained in ~\ref{problemstatement}
 
 \section{Modeling cost functions for attacks}
 \label{section:costfunction}
 %Why is modeling cost function important
 Now that we have formulated the DNN as a MILP model, the next step is to add a cost or objective function to launch a specific kind of attack. 
-This function allows the user to specify which inputs should be preferentially perturbed to generate a ripple.
+This function allows the user to specify which inputs should be perturbed to generate a ripple.
 
 In our \ac{APS}, we have two inputs $x_1$ and $x_2$ that map to an output $y$. 
-To conduct \attack, the goal is to change the inputs in a way that the alarms are not triggered and yet it leads to an output change as we explained in Chapter ~\ref{attack}. 
+To conduct \attack, the goal is to change the inputs in a way that the alarms are not triggered, and yet it leads to an output change as we explained in Chapter ~\ref{attack}. 
 These small changes lead the system to end up in a bad consequence eventually. 
 In \ac{APS}, every small increase is a bad consequence of the system. 
-Since the output determines the amount of insulin to be injected inside the body, small increases in the output.
+Since the output determines the amount of insulin to be injected inside the body, small increases in the output \karthik{hanging sentence}.
 Therefore, the attacker's goal is to change the output to $y'$, where $y' = y + a$. $a$ is some constant. 
 
 %She needs to find the deviations in the input that would help her to change the outputs. 
 However, the catch here is that the inputs perturbations should be very small such that the new input now provides her the output $y'$.  
 The reason she wants the input perturbations to be small is that there are accompanying neural networks that determine the upper and lower bounds for inputs and outputs at every stage. 
 The reason for these accompanying networks is to ensure the patients' safety as explained in Chapter ~\ref{attack}.
-
 
 Algorithm ~\ref{algo:b} describes the process of modeling a neural network in a MILP format.
 It does not consist of the cost function since the function will be different for different systems, depending on what the attacker wants to minimize and/or maximize.
@@ -351,12 +348,12 @@ This would essentially linearize the cost function.
 
 
 \section{Synthesizing attacks}
-Once the attacker has a model and the cost function modeled, the next step is to identify the critical inputs and the desirable perturbations as explained in ~\ref{problemstatement}.
+Once the attacker has a model and the cost function modeled \karthik{you mean a model of the cost function?}, the next step is to identify the critical inputs, and the desirable perturbations as explained in ~\ref{problemstatement}.
 The attacker can run our obtained models along with the cost functions in our \ac{MILP} solver. 
 In our running example of APS, in reality, there are 74 inputs collected from two sensors every five minutes.
  The goal of the attacker is to locate the critical inputs such that they can conduct \ac{RFDIA} at the right time.
  To do so, as described in the previous two sections, the approach implemented as \tool is used to chose the index of inputs to be perturbed.
- \tool allows us to set ranges using the methodology described above such that we can find the desirable perturbations. 
+ \tool allows us to set ranges using the methodology described above such that we can find the desirable perturbations. \karthik{I think desirable perturbations is vague. How about minimum perturbations ?}
  
 
 In this section we explain the intuition behind our approach and how we use the approach to model \tool. 
