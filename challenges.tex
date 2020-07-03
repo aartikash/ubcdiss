@@ -14,13 +14,13 @@ Our goal is twofold:
 	\item Generality: \ac{APS} has an architecture that %despite being similar to our other evaluated systems 
 	is quite different from air control traffic management systems (\ac{ACAS-Xu} and \ac{HCAS}) as observed from Table 6.1.
 	This is due to the difference in the application domain and the \ac{DNN} architecture design. 
-	\ac{APS} is a medical system that consists of a standard feed-forward network with no exotic features such as normalization 
+	\ac{APS} is a medical system that consists of a standard feed-forward network with no exotic\karthik{Awkward phrasing} features such as normalization 
 	unlike \ac{ACAS-Xu}. 
-	To accommodate normalization we have to translate the intuition behind it to a \ac{MILP} model which is not completely straightforward.  
+	To accommodate normalization, we have to translate the intuition behind\karthik{Seems strange that you'd translate the intuition} it to a \ac{MILP} model which is not straightforward.  
 	Hence, we want an abstraction technique that supports such different architectures. 
 	\item Scalability: \ac{APS} consists of 2 hidden layers with 50 neurons each which basically means that there are $2800$ ($50x5 + 50x50 + 50x1$) connections in total.
 	On the other hand, \ac{ACAS-Xu} consists of 5 hidden layers with 50 neurons each which means the total connections are $10,500$. 
-	Hence, we need a technique that is scalable to bigger systems. 
+	Hence, we need a technique that is scalable to bigger systems. \karthik{Why don't we say more complex, as complexity includes size as we defined?} 
 	
 \end{enumerate}
 
@@ -30,7 +30,7 @@ Our goal is twofold:
 \subsection{ Mapping  Mixed-Integer Linear Programming Model to Deep Neural Networks}
 
 DNN architecture is quite complex as explained in ~\ref{dnncomplexity}, and researchers have used experimental means to understand the security scenarios in the DNN \karthik{Citation?}. 
-Their  mathematical structure contains multiple layers which is the first layer of complexity, and the non-linearity introduced due to the activation functions within the network add another layer of complexity for modeling in \ac{MILP}  that we elaborate below.
+Their \karthik{Who ? The researchers' ?}  mathematical structure contains multiple layers, which is the first layer of complexity \karthik{is this a DNN layer?}, and the non-linearity introduced due to the activation functions within the network add another layer of complexity for modeling in \ac{MILP}  that we elaborate below. \karthik{You overload the word layer to mean both DNN layers and layers of complexity. This is confusing !} 
 
 \begin{enumerate}
 	\item Modeling each layer as a set of constraints to build a \ac{MILP} model.
@@ -45,20 +45,20 @@ We chose ReLU because are three evaluation systems have ReLU in their models.
 
 \subsection{Modeling cost function}
 The goal of the cost function is to minimize or maximize the linear constraints that represents the \ac{DNN} architecture. 
-However, our requirement is different in the traditional sense of using minimization and maximization which is usually used in terms of resource utilization ~\cite{7214162}.  
-Based on our attack model we want to minimize the input perturbations, and maximize the output deviations in a \ac{DNN}.
+However, our requirement is different in the traditional sense of using minimization and maximization, which is usually used in terms of resource utilization\karthik{I don't understand this sentence} ~\cite{7214162}.  
+Based on our attack model, we want to minimize the input perturbations, and maximize the output deviations in a \ac{DNN}.
 We do so to find the optimal solutions, which we have defined in  ~\ref{milp}
-There are two main problems that can arise based on our cost function modeling:
+There are two main problems that arise based on our cost function modeling:
 \begin{enumerate}
 	\item There is a possibility that there are no solutions. 
-	This happens if the \ac{MIP} is infeasible and we need to redefine our cost function. 
+	This happens if the \ac{MIP} is infeasible, \karthik{Did we define this earlier ? Refer to it.} and we need to redefine our cost function. 
 	\item If the \ac{MIP} is feasible, then there is a possibility that there is no optimal solution since there are infinitely many good cost function values. 
 	This makes our solution space unbounded, and can lead to state space explosions. 
 \end{enumerate}
 
-We demonstrate both the problems in our experimental evaluation, 
-and show how we tackle the state space problem that can arise, thereby scaling our approach for big sized systems. 
-We use interval analysis, which we elaborate in Chapter ~\ref{relusyn}. 
+We demonstrate both the problems in our experimental evaluation \karthik{Sorry, did you find the problems or did you demonstrate that they don't arise? How can  you demonstrate a problem ?}, 
+and show how we tackle the state space explosion problem, thereby scaling our approach for big sized systems. 
+We use interval analysis for this purpose, which we elaborate in Chapter ~\ref{relusyn}. 
 
 
 

@@ -6,7 +6,7 @@
 
 We use a DNN based \ac{APS}, closed-loop model, by Dutta et al. \cite{10.1007/978-3-319-99429-1_11}  as our motivating example for illustrating a \ac{RFDIA}. 
 We use this to explain our motivating attack. 
-The \ac{APS} model we use in this section is also our first evaluation system; it is also the simple in terms of \ac{DNN} complexity described in ~\ref{dnncomplexity}.
+The \ac{APS} model we use in this section is also our first evaluation system; it is also the simple \karthik{simplest of the three systems ?} in terms of \ac{DNN} complexity described in ~\ref{dnncomplexity}.
 A patient relies on  \ac{APS} to correctly determine the next dose of insulin to be injected every $t$ minutes. 
 
 \begin{figure}
@@ -38,7 +38,7 @@ One \ac{DNN} learns a lower threshold on injection amount; the other learns an u
 Hence, for every time of the day based on the previous patient characteristic, the minimum and the maximum values are known. 
 However, the system will not detect  an adversary  who manages to always administer the maximum allowed dosage through \ac{RFDIA}. 
 Hence, the attacker needs to identify inputs and  perturb them  such that the output changes the maximum allowed dosage for every injection,
-  while being lower than the upper threshold to avoid detection and cause maximum damage. 
+  while being lower than the upper threshold to avoid detection, and cause maximum potential damage to the patient. 
 
 
 \section{Attack Model}
@@ -55,18 +55,17 @@ The attacker can use network noise or physical means of sensor tampering to atta
 We assume that the attacker has following capabilities:
 \begin{enumerate}
 	\item The \ac{DNN}  architecture  is known to the attacker for example., a feed forward  network in case of an \ac{APS}. This information easy to find, as the architectures are  usually public information for the systems. 
-	\item  The weights and bias of the \ac{DNN}  architecture through a read-only access to the system.  
-	\item The attacker cannot modify the code but only the inputs to the model.
-	\item The \ac{DNN} contains ReLU as its activation function. 
-	All three systems in this work contain ReLU.
+	\item  The weights and bias of the \ac{DNN}  architecture are known as well through a read-only access to the system.  
+	\item The attacker cannot modify the code of the system, but can modify the inputs to the model.
+	\item The \ac{DNN} contains ReLU as its activation function. %All three systems in this work contain ReLU.
 \end{enumerate}
 
 \subsection{Strawman attacker}
-The first way to attack the system would be to change all the 74 values that are the inputs to the DNN.
+A simple way to attack the system would be to change all the 74 values that are the inputs to the DNN.
  If all the inputs are changed, the final output prediction is going to be wrong. The problem in this particular scenario is that 
  these inputs are collected every five minutes from the sensors attached to the patient. 
- This means that the attacker will have to conduct FDIAs every five minutes when the data is being collected to cause a change in the output. 
- Doing this is quite tedious in a practical scenario and hence, the attacker needs a better way of attacking the system. 
+ This means that the attacker will have to conduct FDIAs every five minutes when the data is being collected, to cause a change in the output. 
+ However, this is quite tedious in a practical scenario and hence, the attacker needs a better way of attacking the system. 
 
 \subsection{Sophisticated Attacker}
 A more sophisticated approach to attack the system would be by perturbing one or two inputs out of the 74 inputs that cause a change in the output. There are two ways to proceed when the attacker tries to change just one or two inputs at a time. 
@@ -89,8 +88,8 @@ and if it is too low, it will not affect the output as shown in Chapter ~\ref{ev
 \subsubsection{Attack 3}
 The most sophisticated means for an attacker to attack the system would be to know precisely which inputs to perturb and by what amounts,
  such that the output prediction is wrong. 
-To do so, the attacker needs an advanced technique that in limited time, finds the critical inputs
- and also the small perturbations that can ensure a wrong output prediction as explained in . 
+To do so, the attacker needs an advanced\karthik{automated?} technique that in limited time, finds the critical inputs
+ and also the small perturbations \karthik{smallest possible?} that can ensure a wrong output prediction as explained in \karthik{??}. 
 
 %Our motivation for designing the technique were these different ways of attacking the system that can automatically synthesize attacks in an efficient way. 
 
