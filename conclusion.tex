@@ -1,38 +1,54 @@
 \chapter{Conclusion}
-We demonstrate \tool, which is based on generating \attack as an optimization problem using MILP. We address the two main challenges in synthesizing \attack: 1) locating the critical inputs and, 2) finding the smallest perturbations for critical inputs to conduct \attack. To locate the critical inputs, we model a cost function and add $delta$ variable to the inputs and minimize the $delta$. This tells the attacker changing precisely which inputs will result in wrong output predictions. 
-(This guides the attacker to minimize the inputs to mazimize the outputs 
+\label{conclusion}
+We propose and evaluate \tool, which is based on modeling \attack as an optimization problem using MILP \karthik{Does using MILP apply to optimization problem or to the tool ?}.
+We discuss two aspects of synthesizing \attack: 1) identifying the critical inputs and, 2) finding the smallest perturbations for these critical inputs to conduct \attack.
+These are both accomplished by modeling a cost function that minimizes the magnitudes of a set of 'delta' variables which represent the amounts by which the DNN inputs are perturbed.
+These variables in the solved model tell the attacker which inputs to change and precisely how much to change them by to force malicious output predictions. The consequence is a minimal input change resulting
+in a harmful output change.%\karthik{I think you should mention changing the minimal set of inputs by the smallest possible amounts}
+%(This guides the attacker to minimize the inputs to mazimize\karthik{Spell check} the outputs 
 
-%Insights
+% Insights
 % - smaller systems easier to attack due to sizes
 % - ACAS more robust due to the normalization layer that we discuss in Eva, and hence it is possible to make systems more robust
 %- cost function affects the state explosion of the system. When we add a minimize delta, it takes longer because it has to find the smallest delta, whereas if we do not minimize the deltas and add general ranges, it returns the first feasible solution. 
 
-Based on our findings we conclude that:
+Based on our experiments, we conclude that:
 
 \begin{enumerate}
-    \item The first well-known observation is that it is easier (in terms of time) to find attacks on small-sized DNN based CPS. APS took less than a second for finding an attack whereas ACAS Xu took as high as 5 hours in some specific cases. 
+\item As expected, our MILP solver can find \attack for smaller DNN-based CPS faster than for larger DNN-based CPS. We can synthesize attacks for APS in less than a second whereas some attacks for ACAS Xu take five hours to synthesize.%The first well-known observation\karthik{If it's well known, then why do you say it is your finding?} is that it is easier (in terms of time) to find attacks on small-sized DNN based CPS. APS took less than a second for finding an attack whereas ACAS Xu took as high as 5 hours in some specific cases \karthik{For which cases}. 
 
-\item We found fewer attacks in ACAS Xu as compared to APS indicating  that ACAS Xu is a more robustly designed network due to the existence of normalization that makes it difficult to generate ripples. Hence, it is possible to design robust DNN while designing the architectures. 
+\item We found fewer attacks for ACAS Xu compared to APS indicating that ACAS Xu is more robust. This robustness could be due to the existence of a normalization layer, which further complicates our MILP formulation, or due to its larger size resisting our solver. This means it is possible to design the DNN in order to achieve greater resistance to our MILP methodology. We have theorized how this might be done earlier in this thesis. %Hence, it is possible to design robust DNN while designing the architectures. %\karthik{The second sentence doesn't follow from the first in an obvious way}
 
-\item Finally, we observe that cost function affects the state explosion of the system. If there is a minimization function on the input perturbations, it takes much longer to compute and can also lead to explosions in certain cases as compared to having no minimization function. 
+\item As expected, adding a cost function increases the time to solve the MILP model. This opens the door for a comparative analysis of how the choice of cost function (which specifies the specific attack being launched) impacts model solving time. It may be possible to characterize attacks according to their hardness for the solver.
+%\textcolor{red}{The state space does not depend on the objective function. The longer solution time results from a longer search to find the optimal solution; before adding the objective, any feasible solution was sufficient to terminate the search.}
+%\item Finally, we observe that the choice of the cost function affects the state explosion of the system. If there is a minimization function on the input perturbations, it takes much longer to compute and can also lead to explosions \karthik{I'm guessing you mean state-space, not the real kind !} in certain cases as compared to having no minimization function. \karthik{I think the better way to phrase this is comapring with other functions}
 \end{enumerate}
 
+Finally, we believe there is room for future work on \tool.
+The \tool can be evaluated for different application domains where DNN-based safety critical systems are used.
+Control systems in autonomous vehicles are one specific example.
+\tool can also be extended with symmetry breaking techniques to improve scalability with DNN size.
+Any improvement could be quantified by running modified \tool on the challenging ACAS Xu system.
+There is also a deeper intellectual question about how different attacks relate to each other in terms of their difficulty of synthesis.
+\tool would be invaluable for anyone looking to explore this area.
 
-
-
-
-
-
+%\karthik{I think you should include discussion here and merge it with the future work below}
 %Future work
-Finally, we believe that there are many more extensions that can be done with \tool. First, it can be extended for multiple different application domains to find attacks. For eg. Autonomous Vehicles have multiple stacks of DNNs to compute the output and \tool can be utilized to find attacks in multiple DNNs. Second, one can try and model cost functions for an attack model different from ours and use our insights to generate attacks. Third, we observe that in some ACAS Xu attack scenarios we were getting a time-out which tells us that there is the scope of improvement in the heuristics we have currently proposed for a speedup.
+%Finally, we believe that there are many more extensions that can be done with \tool.
+%First, it can be extended for multiple different application domains to find attacks.
+%For eg. \karthik{'ve told you that you can't use e.g. this way} Autonomous Vehicles have multiple stacks of DNNs to compute the output and \tool can be utilized to find attacks in multiple DNNs.
+%Second, one can try and model cost functions for an attack model different from ours and use our insights to generate attacks.
 
-\iffalse
-We have addressed security as an optimization problem by modeling the Deep Neural Network as a Mixed Integer Linear model. This is the first step to automatically synthesize attacks called ripple attacks that on small perturbations to the input propagate further to cause output perturbations. 
+%\textcolor{red}{The point below is not true. The runtime explosion is due to ILP being NP-complete rather than how we have modeled the problem in the solver. This would not happen if there was a known polynomial time algorithm for ILP, which depends on the open question regarding whether P=NP.}
+%Third, we observe that in some ACAS Xu attack scenarios, we were getting a time-out \karthik{I guess you mean that \tool timed out ?}, which tells us that there is the scope of improvement in the heuristics we have currently proposed for a speedup. \karthik{Not sure I understand how this follows - if you improved it, will  you be guaranteed there are no time-outs?}
 
-We discussed the modeling details, designing attack specific cost functions \smi{change 'cost functions' to 'target inputs/perturbation bounds'; cost functions mean objective function which doesn't change for us}, finding critical inputs and finally finding the minimum perturbations for a successful attack that we call as a ripple attack. We show our evaluation on three systems of different sizes. Our biggest system size is (5,50,50,50,50,50,5). We model the cost functions such that even for big systems, our approach does not blow up \smi{we should chat and clarify the meaning of cost functions in this context}. We chose the three systems that are practical safety-critical systems that is an artificial pancreas system, and two aircraft collision avoidance networks.
+%\iffalse
+%We have addressed security as an optimization problem by modeling the Deep Neural Network as a Mixed Integer Linear model. This is the first step to automatically synthesize attacks called ripple attacks that on small perturbations to the input propagate further to cause output perturbations. 
 
-For the medical system which is a considerably smaller system than our collision avoidance system, we are able to find the critical inputs and synthesize minimum perturbations in less than a second. For bigger system with more layers and number of neurons per layer, we are successfully able to synthesize attacks within a minute. 
+%We discussed the modeling details, designing attack specific cost functions \smi{change 'cost functions' to 'target inputs/perturbation bounds'; cost functions mean objective function which doesn't change for us}, finding critical inputs and finally finding the minimum perturbations for a successful attack that we call as a ripple attack. We show our evaluation on three systems of different sizes. Our biggest system size is (5,50,50,50,50,50,5). We model the cost functions such that even for big systems, our approach does not blow up \smi{we should chat and clarify the meaning of cost functions in this context}. We chose the three systems that are practical safety-critical systems that is an artificial pancreas system, and two aircraft collision avoidance networks.
 
-We believe that using our technique to find similar attacks in systems such as self-driving cars that have multiple DNNs instead of one in their control system would be an interesting future work. As mentioned in the discussion section using our approach for tracing error propagation is another interesting use case. Finally, modeling application specific heuristics for systems such as surgical arm to synthesize attacks is another interesting topic for future research. 
-\fi 
+%For the medical system which is a considerably smaller system than our collision avoidance system, we are able to find the critical inputs and synthesize minimum perturbations in less than a second. For bigger system with more layers and number of neurons per layer, we are successfully able to synthesize attacks within a minute. 
+
+%We believe that using our technique to find similar attacks in systems such as self-driving cars that have multiple DNNs instead of one in their control system would be an interesting future work. As mentioned in the discussion section using our approach for tracing error propagation is another interesting use case. Finally, modeling application specific heuristics for systems such as surgical arm to synthesize attacks is another interesting topic for future research. 
+%\fi 
 %\input{discussion}
