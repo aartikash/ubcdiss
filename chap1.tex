@@ -4,12 +4,12 @@
 %\section{Introduction}
 %Para-1 - What are safety-critical cps? Some egs. of their existance in different applications. What are the damages they are capable of causing?
 \ac{CPS} are systems that perform computations by continuous interactions with the physical environment, and perform actions in the physical environment based on the computations.   
-They are increasingly being deployed for applications \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465} such as medical devices (e.g., insulin pumps and robotic surgery equipment), \karthik{You mean failures of, I hope ?} which could be life threatening, and hence need high reliability. 
+They are increasingly being deployed for applications \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465} such as medical devices (e.g., insulin pumps and robotic surgery equipment), failures of which could be life threatening, and hence need high reliability. 
 The mission-critical aspect of \ac{CPS} makes them particularly attractive targets for an attacker. 
 There have been multiple attacks demonstrated in the \ac{CPS} in the past, though the information of most attacks is not publicly available \cite{doi:10.1080/13518040590969785}.
 One of the first reported targeted attacks was on a Supervisory Control and Data Acquisition (SCADA) system \cite{article22} at the Maroochy Shire Council’s sewage control system in Queensland, Australia, where the attacker caused more than 750,000 gallons of untreated sewage water to be released into parks, resulting in clean up damages of more than \$200,000 \cite{10.1016/j.adhoc.2009.04.012}.
 There have also been targeted attacks demonstrated on surgical robots \cite{7579758}, pacemakers\cite{4531149}, airplanes \cite{217595} and  cars \cite{10.5555/1929820.1929848}.
-Some targeted attacks demonstrated in these systems also utilized the glitches in the software \karthik{What's a software glitch ? Is it just a bug ?} to induce attacks without getting detected \cite{242054}. 
+Some targeted attacks demonstrated in these systems also utilized the glitches in the software to induce attacks without getting detected \cite{242054}. 
 
 
 
@@ -19,7 +19,6 @@ For instance we can model model the movement of a self-driving car using equatio
 Such models have low tolerance for perturbations in the values of these parameters because the equations account for a subset of all possible behaviors that can happen in reality. 
 This behavior makes \ac{CPS} vulnerable to attacks that can exploit the limitations by injecting a false reading of a variable \cite{10.1145/1952982.1952995}. 
 Thus, an adversary can cause irreparable harm to such a system by injecting a false reading of a variable; such an attack is called an \ac{FDIA}.
-This can be conducted by causing \karthik{Read your drafts !}
  In an \ac{FDIA}, an attacker compromises the measurements from the sensors in a way that undetected errors are introduced in the outputs \cite{7438916} that control the object in the real world. 
  
 
@@ -32,9 +31,9 @@ The reason behind this is that the control theory equations are well defined for
 However, in a \ac{DNN} the computation proceeds through multiple layers and the input-output mapping becomes opaque. 
 This is because the \ac{DNN} model is defined using the data-set, and needs to capture the behaviors for the \ac{CPS}.
 
-However, a motivated attacker can figure out how to conduct such attacks in a \ac{DNN}. \karthik{as we demonstrate in this thesis}. 
+However, a motivated attacker can figure out how to conduct such attacks in a \ac{DNN} as we demonstrate in this thesis. 
 If we are to build systems to prevent or mitigate such attacks, we must understand the fundamental nature of these attacks. 
-This work takes a first step towards preventing such attacks by introducing a technique to synthesize such attacks. \karthik{I made it less dramatic}
+This work takes a first step towards preventing such attacks by introducing a technique to synthesize such attacks. 
 We demonstrate a vulnerability in these systems by using our technique to synthesize a new class of attacks for DNN based controllers. 
 We call these attacks \ac{RFDIA} as they are transmitted through the DNN's layers in the CPS like ripples in large puddles of water. 
 Much like the outward motion of waves in water when disturbed by dropping a stone, the perturbations introduced to the inputs to a DNN ripple through the layers until they reach the output layer. 
@@ -63,14 +62,12 @@ The main contributions in this work are as follows:
 \end{enumerate}
 
 The main results in this work are as follows:
-\karthik{Only the first one is a result - the others are just repetition of the contributions, so remove them.}.
+
 \begin{enumerate}
 	\item We exposed a new set of vulnerabilities in \ac{DNN} based systems. 
-	 We find ~7000, ~20, ~40 successful \ac{RFDIA} for \ac{APS}, \ac{HCAS} and \ac{ACAS-Xu} in a reasonable amount of time. \karthik{How long - be precise?}
-	\item We build a \ac{MILP} model for \ac{DNN}s to systematically reason about the systems for three unique \ac{DNN} networks. 
-	\item We use \tool to automatically synthesize attacks by taking any \ac{DNN} to identify and find perturbations. 
-	\item We found ways to design robust \ac{DNN}s for \ac{CPS} using our modeling. 
-	\item Finally, we discuss various ways our work can be extended and used in different settings. 
+	 We find ~7000, ~20, ~40 successful \ac{RFDIA} for \ac{APS}, \ac{HCAS} and \ac{ACAS-Xu} less than a second, 40 seconds, and 7000 seconds respectively. 
+	\item We design attack specific cost functions to synthesize the attacks for the three evaluation systems.
+	\item We demonstrate the affects of introducing normalization layers in \ac{DNN} by showing they make \ac{DNN}s more robust. 
 \end{enumerate}
 
 	

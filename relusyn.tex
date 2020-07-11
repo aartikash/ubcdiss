@@ -1,13 +1,13 @@
 \chapter{ReLUSyn}
 \label{relusyn}
-In this section we explain the inner workings of our tool ReLUSyn. 
-There are two parts to this; we first explain our approach and our algorithms that are used for the synthesis, and we then talk about our tool \tool that implements the algorithms and synthesizes the models and attacks. 
+\tool  is our tool for synthesizing \ac{RFDIA}  on \ac{DNN} based \ac{CPS}.
+We explain our approach and algorithms for attack synthesis, and we present our tool, \tool, that implements the algorithms and synthesizes the models and attacks. 
 We show how fully connected feed-forward \ac{DNN}s can be formulated as \ac{MILP} models. 
 We use a generic representation and describe the modeling of cost functions that are used to generate \ac{RFDIA}.
 We then show how this allows us to identify critical inputs and find the perturbations. 
-We finally explain how we map this to real systems.
-We also include a section on how ReLU (the non-linear activation function) might be modeled internally by MILP solvers based on work by Fischetti et al. \cite{fischetti2017deep}, where they propose a 0-1 MILP model for DNN modeling.
-This section is included for completeness as the solver we use for our evaluation is able to handle the $\max$ function automatically.
+Finally, we map this to real systems.
+We also include a section on how ReLU (the non-linear activation function) might be modeled internally by MILP solvers based on work by Fischetti et al. \cite{fischetti2017deep}, who propose a 0-1 MILP model for \ac{DNN} modeling.
+
 
 \begin{figure}
 	\centering
@@ -25,41 +25,43 @@ This section is included for completeness as the solver we use for our evaluatio
 
 
 \section{ReLUSyn: Overview}
-ReLUSyn is the tool that models our approach, and allows the attacker to generate \ac{RFDIA} attacks directly from the \ac{DNN} model. 
+ReLUSyn is the tool that implements our approach, allowing the attacker to generate \ac{RFDIA} attacks directly from the \ac{DNN} model. 
 Our technique is shown in Figure ~\ref{fig:methodology}.
-The \ac{DNN} is made available from the systems which can be directly passed through \tool. 
-It automatically synthesizes a \ac{MILP} model from the \ac{DNN} model which also contains the input value bounds.
-The attacker can specify a cost function if they possess the relevant domain-specific knowledge to make such a decision. 
+\tool takes the \ac{DNN} as input and automatically synthesizes a \ac{MILP} model containing the input value bounds.
+The attacker can specify a cost function if they possess the relevant domain-specific knowledge to do so. 
 The cost function determines the kind of attack to be launched on the system.
-\karthik{Please say who does the synthesis in the next 2 sentences}
-Everything inside the blue box is automatically synthesized in Figure ~\ref{fig:methodology}.
-The cost function and bounds have a plug-gable \karthik{no hyphen} functionality. 
-Everything inside the blue box is automatically synthesized. \karthik{Duh ! Didn't you just say this ?}
-The orange parts can be easily changed to extend the technique for different systems and applications in the future. \karthik{What are these parts again?}
-The models along with the cost functions and bounds are passed through a MILP solver; the solver finds an optimal solution for the MILP model, and this optimal solution corresponds to an attack. If the solver determines the model is infeasible, then no attacks exist.
-Each feasible solution of the model corresponds to a particular attack \karthik{How's this different from what you told me 2 sentences back?}
-and the optimal solution corresponds to the preferred attack as specified by the user's cost function. We discuss the concept of using cost functions to launch specific attacks later in this chapter.
+Everything inside the blue box in Figure ~\ref{fig:methodology} is automatically synthesized.
+The cost function and bounds are pluggable. 
+The orange parts (\ac{MILP} models, cost function and the bounds) can be changed to extend the technique for different systems and applications. 
+The models, along with the cost functions and bounds, are passed to a MILP solver. 
+The solver finds an optimal solution for the MILP model, and this optimal solution corresponds to an attack. If the solver determines the model is infeasible, then no attacks exist.
+ We discuss the concept of using cost functions to launch specific attacks in ~\ref{section:costfunction}. 
+ 
+
+
+
+ 
 	
 \section{DNN formalism}
 We follow the formalism based on the general architecture that we explain in Chapter ~\ref{background}. 
-The \ac{DNN} controller maps the inputs that are the $x1$ and $x2$ to the output $y$ as shown in  Figure ~\ref{fig:dnn-controller}.   
-We now begin with the formal modeling of the \ac{DNN}.
+The \ac{DNN} controller
+ Figure ~\ref{fig:dnn-controller} maps the inputs, $x1$ and $x2$, to the output $y$. 
+
 
 
 %Formal modeling of a DNN for later use when explaining the modeling in MILP  
 The architecture can be represented as a function F defined as $F: X \rightarrow Y$ where the inputs X are mapped to the output Y and are composed of multiple layers. 
-We consider \ac{DNN} to be made up of $K + 1$ layers, numbered from 0 to K.
+Assume \ac{DNN} to be composed of $K + 1$ layers, numbered 0 to K.
 Layer 0 %does not really exist since it 
-is the input layer of the network, while
-the last layer K corresponds to the output of the \ac{DNN}.
-Every individual layer in the \ac{DNN} $k$ $\epsilon$ $\{0,1,....,K\}$ consists of $n_k$ nodes or neurons in the network.
+is the input layer, while layer K is the output.
+Each layer $k$ $\epsilon$ $\{0,1,....,K\}$ consists of $n_k$ nodes or neurons each.
 Each neuron has a bias associated with it. 
-Every neuron from the previous layer is connected to every neuron in the next layer. 
+The network is fully connected hence each neuron from layer $k$ is input to layer $k+1$ is connected to every neuron in layer $k+1$. 
 The neurons are labeled starting from $1$ to $n_k$ in the network. 
-We denote every neuron by $NODE(i,k)$ which corresponds to the $ith$ node for the layer k. 
+We denote each neuron by $NODE(i,k)$ which corresponds to the $ith$ node for the layer k. 
 
-We denote the output vector of the layer $k$ as $F_k(x)$.
-The output for every $NODE(i,k)$ denoted as $F_{ik}(x)$ where $i$ $\epsilon$ $\{0,1,....,n_k\}$ 
+We denote the output vector of layer $k$ as $F_k(x)$.
+The output for each $NODE(i,k)$ is denoted as $F_{ik}(x)$ where $i$ $\epsilon$ $\{0,1,....,n_k\}$ 
 
 The output for layer 0 is represented as $F_k(0)$.
 For every layer $k \geq 1$ the output vector is represented in Equation ~\ref{1}. 
@@ -71,10 +73,14 @@ F_k(x) &= \upsigma(W^{k-1}x^{k-1} + b^{k-1}) \\
 \end{aligned}
 \end{equation}
 
-where $\upsigma$ represents the activation function being used in the DNN under consideration. 
-There are multiple types of activation functions with different modeling capabilities, such as ReLU ($f(x) = max {0,x}$) as shown in Figure 	\ref{fig:relubreakdown} and logistic (or sigmoid) activation function $f(x)=1/(1+ exp(-e))$.
-\tool focuses on using Rectified Linear Unit (ReLU) since it is one of the commonly used activation functions in \ac{DNN}s as Krizhevsky et al. \cite{10.1145/3065386}. 
-Hence, our equation now \karthik{as opposed to in the past ? Please avoid words like now} looks something like where, for a vector $x$, \texttt{ReLU}($x$):= $\sum_{i=1}^{n} e_{i}\max(0, x_{i})$ (per layer).
+$W$ is the weight vector, $b$ is the bias associated for each layer, and $x$ is the input to the network and $\upsigma$ represents the activation function. 
+There are multiple types of activation functions with different modeling capabilities. Two common ones are: Rectified Linear Unit (ReLU) ($f(x) = max$ (${0,x}$) as shown in Figure \ref{fig:relubreakdown} and logistic (or sigmoid) activation function $f(x)=1/(1+ exp(-e))$.
+\tool focuses on ReLU  since it is one of the commonly used activation functions as stated by Krizhevsky et al. \cite{10.1145/3065386} and also used in all of our systems.
+
+Thus, the activation function for a layer $k$ and vector $x$ is 
+
+ReLU($x$):= $\sum_{i=1}^{n} e_{i}\max(0, x_{i})$ 
+
 
 
 
@@ -85,7 +91,7 @@ F_k(x) &= ReLU(W^{k-1}x^{k-1} + b^{k-1}) \\
 \end{aligned}
 \end{equation}
 
-Since a network consists of multiple layers, the general \ac{DNN} representation looks like a composition function as shown below. 
+Since a network consists of multiple layers, the general \ac{DNN} representation is composition function. 
 \begin{equation}
 \label{3}
 	\begin{aligned}
@@ -98,14 +104,10 @@ Since a network consists of multiple layers, the general \ac{DNN} representation
 %This ends  our \ac{DNN} formalism. In the next section we use the formalism to create a \ac{MILP} model. 
 
 \section{MILP Model}
-The ReLU activation function cannot be modeled directly by MILP solvers. 
-This section presents an
-equivalent formulation that is accepted by such solvers, which we use to locate critical inputs and find the minimum perturbations as explained in ~\ref{problemstatement}. 
-The solver we use, Gurobi, handles this conversion
-internally without exposing the details to the user. 
-However, we include the details for the purpose of completeness.
+The non-linear ReLU activation function cannot be modeled directly by MILP solvers so we present an equivalent formulation which we use to identify critical inputs and find the minimum perturbations as explained in ~\ref{problemstatement}. 
+We use the Gurobi solver.
 
- To create a \ac{MILP} model, the essence lies in studying the basic scalar equation that describes the \ac{DNN} architecture. 
+ To create a \ac{MILP} model, we study the basic scalar equation that describes the \ac{DNN} architecture. 
 
 \begin{equation}
 \label{4}
@@ -116,6 +118,7 @@ x &= ReLU(w^Ty + b) \\
  
 
 We cannot apply the $f(X) = \max(0, x)$ operator directly because it is non-linear. 
+As explained in Figure \ref{fig:relubreakdown}, the ReLU function can be broken in two parts, namely positive and negative parts which is termed as piecewise linear. 
 Instead, we can rewrite the equation given above as follows:
 
 \begin{equation}
@@ -126,13 +129,13 @@ w^Ty + b = x - s, x \geq 0, s \geq 0 \\
 \end{equation}
 
 The reason we represent it as in Equation ~\ref{5} is to first separate the equation from its non-linear component;  ReLU activation function is the non-linear part of Equation ~\ref{4}.
-$s$ in Equation ~\ref{5} translates the ReLU activation function to a linear representation. 
+The addition of variable $s$ in Equation ~\ref{5} translates the ReLU activation function to a linear representation.
 We make this division so that we can reason about the non-linear activation function separately from the actual equation. 
 
-As explained in Figure \ref{fig:relubreakdown}, the ReLU function can be broken in two parts, namely positive and negative parts which is termed as piecewise linear.  
-To implement the piece-wise linear behavior, we define an activation variable $ac$ that imposes the logical implications. 
-The choice to use different symbols was made in the interest of clarity. The equation in this rewritten form is linear, and it does model ReLU functionality  correctly as $x$ will always be non-negative. 
-The problem with this formulation is that it does not admit a unique solution. One way to account for this is to add indicator constraints of the form shown below. 
+ To implement the piece-wise linear behavior, we define an activation variable $ac$ that imposes the logical implications. 
+The choice to use different symbols was made in the interest of clarity. 
+The equation in this rewritten form is linear, and it does model ReLU functionality  correctly as $x$ will always be non-negative. 
+
 Modern MILP solvers can handle these constraints directly.
 
 \begin{equation}
@@ -148,6 +151,19 @@ The $x \leq 0$ constraint in conjunction with $x \geq 0$ forces $x$ to zero. The
 This opens the door for a formulation that leads to unique solutions for $x$ and $s$ while enforcing the constraint $x \geq 0$.
 The uniqueness may be achieved by adding a regularization term in the objective function that encourages most entries in $ac$ to be zero.
 Extending this scalar example to the DNN case leads to a \ac{MILP} model of the form:
+
+
+We have divided our \ac{MILP} model in three main parts. 
+
+
+
+
+
+Equation ~\ref{7} represents the cost functions that are to be minimized or maximized.
+These cost functions are different for different applications and depends on our goal. 
+The equation \ref{7} is a generic representation of cost function modeling. 
+We explain our cost function in more details in \ref{section:costfunction} for \ac{RFDIA} attack synthesis. 
+
 \begin{equation}
 \label{7}
 \begin{aligned}
@@ -156,6 +172,13 @@ Extending this scalar example to the DNN case leads to a \ac{MILP} model of the 
 \end{aligned}
 \end{equation}
 %ReLU
+
+
+Equations ~\ref{8} represents the ReLU modeling for each layer in the network. 
+We showed in Equation~\ref{6} how we can represent ReLU units as a set of linear constraints in \ac{MILP} solvers. 
+To model the constraints we use the formalism from Equation \ref{5} where we introduce the variable $s$ to accommodate the non-linearity using linear representations as explained in \ref{6}. 
+We expand on it and apply it to all the layers in the modeling. 
+ 
 ReLU constraints
 \begin{equation}
 \label{8}
@@ -169,6 +192,9 @@ ReLU constraints
 \end{aligned}
 \end{equation}
 
+Equations ~\ref{9} add lower bounds ($lb$) and upper bounds ($up$) in the  model for different variables that we will  require to add limits to our search space.  
+These will be 0 and $+\infty$ respectively except for the first input layer
+where the bounds would depend on what is valid input for the DNN application.
 Upper and lower bounds for range analysis
 %Lower and upper bounds on the model
 \begin{equation}
@@ -176,24 +202,15 @@ Upper and lower bounds for range analysis
 \begin{aligned}
 & & & lb \geq x_i^k \geq up, \\
 & & &  lb \geq s_i^k \geq up \\
-& & & lb \geq z_i^k \geq up, \\
 \end{aligned}
 \end{equation}
 
 
-We have divided our \ac{MILP} model in three main parts. 
-Equation ~\ref{7} represents the cost functions that are to be minimized or maximized.
-These cost functions are different for different applications.  
-We will show in the next section how we model cost functions for \ac{RFDIA}
-attack synthesis. 
 
-Equations ~\ref{8} represents the ReLU modeling for each layer in the network. 
-We showed in Equation~\ref{6} how we can represent ReLU units as a set of linear constraints in \ac{MILP} solvers. 
-We expand on it and apply it to all the layers in the modeling. 
 
-Equations ~\ref{9} add lower bounds ($lb$) and upper bounds ($up$) in the  model for different variables that we will  require to add limits to our search space.  
-These will be 0 and $+\infty$ respectively except for the first input layer
-where the bounds would depend on what is valid input for the DNN application.
+
+
+
 
 Our MILP modeling applies the $f(x) = \max(0, x)$ operation directly to the output of layers because our MILP solver linearizes this internally when solving the model.
 This section illustrated how the solver could be handling this linearization internally. The next section describes how we build our model.
@@ -211,8 +228,9 @@ This section illustrated how the solver could be handling this linearization int
 \section{Building the model}
 \label{section:attacks}
 
-As part of \tool, we provide automated attack synthesizers for the Artificial Pancreas System, Aircraft Collision Avoidance systems ACAS Xu and Horizontal CAS. 
-As an example, we use an \ac{APS} shown in \label{fig:toyaps}, which consists of two sensor inputs that predict the amount of insulin as the output at some time $t$. 
+ \tool contains automated attack synthesizers for the Artificial Pancreas System, Aircraft Collision Avoidance systems ACAS Xu and Horizontal CAS. 
+ We will continue using the \ac{APS} shown in \label{fig:toyaps} to illustrate \tool's functionality. 
+The \ac{APS} consists of two sensor inputs that determine the amount of insulin to inject at some time $t$. 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/ToyAPS}
@@ -224,7 +242,7 @@ As an example, we use an \ac{APS} shown in \label{fig:toyaps}, which consists of
 \begin{algorithm}
 	%\DontPrintSemicolon % Some LaTeX compilers require you to use \dontprintsemicolon    instead
 	\KwIn{weight matrices, bias vectors, num\_layers, num\_neurons}
-	\KwOut{DNN input, DNN output}
+	\KwOut{input, layer\_output, ReLU\_output,}
 	Take the weight, bias, number of layers, and the number of neurons per layer. \\
 	
 	\textbf{Model}, \linebreak
@@ -245,11 +263,10 @@ As an example, we use an \ac{APS} shown in \label{fig:toyaps}, which consists of
 \end{algorithm}
 
 
-The system can be represented as a MILP model through pseudo-code in Algorithm ~\ref{algo:b}. 
-The model generated by this procedure is directly accepted by Gurobi (the solver we use for our experiments).
-This converts the neural network structure into a set of linear equations that can be mapped directly into a back-end MILP solver.
+The system is represented as a MILP model through pseudo-code in Algorithm ~\ref{algo:b}. 
+This converts the neural network structure into a set of linear equations that can be mapped directly into a back-end MILP solver, in our case, Gurobi. 
 
-An interesting point to note is that the DNN input is an output of Algorithm  ~\ref{algo:b}. 
+An interesting point to note is that the DNN input for $k+1$ is the output of the $k$ layer as shown in Algorithm  ~\ref{algo:b}. 
 This is because our procedure does not require an input to the DNN, as the resulting model can be solved to produce a valid input-output pair.
  Bounds can be enforced on the input variables by the user to ensure only
 valid inputs are generated by the MILP solver. 
@@ -258,7 +275,7 @@ This is a positive consequence of using a constraint solving approach.
  It also means that we can enumerate many such input-output pairs by repeatedly solving the model,
 and adding constraints to exclude previously seen solutions.
 
-This is the general algorithm for converting any \ac{DNN} into a \ac{MILP} model. 
+This is the general algorithm for converting a \ac{DNN} with ReLU activation function into a \ac{MILP} model. 
 The difference in our evaluated systems and this system is only the difference between the number of layers and nodes in each layer that can be easily extended.
 Our \tool  takes in a \ac{DNN} and automatically synthesizes \ac{MILP} models for it. 
 Following the same algorithm, we successfully synthesize models for \ac{APS}, \ac{ACAS-Xu}, and \ac{HCAS} within a minute. 
@@ -269,28 +286,31 @@ Following the same algorithm, we successfully synthesize models for \ac{APS}, \a
 x &= ReLU(w^Ty + b) \\
 \end{aligned}
 \end{equation}
+
+\iffalse
+
 Equation ~\ref{10} represents an \ac{APS}. 
 We convert the equations above into a MILP model as shown in Algorithm ~\ref{algo:b}. 
 Every layer is initially modeled as a linear equation. 
 The activation function is represented as piecewise linear.
 Our approach will work for any representation of a piece-wise linear function contingent on the assumption that a non-linear function can be broken down into linear components.
-Since we have abstracted away the details that represent non-linearity, the future work\karthik{Do you mean you would consider this in future work?} would be representing non-linear functions as linear functions. 
+Since we have abstracted away the details that represent non-linearity, the future work would be representing non-linear functions as linear functions. 
  However, in our work, we focus on ReLU as explained in ~\ref{problemstatement}
-
+\fi
 \section{Modeling cost functions for attacks}
 \label{section:costfunction}
 %Why is modeling cost function important
-Now that we have formulated the DNN as a MILP model, the next step is to add a cost or objective function to launch a specific kind of attack. 
-This function allows the user to specify which inputs should be perturbed to generate a ripple.
+Now that we have formulated the DNN as a MILP model, the next step is to add a cost or objective function corresponding to a specific kind of attack. 
+This function allows the user to specify which inputs should be perturbed to generate the desired output changes.
 
-In our \ac{APS}, we have two inputs $x_1$ and $x_2$ that map to an output $y$. 
-To conduct \attack, the goal is to change the inputs in a way that the alarms are not triggered, and yet it leads to an output change as we explained in Chapter ~\ref{attack}. 
-These small changes lead the system to end up in a bad consequence eventually. 
-In \ac{APS}, every small increase is a bad consequence of the system. 
-Since the output determines the amount of insulin to be injected inside the body, small increases in the output \karthik{hanging sentence}.
-Therefore, the attacker's goal is to change the output to $y'$, where $y' = y + a$. $a$ is some constant. 
+To conduct \attack our goal is to change the inputs in a way that leads to an output change without triggering an alarm as explained in explained in Chapter ~\ref{attack}. 
+The attacker's goal is to change the output to $y'$, where $y' = y + a$ for some constant $a$. 
 
 %She needs to find the deviations in the input that would help her to change the outputs. 
+ 
+
+
+
 However, the catch here is that the inputs perturbations should be very small such that the new input now provides her the output $y'$.  
 The reason she wants the input perturbations to be small is that there are accompanying neural networks that determine the upper and lower bounds for inputs and outputs at every stage. 
 The reason for these accompanying networks is to ensure the patients' safety as explained in Chapter ~\ref{attack}.
@@ -338,25 +358,23 @@ Algorithm ~\ref{algo:c} shows how to include the cost functions for \ac{RFDIA} a
 	\label{algo:c}
 \end{algorithm}
 
-If there are two inputs as in \ac{APS}, we can either try to minimize the delta values for both the inputs or only one of the inputs. 
-The reason it is important to understand this is because, in general, within \ac{APS} there are inputs that come from two different sensors as explained in the motivating example section. 
+An attacker can choose how many inputs can be modified, assigning deltas to $0$ for those that cannot be modified. 
+This is crucial in \ac{CPS} where inputs may come from different sensors and the attacker may be able to tamper with some, but not all of them.
 
-The attacker might want to make changes to only one of the sensor readings. Hence, considering different scenarios, we can minimize the values depending on which inputs we are interested in targeting with an \ac{RFDIA}. 
+Considering different scenarios, we can minimize the values depending on which inputs we are interested in targeting with an \ac{RFDIA}. 
 The \ac{RFDIA} cost function in Algorithm ~\ref{algo:c} minimizes the absolute values of the perturbations to both inputs.
 The solver can minimize the cost function despite it not being linear by introducing an extra variable for each input and adding two additional constraints per input that bound the input's value using this newly introduced variable. 
-This would essentially linearize the cost function.
+
 
 
 \section{Synthesizing attacks}
-Once the attacker has a model and the cost function modeled \karthik{you mean a model of the cost function?}, the next step is to identify the critical inputs, and the desirable perturbations as explained in ~\ref{problemstatement}.
-The attacker can run our obtained models along with the cost functions in our \ac{MILP} solver. 
-In our running example of APS, in reality, there are 74 inputs collected from two sensors every five minutes.
+Once the attacker has a model and the cost function designed, the next step is to identify the critical inputs, and the desirable perturbations.
+The attacker can run models with the cost functions in a \ac{MILP} solver. 
+In our running example of APS, there are 74 inputs collected from two sensors every five minutes.
  The goal of the attacker is to locate the critical inputs such that they can conduct \ac{RFDIA} at the right time.
- To do so, as described in the previous two sections, the approach implemented as \tool is used to chose the index of inputs to be perturbed.
- \tool allows us to set ranges using the methodology described above such that we can find the desirable perturbations. \karthik{I think desirable perturbations is vague. How about minimum perturbations ?}
+ To do so, an attacker chooses the inputs to be perturbed and the ranges by which they can be perturbed.  
  
-
-In this section we explain the intuition behind our approach and how we use the approach to model \tool. 
-We further explain how we use \tool for synthesizing attacks from the models. 
-In the next section we explain our results for three evaluation systems. 
+ 
+ 
+We explain our experiments and results in the next section. 
 

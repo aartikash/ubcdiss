@@ -80,8 +80,9 @@
 \usepackage{ gensymb }
 \usepackage{ upgreek }
 \usepackage{xspace}
+\usepackage{longtable}
 \theoremstyle{plain}
-
+\usepackage{array}
 \long\def\authornote#1{%
 	\leavevmode\unskip\raisebox{-3.5pt}{\rlap{$\scriptstyle\diamond$}}%
 	\marginpar{\raggedright\hbadness=10000
@@ -98,6 +99,11 @@
 \usepackage{blindtext}
 \newtheorem{problem}{P}
 \newtheorem*{approach*}{Approach}
+
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Configure fonts for XeTeX / XeLaTeX using the fontspec package.
 %% Be sure to check out the fontspec documentation.

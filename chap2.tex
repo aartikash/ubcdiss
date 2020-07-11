@@ -62,7 +62,7 @@ as shown in Figure ~\ref{fig:closedvsopen} (top diagram), the human is a part of
 In closed-loop systems, there is no human intervention 
 as shown in Figure ~\ref{fig:closedvsopen} (below diagram). 
 In the latter case, understanding different types of security attacks becomes a necessity because the automation means that once the attacker has found a way to tamper with the automation mechanism, they can fool the system. 
-In the case of stealthy (or subtle) attacks as described in Chapter 3, \karthik{Symbolic ref} 
+In the case of stealthy (or subtle) attacks as described in Chapter ~\ref{attack}, 
 the closed loop systems are more vulnerable because existing error-detection mechanisms can be reverse engineered and can be used to attack the systems. 
 
 \section{Conventional Controllers for CPS}
@@ -123,7 +123,7 @@ The layers are built of nodes. Every computation occurs within in a node of a ne
 In the base case, there is a single neuron that takes all the inputs to produce an output as shown in Figure 2.5. 
 All inputs to the node in Figure 2.5 are summed up, and  passed through an activation function. 
 The activation function introduces non-linearity in the network. 
-The node determines up to what extent the signal must be progressed \karthik{seems awkward} to calculate the final output. 
+The node determines up to what extent the signal must be progressed to calculate the final output. 
 The final output depends on the network and can be in binary form or have a value associated with it. 
 
 
@@ -221,14 +221,14 @@ A \ac{MILP} is a \ac{LP} with a restriction that some of the variables in the mo
 We define a \ac{DNN} as a \ac{MILP} model due to the complex structure of a \ac{DNN} which we will elaborate more in Chapter ~\ref{evaluation}. 
 
 There are multiple tools that provide an interface to build \ac{MILP} models such as Cplex ~\cite{cplex}, and Gurobi ~\cite{gurobi}.
-Both are high-performing tools\karthik{What's a high-performing tool?}; however, we choose Gurobi for our purpose as it was more usable\karthik{Please check}. 
+Both are widely used tools; however, we choose Gurobi for our purpose. 
 
 
 
 \section{Problem Statement}
 \label{problemstatement}
 
-Given a trained DNN with fixed parameters our goal is to understand if the well-known \ac*{FDIA} in classical control theory are also valid in the DNN based CPS. \karthik{Given that we've introduced RFDIA, should we simply say RFDIA here?} \karthik{and to automatically mount them, correct ?}
+Given a trained DNN with fixed parameters our goal is to understand if the  \ac*{RFDIA} in classical control theory are also valid in the DNN based CPS.
 This leads to two sub-problems as follows.
 
 \begin{problem}
