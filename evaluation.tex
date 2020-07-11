@@ -60,6 +60,9 @@ As explained in \ref{relusyn} the tool converts the \ac{DNN} to \ac{MILP} format
 
 We used an 8-core system and ran the experiments on Gurobi such that it uses a single thread for running the experiments. 
 
+Using this approach the attacker can use \tool to synthesize the attacks and can mount the attacks on these systems in real-time by introducing noise in the physical and/or network communications as explained in Chapter ~\ref{attack}. 
+Our work focuses on synthesizing the attacks if they exist and not the latter part. 
+
 
 
 \begin{figure}
@@ -74,10 +77,11 @@ We used an 8-core system and ran the experiments on Gurobi such that it uses a s
 \section{APS}
 %The APS model designed by Kushner et al. \cite{Dutta_Others__2018__Robust}\smi{add space here}is a data-driven model. The goal of the model is to predict future blood glucose values for the patients.
 APS is the running example that we have used throughout the paper. 
-APS model predicts the glucose value at a "lookahead" time $t + T$, using the history of the past $N$ glucose values with a step size of $h$. The step size implies that the data is recorded after every $h$ seconds from the starting time. The inputs contain the past insulin values and glucose values by keeping the step size $h$ as 5 and the neural network builds the mapping between input and output values. It is a network with two hidden layers (with 8 neurons per layer), 74 inputs and one output that predicts the future glucose values as shown in Figure 1. 
+APS model predicts the insulin value at a "lookahead" time $t + T$, using the history of the past $N$ glucose and insulin values with a step size of $h$. 
+The step size implies that the data is recorded after every $h$ seconds from the starting time. The inputs contain the past insulin values and glucose values by keeping the step size $h$ as 5 and the neural network builds the mapping between input and output values. It is a network with two hidden layers (with 8 neurons per layer), 74 inputs and one output that predicts the future insulin values. 
 
 %Attacks in the APS system.
-Using \tool, we can successfully synthesize attacks in less than a minute; this allows the attacker to synthesize attacks quickly. 
+Using \tool, we can successfully synthesize attacks in less than a minute. 
 %The experiments that we conduct
 
 
@@ -85,7 +89,7 @@ Using \tool, we can successfully synthesize attacks in less than a minute; this 
 \begin{table}[h!]
 	\begin{center}
 		\caption{Critical Inputs - APS - 1 Input perturbed at a time}
-		\label{tab:table3}
+		\label{criticalinputs}
 		\begin{tabular}{l|S|r}
 			\textbf{Output range} & \textbf{Total inputs} & \textbf{Critical Inputs}  \\
 			%$\alpha$ & $\beta$ & $\gamma$ & $\gamma$ \\
@@ -257,10 +261,16 @@ Using \tool, we can successfully synthesize attacks in less than a minute; this 
 
 
 \subsection{Attacks}
-The goal is to minimize the input perturbations such that the output is perturbed by amounts so it remains between the user-specified lower and the upper bounds. The reason we evaluate for such attacks is that in APS, even small deviations from the original outputs can cause damage. Injecting more than the required amounts even if within the bounds is undesirable for users of the systems. 
+The goal is to minimize the input perturbations such that the output is perturbed by amounts so it remains between the user-specified lower and the upper bounds.
+Injecting more than the required amounts even if within the bounds is potentially fatal for users of the systems. 
 
 %Randomly changing inputs can trigger alarms in the system because it will raise the levels above the bounds enforced by specifications. We want to perturb the inputs in a stealthy way. The stealthiness is induced by finding the exact perturbations and to find those exact perturbations we need \tool. Brute force would require to search through the entire search space. We model the attack by including a $delta$ function in the inputs. 
-To locate the critical inputs we first perturb the inputs, one at a time, to induce small perturbations in the outputs as shown in Table ~\ref{tab:table2} under the APS section. We find that for different ranges of outputs, the critical inputs vary as shown in Table III. We have included the critical inputs when we perturb only one input at a time since these are the most useful from an attackers' perspective. 
+To locate the critical inputs we first perturb the inputs, one at a time, to induce small perturbations in the outputs as shown in Table ~\ref{summary} under the APS section and in more details in Table ~\ref{APS}. 
+We find that for different ranges of outputs, the critical inputs vary as shown in Table ~\ref{criticalinputs}. 
+We have included the critical inputs when we perturb only one input at a time since these are the most useful from an attackers' perspective, and also because of space reasons. 
+As we can observe in Table ~\ref{APS} as the number of perturbed inputs increases the possible combinations of critical inputs also increases. 
+
+
 
 %, For example, we find that when we perturb one input for an output range of 194-197, changing any one of these (40, 50, 61, 63, 66, 67, 72, 73) inputs by certain amounts will result in a successful  FDI \attack. Due to space reasons, we provide a summary of all combinations of attacks in Table II for APS. 
 %Along with the critical inputs, we also obtain the perturbations that will lead to an output deviation. 
@@ -280,7 +290,7 @@ To locate the critical inputs we first perturb the inputs, one at a time, to ind
 \begin{table}[h!]
 	%\centering
 	\caption{Results Summary}
-	\label{tab:table2}
+	%\label{summary}
 	\begin{tabular}{l|S|r|l|r|l|r|l}
 		Attack & Attack  & No. of  & Successful & Unsuccessful  & Peak  & Memory \\
 		&  No. &  combinations &  Attack(s) & Attack(s& time& used \\
@@ -716,16 +726,25 @@ To locate the critical inputs we first perturb the inputs, one at a time, to ind
 	\end{tabular}
 \end{table}
 %We test our approach on two other available systems that are collision avoidance (CA) as explained in the above section. 
-The ACAS Xu and HCAS are different from each other in terms of their architectures and parameters as described in Table ~\ref{tab:table1}. Apart from the difference between the weights, bias and the number of layers, the datasets used to produce the two are also quite different; this means that their behavior is different from each other. 
+The ACAS Xu and HCAS are different from each other in terms of their architectures and parameters as shown in Table ~\ref{tab:table1}. 
+Apart from the difference between the weights, bias and the number of layers, the datasets used to produce the two are also quite different. 
 
 %We conduct two random and targeted \attack \smi{this is singular but should perhaps be plural; good idea to skim the rest of the paper where \attack is used} in these systems, to understand how the systems\smi{this sentence is incomplete}
-The ACAS Xu is designed to model a large lookup table that maps the sensor readings to the advisories. There are five sensor readings:  (1) Distance from ownship to intruder, (2) Angle to the intruder relative to ownship heading direction, (3) Header angle to intruder relative to ownship heading direction, (4) Speed of ownship, and (5) Speed of intruder. The geometry of the ACAS Xu is shown in Figure ~\ref{fig:acasxugeometry}. The outputs represent five different possible advisories: (1 )clear-of-conflict (COC), (2) weak right, (3) strong right, (4) weak left, and (5) strong right. Based on the inputs, the one with the least value is the advisory that is going to be the action to be taken by the system.  
+The ACAS Xu is designed to model a large lookup table that maps sensor readings to the decisions based on the readings or advisories. 
 
-We conduct two types of \ac{RFDIA} here: targeted and random. 
-The reason we conduct these two types of attacks is that we want to understand the difficulty of synthesizing them in terms of time. 
-In targeted attacks, we have to specifically choose an output that not only has to be minimized but has to have the smallest values of the five possible outcomes. 
+The geometry of the ACAS Xu is shown in Figure ~\ref{fig:acasxugeometry}.
+The ownship is the unmanned vehicle with the \ac{CA} system and the intruder's goal is to crash with the ownship. 
+There are five sensor readings:  (1) Distance from ownship to intruder, (2) Angle to the intruder relative to ownship heading direction, (3) Header angle to intruder relative to ownship heading direction, (4) Speed of ownship, and (5) Speed of intruder.  
+The outputs represent five different possible advisories or decisions based on sensor readings: (1 )clear-of-conflict (COC), (2) weak right, (3) strong right, (4) weak left, and (5) strong right. 
+The advisories goals is to avoid crashes of the ownship with the intruder; incase the two are getting too close, an action is taken that moves the two apart. 
+Based on the inputs, the one with the least value is the advisory that is going to be the action to be taken by the system.  
+
+
+We conduct two types of \ac{RFDIA} here: targeted and random, to understand how long it take to synthesize attacks. 
+In targeted attacks, the attacker specifically chooses an output that has to be minimized and have to have the smallest values of the five possible outcomes.
+This means that out of the five advisories listed above depending on the ownship and the intruder location that action is taken which moves the ownship away from the intruder and the one with the smallest value is the action supposed to be taken by the \ac{CA}.
 The \ac{HCAS} works in a similar way except that it takes in three inputs instead of five. %Also, as shown in Table 1, the parameters are different for ACAS Xu and HCAS. 
-The reason it takes Gurobi more time to generate attacks in targeted setting as compared to random setting is the stricter ordering on the outputs. 
+
 
 \begin{figure}
 	\centering
@@ -734,13 +753,35 @@ The reason it takes Gurobi more time to generate attacks in targeted setting as 
 	\label{fig:acasxugeometry}
 \end{figure}
 
+\iffalse
 %Explain about the normalization layer
 The one feature about these systems that are different from the previous system which is the APS is that these systems consist of inputs and outputs normalization. These normalization are used to place bounds on how much the inputs can be perturbed by. To accommodate the normalization layer, we introduce certain heuristics that are deep network specific. %The normalization depends on the conditions that are introduced by the neural network.
+\fi
 
-\section{Targeted attack} 
-In the first attack, we minimize the input perturbations by keeping all but $1$, $2$ and $n$ inputs constant in the three sets of experiments that we conduct as shown in Table II for HCAS and ACAS Xu. We minimize the input perturbations but the goal is not to maximize the outputs in this case but to change the values of the inputs in a way that the output changes from slightly left to slightly right or changes from slightly right to strictly left. To find the input perturbations for such attacks the modeling has to be more precise.
+We conduct two categories of attacks in \ac{ACAS-Xu} and \ac{HCAS}:
+\subsection{Targeted attack} 
+In the first attack, we minimize the input perturbations by keeping all but $1$, $2$ and $n$ inputs constant in the three sets of experiments that we conduct as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu}. 
+Our goal is to find the smallest input perturbations that produce an output with the wrong direction, for instance, weak left to weak right, or weak right to weak left, or weak right instead of COC. 
 
-For example: Consider a set of five inputs for which the output is slightly left. The output is slightly left implies that out of the five output values in the DNN, the least value is of the output that signifies slightly left which is the Output four. The network is trained in a way such that the least value signifies the output that should be taken next. Our goal is to change the output in a way such that the minimum value changes from slightly left to slightly right. To model this, we first add a delta value to the inputs as in our previous evaluation. Our goal is to minimize the deltas values, however, our goal is to not minimize or maximize the outputs, but to change the values of the outputs such that the smallest output is switched with the output we want it to have. To do so, we add constraints that specify that in the modeling $Output 4 > Output 5$. This would mean that the $Output 4$ now has a greater value than $Output 5$ and hence, ideally we would consider that the constraint modeling is solved. However, since this is a targeted attack we want the value of $Output 5$ to be minimized with respect to all the other outputs and not only $Output 4$. To do so, we have to add more constraints to specify that Output 5 should be the smallest value.
+
+Consider a set of five inputs for which the output is weak left. 
+The output weak left indicates that the \ac{DNN} returns 4. 
+The network is trained in a way such that the least value signifies the output that should be taken next. 
+The attacker's goal is to change the output in a way such that the minimum value changes from weak left to weak right. 
+To model this, we first add a delta value to the inputs as in our previous evaluation. 
+To do so, we add constraints that force the output to 5 instead of 4; the constraints look of the form "$05 < $(All other outputs)".
+
+
+Some combinations we experiment with are as follows:
+\begin{enumerate}
+	\item Targeted attack 1 = 03 $<$ 02 $<$ 01 $<$ 04 $<$ 05
+	\item Targeted attack 2 = 03 $<$ 02 $<$ 01 $<$ 05 $<$ 04
+	\item Targeted attack 3 = 01 $<$ 02 $<$ (any order)
+	\item Targeted attack 4 = 01 $<$ (any order) 
+\end{enumerate}
+ 
+The attacker can conduct various targeted attacks using the critical inputs as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu} through physical means. 
+
 
 \begin{figure}
 	\centering
@@ -749,11 +790,13 @@ For example: Consider a set of five inputs for which the output is slightly left
 	\label{fig:acasxudnn}
 \end{figure}
 
-\section{FDI random attack} 
-Constructing random FDI attacks is slightly less effort for the attacker as compared to targeted attacks; this is because the constraints in a targeted setting are much tighter as compared to others. 
-Building on the previous example, if we have 5 inputs that give us the result as output 4. We need to perturb the inputs such that the output changes to any of the other possibilities such as output 1, output 2, output 3 and output 5.
+\subsection{FDI random attack} 
+Constructing random \ac{RFDIA} attacks is slightly less effort for the attacker as compared to targeted attacks; this is because the constraints in a targeted setting are much tighter. 
+Building on the previous example, if we have 5 inputs that give us the result as output 4, we need to perturb the inputs such that the output changes to any of the other possibilities such as output 1, output 2, output 3 and output 5.
 
-In this case, we try out multiple different combinations that allow us to find the perturbations.
+In this case, we try out multiple different combinations that allow us to find the perturbations as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu}.
+
+
 
 \section{Summary}
 From our experimentation we conduct ~19,000 attacks for \ac{APS} out of which ~7200 attacks were successful and took less than 1 second. 
@@ -761,12 +804,16 @@ We conducted ~30 \ac{HCAS} random attacks out of which ~20 were successful and t
 We conducted ~7 targeted attacks for \ac{HCAS} out of which 1 attack was successful.
 We conducted ~140 \ac{ACAS-Xu} random attacks out of which ~32 were successful and the maximum amount taken by the attacks was 7228 seconds. 
 We conducted ~16 targeted attacks for \ac{HCAS} out of which 2 attacks was successful.
-We also successfully found the critical inputs and the desirable perturbations for a successful attack. 
+These results are shown in Table ~\ref{summary}.
+
+Thus we can see that synthesizing \ac{RFDIA} attacks can be easily accomplished by the attacker in a small amount of time. 
+We have also tried out multiple different combinations of attacks keeping multiple attacker scenarios in mind and show that for systems such as \ac{APS} perturbing a single input out of the 74 inputs is enough to cause damage in Table ~\ref{APS}.
+Similarly for \ac{HCAS} and \ac{ACAS-Xu} we observe  from Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} that perturbing a single input in certain scenarios is enough to cause output deviation. 
 
  \begin{table}[h!]
  	%\centering
  	\caption{Results Summary}
- 	\label{tab:table2}
+ 	\label{summary}
  	\begin{tabular}{l|S|r|l}
  		\textbf{Inputs-pert} & \textbf{Total} &  \textbf{Successful} & \textbf{Mean-Time/ } \\
  		urbed/Attack &  Attacks &  Attacks &  Attack(s) \\
