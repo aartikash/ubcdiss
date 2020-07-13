@@ -5,7 +5,6 @@
 
 
 We use a DNN based \ac{APS}, closed-loop model, by Dutta et al. \cite{10.1007/978-3-319-99429-1_11}  as our motivating example for illustrating a \ac{RFDIA}. 
-We use this to explain our motivating attack. 
 The \ac{APS} model we use in this section is also our first evaluation system; it is also the simplest of the three systems in terms of \ac{DNN} complexity described in ~\ref{dnncomplexity}.
 A patient relies on  \ac{APS} to correctly determine the next dose of insulin to be injected every $t$ minutes. 
 
@@ -17,8 +16,8 @@ A patient relies on  \ac{APS} to correctly determine the next dose of insulin to
 \end{figure}
 
 %How is APS constructed?
-The APS architecture is explained in Section ~\ref{apsdnn}. 
-We examine the \ac{APS} controller model from Dutta et al., which has a feed-forward architecture. 
+The APS architecture is  the same as that discussed in Section ~\ref{apsdnn}. 
+We examine the \ac{APS} controller model from Dutta et al., which has a feed-forward architecture with $1$ hidden layers  with 74 inputs 
 The DNN for APS creates mappings between the insulin and the glucose values that allow for the prediction of future insulin values as shown in Figure ~\ref{fig:apsdnn}. 
 The insulin and the glucose values are the values collected from the sensors and the actuators. 
 The model has 74 inputs in total, where 32 inputs are the glucose, and the other 32  are insulin values collected every 5 minutes.
