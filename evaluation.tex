@@ -4,9 +4,10 @@
 %Why are they important
 %How are they different from each other?
 %Why does my system selection show that our techniques are generalizable. 
+We use three DNNs for evaluating \tool.
 Table \ref{tab:table1} presents the architectures of the three \ac{DNN}s used in \ac{APS}, \ac{HCAS}, and \ac{ACAS-Xu}, in increasing order of complexity. 
-These applications are all mission critical and can produce catastrophic outcomes in the presence of a successful attack.
-They also come from two rather different domains: medical devices and autonomous vehicles, providing evidence of the generality of \tool. 
+These applications are all mission critical, and can produce catastrophic outcomes in the event of a successful attack.
+They also come from two rather different domains: medical devices and autonomous vehicles, thus demonstrating the generality of \tool. 
 
 %We test our approach to incrementally larger DNNs. Larger DNNs imply networks with more layers and neurons per layer. %As mentioned previously, we have tested our approach for feed-forward neural networks that use ReLU for adding non-linearity. 
 
@@ -40,30 +41,31 @@ They also come from two rather different domains: medical devices and autonomous
 
 
 
-
-We chose safety-critical applications for evaluating our approach. 
-Our first application was inspired by the open-source system called openAPS.
-Dutta et al. \cite{10.1007/978-3-319-99429-1_11} proposed a DNN for APS that takes in 74 inputs by discretizing time.
-The second and third systems are modeling a collision avoidance (CA) system; it is a automatic system designed for unmanned vehicles  
-The researchers proposed ACAS Xu standards that are tailored for threat CA logic and horizontal logic \cite{7778055}. 
+%We chose safety-critical applications for evaluating our approach. 
+Our first application was inspired by the open-source system called openAPS. \karthik{We've mentioned this earlier, haven't we ? Why do we repeat it}
+Dutta et al. \cite{10.1007/978-3-319-99429-1_11} proposed a DNN for APS that takes in 74 inputs by discretizing time. \karthik{Is this the same system as OpenAPS ? Then say it}
+The second and third systems both model a collision avoidance (CA) system, which is an automatic system designed for unmanned vehicles. \karthik{ariel vehicles?}  
+The researchers \karthik{which researchers?} proposed ACAS Xu standards that are tailored for threat CA logic and horizontal logic \cite{7778055}. \karthik{Do we need this ? Just seems like jargon to me.} 
 These standards were implemented in \ac{ACAS-Xu} \ac{DNN}.
-There are 45 DNNs that together make up the collision avoidance system \cite{Julian_2019}.  
-Julian et al. \cite{Julian_2019} proposed a DNN compression for ACAS by representing large data tables in the form of DNNs. ACAS Xu dataset is currently proprietary and hence we did not have access to it. But for our tool, the trained model is enough to synthesize \ac{FDIA}. \ac{HCAS} is an open-source model created for collision avoidance. The reason we test our approach on ACAS and HCAS is that the sizes of these systems are different. The cost functions designed are the same in both cases.
+There are 45 DNNs that together make up the collision avoidance system in ACAS-Xu \cite{Julian_2019}.  
+Julian et al. \cite{Julian_2019} proposed a DNN compression for ACAS by representing large data tables in the form of DNNs. \karthik{Why is this relevant ? Do we use these ?}
+ACAS Xu dataset is currently proprietary and hence we did not have access to it. However, the trained model is enough to synthesize \ac{FDIA} with \tool. \ac{HCAS} is an open-source model created for collision avoidance. The reason we test our approach on both ACAS and HCAS is that the sizes of these systems are different \karthik{Provide details}. The cost functions designed are the same in both cases. \karthik{We designed these, correct ? Or did someone else ?}
 
 \section{Methodology}
-Our overall methodology is described in Figure \ref{fig:methodology-2} which describes how we evaluate three different systems. 
-We pass the trained \ac{DNN} models through our tool which then synthesizes the critical inputs and the perturbations for conducting \ac{RFDIA} if they exist. 
-Our tool currently supports tensorflow and pytorch formats.
+Our overall methodology is described in Figure \ref{fig:methodology-2}. %, which describes how we evaluate three different systems. 
+We pass the trained \ac{DNN} models through our tool, which then synthesizes the critical inputs and the perturbations for conducting \ac{RFDIA} (if they exist \karthik{This is confusing - perhaps we should just omit it as it's implicit, or say it once and not repeat it}). 
 
+Our tool currently supports tensorflow and pytorch formats. \karthik{Consistent capitalization, and citations please. Also, what do you mean by formats here ?}
+\karthik{Can we say something about the tool's implementation ? What language did we use ? How many loc is it ?}
 As explained in \ref{relusyn} the tool converts the \ac{DNN} to \ac{MILP} format and provides the critical inputs and the perturbations. 
 
+We used an 8-core system and ran the experiments on Gurobi such that it uses a single thread for running the experiments. \karthik{if we used a single thread, why does 
+	it matter how many threads it uses ? Also, we already said our tool in the methodology. Why do we repeat it ?}
 
-We used an 8-core system and ran the experiments on Gurobi such that it uses a single thread for running the experiments. 
-
-Using this approach the attacker can use \tool to synthesize the attacks and can mount the attacks on these systems in real-time by introducing noise in the physical and/or network communications as explained in Chapter ~\ref{attack}. 
-Our work focuses on synthesizing the attacks if they exist and not the latter part. 
-
-
+%Using this approach 
+The attacker can use \tool to synthesize the attacks, and can mount the attacks on these systems in real-time \karthik{Why real-time? }
+by introducing noise in the physical and/or network communications as explained in Chapter ~\ref{attack}. 
+Our work focuses on synthesizing the attacks if they exist and not the latter part. \karthik{This is obvious as well and should be removed}
 
 \begin{figure}
 	\centering
@@ -77,11 +79,12 @@ Our work focuses on synthesizing the attacks if they exist and not the latter pa
 \section{APS}
 %The APS model designed by Kushner et al. \cite{Dutta_Others__2018__Robust}\smi{add space here}is a data-driven model. The goal of the model is to predict future blood glucose values for the patients.
 APS is the running example that we have used throughout the paper. 
+\karthik{What information do we add below from the earlier description ? If nothing, then remove it. Otherwise, just focus on the new stuff.}
 APS model predicts the insulin value at a "lookahead" time $t + T$, using the history of the past $N$ glucose and insulin values with a step size of $h$. 
 The step size implies that the data is recorded after every $h$ seconds from the starting time. The inputs contain the past insulin values and glucose values by keeping the step size $h$ as 5 and the neural network builds the mapping between input and output values. It is a network with two hidden layers (with 8 neurons per layer), 74 inputs and one output that predicts the future insulin values. 
 
 %Attacks in the APS system.
-Using \tool, we can successfully synthesize attacks in less than a minute. 
+Using \tool, we can successfully synthesize attacks in less than a minute. \karthik{Can you put this number in context ? Is this good or bad ?}
 %The experiments that we conduct
 
 
@@ -267,9 +270,9 @@ Injecting more than the required amounts even if within the bounds is potentiall
 %Randomly changing inputs can trigger alarms in the system because it will raise the levels above the bounds enforced by specifications. We want to perturb the inputs in a stealthy way. The stealthiness is induced by finding the exact perturbations and to find those exact perturbations we need \tool. Brute force would require to search through the entire search space. We model the attack by including a $delta$ function in the inputs. 
 To locate the critical inputs we first perturb the inputs, one at a time, to induce small perturbations in the outputs as shown in Table ~\ref{summary} under the APS section and in more details in Table ~\ref{APS}. 
 We find that for different ranges of outputs, the critical inputs vary as shown in Table ~\ref{criticalinputs}. 
-We have included the critical inputs when we perturb only one input at a time since these are the most useful from an attackers' perspective, and also because of space reasons. 
-As we can observe in Table ~\ref{APS} as the number of perturbed inputs increases the possible combinations of critical inputs also increases. 
-
+We have only included the critical inputs where we perturb only one input at a time because these are the most useful from an attackers' perspective \karthik{why ?}, and also because of space constraints. 
+As we can observe in Table ~\ref{APS} as the number of perturbed inputs increases, the possible combinations of critical inputs also increases. \karthik{Duh ? Is this surprising ?} 
+\karthik{Can you point out 1-2 interesting attacks in the table that were found by the tool}
 
 
 %, For example, we find that when we perturb one input for an output range of 194-197, changing any one of these (40, 50, 61, 63, 66, 67, 72, 73) inputs by certain amounts will result in a successful  FDI \attack. Due to space reasons, we provide a summary of all combinations of attacks in Table II for APS. 
@@ -317,8 +320,6 @@ As we can observe in Table ~\ref{APS} as the number of perturbed inputs increase
 
 
 \section{ACAS Xu and HCAS}
-
-
 
 
 \begin{table}[h!]
@@ -731,20 +732,19 @@ Apart from the difference between the weights, bias and the number of layers, th
 
 %We conduct two random and targeted \attack \smi{this is singular but should perhaps be plural; good idea to skim the rest of the paper where \attack is used} in these systems, to understand how the systems\smi{this sentence is incomplete}
 The ACAS Xu is designed to model a large lookup table that maps sensor readings to the decisions based on the readings or advisories. 
-
 The geometry of the ACAS Xu is shown in Figure ~\ref{fig:acasxugeometry}.
-The ownship is the unmanned vehicle with the \ac{CA} system and the intruder's goal is to crash with the ownship. 
+The ownship is the unmanned vehicle with the \ac{CA} system and the intruder's goal \karthik{To be clear, this is different from the attacker?} is to crash with the ownship. 
 There are five sensor readings:  (1) Distance from ownship to intruder, (2) Angle to the intruder relative to ownship heading direction, (3) Header angle to intruder relative to ownship heading direction, (4) Speed of ownship, and (5) Speed of intruder.  
-The outputs represent five different possible advisories or decisions based on sensor readings: (1 )clear-of-conflict (COC), (2) weak right, (3) strong right, (4) weak left, and (5) strong right. 
-The advisories goals is to avoid crashes of the ownship with the intruder; incase the two are getting too close, an action is taken that moves the two apart. 
-Based on the inputs, the one with the least value is the advisory that is going to be the action to be taken by the system.  
+The outputs represent five different possible advisories or decisions based on sensor readings: (1) clear-of-conflict (COC), (2) weak right, (3) strong right, (4) weak left, and (5) strong right. 
+The advisories \karthik{I think you meant adversary. Also, please use apostrophes} goal is to avoid crashes of the ownship with the intruder; in case the two are getting too close, an action is taken that moves the two apart. 
+Based on the inputs, the one with the least value \karthik{Wait, the one here is input or the action ? Least value of what?} is the advisory that is going to be the action to be taken by the system.  
 
-
-We conduct two types of \ac{RFDIA} here: targeted and random, to understand how long it take to synthesize attacks. 
-In targeted attacks, the attacker specifically chooses an output that has to be minimized and have to have the smallest values of the five possible outcomes.
-This means that out of the five advisories listed above depending on the ownship and the intruder location that action is taken which moves the ownship away from the intruder and the one with the smallest value is the action supposed to be taken by the \ac{CA}.
+We conduct two types of \ac{RFDIA} here: targeted and random, to understand how long it take to synthesize attacks. \karthik{For \tool, correct?}
+In targeted attacks, the attacker specifically chooses an output that has to be minimized, and has to have the smallest values of the five possible outcomes.
+This means that out of the five advisories listed above, 
+%depending on the ownship and the intruder location that action is taken which moves the ownship away from the intruder, and \karthik{You just said this !}
+the one with the smallest value is the action supposed to be taken by the \ac{CA}.
 The \ac{HCAS} works in a similar way except that it takes in three inputs instead of five. %Also, as shown in Table 1, the parameters are different for ACAS Xu and HCAS. 
-
 
 \begin{figure}
 	\centering
@@ -755,7 +755,8 @@ The \ac{HCAS} works in a similar way except that it takes in three inputs instea
 
 \iffalse
 %Explain about the normalization layer
-The one feature about these systems that are different from the previous system which is the APS is that these systems consist of inputs and outputs normalization. These normalization are used to place bounds on how much the inputs can be perturbed by. To accommodate the normalization layer, we introduce certain heuristics that are deep network specific. %The normalization depends on the conditions that are introduced by the neural network.
+The one feature about these systems that are different from the APS system is that these systems consist of inputs and outputs normalization. These normalization are used to place bounds on how much the inputs can be perturbed by \karthik{Awkward phrasing - ending a sentence with a preposition. Say the maximum perturbation of the input instead}. To accommodate the normalization layer, we introduce certain heuristics that are deep network specific. 
+%The normalization depends on the conditions that are introduced by the neural network.
 \fi
 
 We conduct two categories of attacks in \ac{ACAS-Xu} and \ac{HCAS}:
@@ -771,8 +772,7 @@ The attacker's goal is to change the output in a way such that the minimum value
 To model this, we first add a delta value to the inputs as in our previous evaluation. 
 To do so, we add constraints that force the output to 5 instead of 4; the constraints look of the form "$05 < $(All other outputs)".
 
-
-Some combinations we experiment with are as follows:
+Other combinations we experiment with are as follows: \karthik{Why are you telling me this?}
 \begin{enumerate}
 	\item Targeted attack 1 = 03 $<$ 02 $<$ 01 $<$ 04 $<$ 05
 	\item Targeted attack 2 = 03 $<$ 02 $<$ 01 $<$ 05 $<$ 04
@@ -781,7 +781,7 @@ Some combinations we experiment with are as follows:
 \end{enumerate}
  
 The attacker can conduct various targeted attacks using the critical inputs as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu} through physical means. 
-
+\karthik{Again, can you point to 1-2 interesting attacks and how ReluSyn found them in the table ?}
 
 \begin{figure}
 	\centering
@@ -791,15 +791,15 @@ The attacker can conduct various targeted attacks using the critical inputs as s
 \end{figure}
 
 \subsection{FDI random attack} 
-Constructing random \ac{RFDIA} attacks is slightly less effort for the attacker as compared to targeted attacks; this is because the constraints in a targeted setting are much tighter. 
+
+Constructing random \ac{RFDIA} attacks takes slightly less effort for the attacker as compared to targeted attacks; this is because the constraints are much tighter in a targeted setting.
 Building on the previous example, if we have 5 inputs that give us the result as output 4, we need to perturb the inputs such that the output changes to any of the other possibilities such as output 1, output 2, output 3 and output 5.
-
-In this case, we try out multiple different combinations that allow us to find the perturbations as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu}.
-
+In this case, we try out \karthik{Did you mean you as the experimenter, attacker or the automated algorithm in \tool?} multiple different combinations that allow us to find the perturbations as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu}.
 
 
 \section{Summary}
-From our experimentation we conduct ~19,000 attacks for \ac{APS} out of which ~7200 attacks were successful and took less than 1 second. 
+\karthik{Much of this information seems to be presented for the first time, rather than a summary. Also, perhaps present it in a bulleted form as it's very dense.}
+We conduct a total of ~19,000 attacks for \ac{APS} out of which ~7200 attacks were successful and took less than 1 second. 
 We conducted ~30 \ac{HCAS} random attacks out of which ~20 were successful and the maximum amount taken by the attacks was 41 seconds. 
 We conducted ~7 targeted attacks for \ac{HCAS} out of which 1 attack was successful.
 We conducted ~140 \ac{ACAS-Xu} random attacks out of which ~32 were successful and the maximum amount taken by the attacks was 7228 seconds. 
@@ -807,9 +807,12 @@ We conducted ~16 targeted attacks for \ac{HCAS} out of which 2 attacks was succe
 These results are shown in Table ~\ref{summary}.
 
 Thus we can see that synthesizing \ac{RFDIA} attacks can be easily accomplished by the attacker in a small amount of time. 
-We have also tried out multiple different combinations of attacks keeping multiple attacker scenarios in mind and show that for systems such as \ac{APS} perturbing a single input out of the 74 inputs is enough to cause damage in Table ~\ref{APS}.
+We have also tried out multiple different combinations of attacks keeping multiple attacker scenarios in mind and show that for systems such as \ac{APS},
+ perturbing a single input out of the 74 inputs is enough to cause damage in Table ~\ref{APS}.
 Similarly for \ac{HCAS} and \ac{ACAS-Xu} we observe  from Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} that perturbing a single input in certain scenarios is enough to cause output deviation. 
+\karthik{I think this is an important finding and should be brought out in the corresponding sections where you present the attacks - you can also summarize it here}.
 
+\karthik{In the tables, do you really measure 5 decimal places for the time ? Is it necessary ?}
  \begin{table}[h!]
  	%\centering
  	\caption{Results Summary}
