@@ -1,14 +1,14 @@
 \chapter{Conclusion}
 \label{conclusion}
 
-In this section we leverage our insights that can be used to design robust \ac{DNN}s. 
+
 We discuss two main approaches that can help researchers or developers design error-free \ac{DNN}s. 
 We also discuss some limitations in our approach.
 Finally, we conclude and discuss some future work.
 
 
 \section{Designing Robust DNNs}
-From our experience in working with three different types of \ac{DNN} based CPS to attack the systems, we realized that there are two ways to construct or build robust \ac{DNN} based systems. 
+From our experience in attacking three different types of \ac{DNN} based CPS we realized that there are two ways to construct or build robust \ac{DNN} based systems. 
 The two things that help us in building our intuition were:
 \begin{enumerate}
 	\item Building and running the models on \ac{MILP} solvers helped us understand the power in terms of reasoning about \ac{DNN} based systems for observing non-obvious security properties such as ripples. 
@@ -19,25 +19,25 @@ The two things that help us in building our intuition were:
 \subsection{Effects of normalization and attacks}
 The biggest difference between \ac{APS} and \ac{ACAS-Xu} apart from the \ac{DNN} size was the robustness of the \ac{DNN}. 
 \ac{APS} has a fully-connected feed-forward architecture, where the network takes the inputs and passes them through the hidden layers to compute the output. 
-\ac{ACAS-Xu} is also a fully-connected \ac{DNN} however, it consists of one additional feature called normalization that we have defined in Chapter ~\ref{background}.
-Due to the additional feature in \ac{HCAS} and \ac{ACAS-Xu} inducing small changes in the input will not lead to \ac{RFDIA}; this means that we have to try out more combinations in our model to find if the attack exists. 
-This happens because the small perturbations during the \ac{FDIA} get masked due to the normalization layer; if we change the input value from $5$ to $10$ this will have little to no effect on the \ac{DNN} since the normalization layer normalizes a specific set of inputs to a value that lies between $0$ and $1$. 
-This means that we have to perturb by values large enough such that after normalization the change is significant enough to generate ripples. 
-We also observed that in a lot of cases despite large enough perturbation we were unable to generate \ac{RFDIA} in \ac{HCAS} and \ac{ACAS-Xu} as shown in Chapter ~\ref{evaluation}.
+\ac{ACAS-Xu} is also a fully-connected \ac{DNN} however, it includes normalization.
+This means that we have to try out more combinations of input variable perturbations to find if an attack exists. 
+Small perturbations during the \ac{FDIA} get masked due to the normalization layer; changing an input value from $5$ to $10$ has little to no effect on the \ac{DNN} if the normalization layer normalizes a range of inputs to a value between $0$ and $1$. 
+Thus we have to perturb by values large enough to induce a change in the normalized representation. 
+We also observed that in many cases, despite large enough perturbation we were unable to generate \ac{RFDIA} in \ac{HCAS} and \ac{ACAS-Xu} as shown in Chapter ~\ref{evaluation}.
 Intuitively due to the nature of the attacks based on the sizes of \ac{APS} and \ac{ACAS-Xu} we should have been able to generate significantly more \ac{RFDIA}; instead we observe that despite the bigger search space in \ac{HCAS} and \ac{ACAS-Xu} we found very few \ac{RFDIA} as compared to \ac{APS}. 
 
 
-Hence, our conclusion based on this observation is that including features such as normalization when designing a \ac{DNN} architecture can help by making it difficult for the attacker to attack the system. 
-It will not eliminate the possibilities of conducting attacks entirely but will relatively make the system more secure. 
+We believe that normalization makes it difficult for attacker to compromise the system. 
+It does not eliminate the possibility of conducting attacks entirely, but makes the system somewhat more secure. 
 
 \subsection{Effects of DNN size and attacks}
-\ac{APS} was relatively a much smaller system as compared to \ac{ACAS-Xu} and \ac{HCAS}.
+The \ac{APS} was a relatively smaller system compared to \ac{ACAS-Xu} and \ac{HCAS}.
 We observe that due to the smaller and much less complex nature of \ac{APS}, we are able to try out more combinations and hence are able to find more attacks. 
 Every attack in \ac{APS} takes less than a minute to generate if it exists or tell us if it does not; \ac{HCAS} and \ac{ACAS-Xu} on the other hand can take hours just to tell us that there is no attack. 
 This restricts and allows us to conduct a limited number of combinations to find attacks. 
-Hence, comparing between small systems such as \ac{APS}, and relatively bigger systems such as \ac{HCAS} and \ac{ACAS-Xu} we observe that due to the small system size we are able to generate more attacks and cover more combinations. 
-When we compare between \ac{HCAS} and \ac{ACAS-Xu} we observe a similar behavior; \ac{HCAS} took less time per attack and hence we were able to explore more space and find successful instances of attacks. 
-The reason we consider time an important factor is because if it takes 100 days to find an attack, the question there would be if it is really useful?
+Hence, comparing between small systems such as \ac{APS}, and relatively bigger systems, such as \ac{HCAS} and \ac{ACAS-Xu}, we observe that the small system size enables us to generate more attacks and cover more combinations. 
+When we compare \ac{HCAS} and \ac{ACAS-Xu} we observe a similar behavior; \ac{HCAS} took less time per attack and hence we were able to explore more space and find successful instances of attacks. 
+The reason we consider time an important factor is because if it takes 100 days to find an attack, attacks become more expensive to find. 
 Hence, our focus is not to generate the attack in seconds but our goal is to come to a reasonable trade-off between time and size to generate attacks. 
 
 Thus, based on our observations we can say that designing bigger systems can help make systems more secure but this is true given they are well trained since if a network is poorly trained no matter how big it is will not help secure it. 
@@ -62,15 +62,15 @@ This can be seen as trying to generate the datasets from a trained model that ca
 
 \section{ Limitations  and Future Work}
 
-There are 2 limitations that also paves way for future work based on our work. 
+There are 2 limitations that pave way for future work. 
 \begin{enumerate}
 	\item First, we are assuming that the attacker has read access to the weights and the bias of a \ac{DNN}.
 	However, in an ideal scenario it is difficult to obtain read access to weights and bias of safety-critical systems such as \ac{CA} systems since they protect their systems by security by obscurity for an attacker. 
 	Therefore, the attacker might need tools or techniques that allows them to attack the system without having knowledge about the internals of the network; also called as a black-box approach. 
 	This would mean that with a short amount (preferably a couple of hours) the attacker is able to attack a black box system and conduct \ac{RFDIA} or other attacks. 
 	\item Second, we observed that in complex \ac{DNN}s of our three systems, there were many cases when  \ac{ACAS-Xu} timed out and did not return us any results. 
-	The time out occurred because the search space for the appropriate input-output pair was very huge; also called as a state space explosion. 
-	However, we believe by adding more precise bounds and limiting the search space can significantly scale our approach. 
+	The time out occurred because the search space for the appropriate input-output pair was very huge. 
+	However, we believe adding more precise bounds and limiting the search space can significantly scale our approach. 
 	There is a possibility of designing clever heuristics for domain specific systems such as removing non required layers, pruning the \ac{DNN} appropriately, using algorithmic approaches to decrease time complexity of \ac{MILP} solvers. 
 	
 	\label{section:limitations}
