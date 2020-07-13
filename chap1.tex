@@ -3,20 +3,20 @@
 \label{ch:Chapter1}
 %\section{Introduction}
 %Para-1 - What are safety-critical cps? Some egs. of their existance in different applications. What are the damages they are capable of causing?
-\ac{CPS} are systems that perform computations by continuous interactions with the physical environment, and perform actions in the physical environment based on the computations.   
-They are increasingly being deployed for applications \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463} \cite{6051465} such as medical devices (e.g., insulin pumps and robotic surgery equipment), failures of which could be life threatening, and hence need high reliability. 
+\ac{CPS} are systems that perform computations by continuous interactions with the physical environment and perform actions in the physical environment based on the computations.   
+They are increasingly being deployed for applications \cite{10.1145/2038642.2038685}\cite{10.1145/1837274.1837463}\cite{6051465} such as medical devices (e.g., insulin pumps and robotic surgery equipment), failures of which could be life threatening and hence need high reliability. 
 The mission-critical aspect of \ac{CPS} makes them particularly attractive targets for an attacker. 
 There have been multiple attacks demonstrated in the \ac{CPS} in the past, though the information of most attacks is not publicly available \cite{doi:10.1080/13518040590969785}.
-One of the first reported targeted attacks was on a Supervisory Control and Data Acquisition (SCADA) system \cite{article22} at the Maroochy Shire Council’s sewage control system in Queensland, Australia, where the attacker caused more than 750,000 gallons of untreated sewage water to be released into parks, resulting in clean up damages of more than \$200,000 \cite{10.1016/j.adhoc.2009.04.012}.
+One of the first reported targeted attacks was on a Supervisory Control and Data Acquisition (SCADA) system \cite{article22} at the Maroochy Shire Council’s sewage control system in Queensland, Australia, where attacker caused more than 750,000 gallons of untreated sewage water to be released into parks, resulting in clean up damages of more than \$200,000 \cite{10.1016/j.adhoc.2009.04.012}.
 There have also been targeted attacks demonstrated on surgical robots \cite{7579758}, pacemakers\cite{4531149}, airplanes \cite{217595} and  cars \cite{10.5555/1929820.1929848}.
-Some targeted attacks demonstrated in these systems also utilized the glitches in the software to induce attacks without getting detected \cite{242054}. 
+Some targeted attacks demonstrated in these systems also utilized glitches in the software to induce attacks without getting detected \cite{242054}. 
 
 
 
-Traditionally, \ac{CPS} have used classical control theory-based models  \cite{1337806} \cite{10.1145/2038642.2038667} \cite{6051465} to calculate the next output for decision making. 
+Traditionally, \ac{CPS} have used classical control theory-based models \cite{6051465} \cite{1337806} \cite{10.1145/2038642.2038667}  to calculate the next output for decision making. 
 Based on classical control-theory, these systems model the physical world via differential equations. 
 For instance we can model model the movement of a self-driving car using equations that include parameters (or variables) such as road friction, wind speed and direction, and engine power. 
-Such models have low tolerance for perturbations in the values of these parameters because the equations account for a subset of all possible behaviors that can happen in reality. 
+Such models have low tolerance for perturbations in the values of these parameters, because the equations account for a subset of all possible behaviors that can happen in reality. 
 This behavior makes \ac{CPS} vulnerable to attacks that can exploit the limitations by injecting a false reading of a variable \cite{10.1145/1952982.1952995}. 
 Thus, an adversary can cause irreparable harm to such a system by injecting a false reading of a variable; such an attack is called an \ac{FDIA}.
  In an \ac{FDIA}, an attacker compromises the measurements from the sensors in a way that undetected errors are introduced in the outputs \cite{7438916} that control the object in the real world. 
@@ -24,32 +24,28 @@ Thus, an adversary can cause irreparable harm to such a system by injecting a fa
 
 
 Recently,  \ac{DNN} based controllers have replaced classical control-theory based controllers \cite{xiang18} \cite{Kocic2019} \cite{bechtel2017deeppicar}.  
-Techniques used to generate inputs to mount an FDIA attack for classical control theory based controllers are not directly applicable for DNNs.
-This is because the state space for DNN based systems is typically much bigger than classical control theory models. 
-In a conventional system, it is relatively easy to identify the function that maps changes in input values to changes in output values. 
-The reason behind this is that the control theory equations are well defined for different different modes for output prediction.
-However, in a \ac{DNN} the computation proceeds through multiple layers and the input-output mapping becomes opaque. 
-This is because the \ac{DNN} model is defined using the data-set, and needs to capture the behaviors for the \ac{CPS}.
+Techniques used to generate inputs to mount an FDIA attack for classical control theory based controllers are not directly applicable for DNNs, because the state space for DNN based systems is typically much larger that for classical control theory models. 
+In a conventional system, it is relatively easy to identify the function that maps changes in input values to changes in output values because the control theory equations are well defined for different modes of output prediction.
+However, in a \ac{DNN} the computation proceeds through multiple layers and the input-output mapping becomes opaque, because the \ac{DNN} model is a function of the training data-set.
 
 However, a motivated attacker can figure out how to conduct such attacks in a \ac{DNN} as we demonstrate in this thesis. 
 If we are to build systems to prevent or mitigate such attacks, we must understand the fundamental nature of these attacks. 
 This work takes a first step towards preventing such attacks by introducing a technique to synthesize such attacks. 
-We demonstrate a vulnerability in these systems by using our technique to synthesize a new class of attacks for DNN based controllers. 
+We demonstrate a vulnerability in these systems by using our technique to synthesize a new class of attacks for DNN based controllers that perturbs critical inputs to produce change in output. 
 We call these attacks \ac{RFDIA} as they are transmitted through the DNN's layers in the CPS like ripples in large puddles of water. 
-Much like the outward motion of waves in water when disturbed by dropping a stone, the perturbations introduced to the inputs to a DNN ripple through the layers until they reach the output layer. 
-To mount a successful \ac{RFDIA} attack on a DNN based controller, the attacker needs to distort an input to the extent that the effects of its perturbation reach the final layer in a DNN without triggering any alarms. 
+Much like the outward motion of waves in water when disturbed by dropping a stone, the perturbations introduced to the inputs of a DNN ripple through the layers until they reach the output layer. 
+To mount a successful \ac{RFDIA} attack on a DNN based controller, the attacker needs to distort an input to the extent that the effects of its perturbation reach the final layer in without triggering any alarms. 
 
 
 To mount a \ac{RFDIA}, the attacker needs to identify two things: 
 \begin{enumerate}
-	\item \textbf{The critical inputs}: To introduce a ripple, an attacker must identify inputs that can be perturbed (either together or in isolation) to cause a desirable change in the output (for the attacker).
-	\item \textbf{Perturbations for each critical input}: The attacker needs to identify the smallest perturbations that will trigger the desired change in output. 
+	\item \textbf{The critical inputs}: The inputs (for the attacker) that can be perturbed (either together or in isolation) to cause a desirable change in the output.
+	\item \textbf{Perturbations for each critical input}: The smallest perturbations that will trigger the desired change in output. 
 \end{enumerate}
 
 
-In this thesis, we propose an automated technique to mount an  \ac{RFDIA}.
-Our technique finds the \textit{critical inputs} and the \textit{minimal perturbations} to cause a successful \ac{RFDIA}. 
-We model attack synthesis as an optimization problem using \ac{MILP}, and build an automated tool \tool that identifies the critical inputs and finds the perturbations.
+We present an automated technique that finds the \textit{critical inputs} and the \textit{minimal perturbations} to cause a successful \ac{RFDIA}. 
+We model attack synthesis as an optimization problem using \ac{MILP} and build an automated tool \tool that identifies the critical inputs and finds the perturbations.
 {\em To the best of our knowledge, we are the first to  propose an automated approach to systematically identify the critical inputs and find the minimum perturbations to conduct a \ac{RFDIA} for DNN-based controller systems.
 }
 The main contributions in this work are as follows:
@@ -57,7 +53,7 @@ The main contributions in this work are as follows:
 \begin{enumerate}
 	\item Define and demonstrate a new class of attacks called \ac{RFDIA} for \ac{DNN} based \ac{CPS}. 
 	\item Model \ac{RFDIA} synthesis as an optimization problem (specifically as a \ac{MILP}). 
-	\item We demonstrate \ac{RFDIA} on three \ac{DNN} based \ac{CPS}:  An \ac{APS} and two air traffic control management systems called \ac{ACAS-Xu} and \ac{HCAS}.
+	\item Demonstrate \ac{RFDIA} on three \ac{DNN} based \ac{CPS}:  An \ac{APS} and two air traffic control management systems called \ac{ACAS-Xu} and \ac{HCAS}.
 	\item Evaluate \tool's performance and show that it can identify the critical inputs and perturbations \ac{RFDIA} in a short time period.  
 \end{enumerate}
 
@@ -65,18 +61,19 @@ The main results in this work are as follows:
 
 \begin{enumerate}
 	\item We exposed a new set of vulnerabilities in \ac{DNN} based systems. 
-	 We find ~7000, ~20, ~40 successful \ac{RFDIA} for \ac{APS}, \ac{HCAS} and \ac{ACAS-Xu} less than a second, 40 seconds, and 7000 seconds respectively. 
+	 We find ~7000, ~20, ~40 successful \ac{RFDIA} for \ac{APS}, \ac{HCAS} and \ac{ACAS-Xu} fewer than a second, 40 seconds, and 7000 seconds, respectively. 
 	\item We design attack specific cost functions to synthesize the attacks for the three evaluation systems.
-	\item We demonstrate the affects of introducing normalization layers in \ac{DNN} by showing they make \ac{DNN}s more robust. 
+	\item We demonstrate the affects of introducing normalization layers in \ac{DNN} by showing they make \ac{DNN}s more robust against \ac{RFDIA}.
 \end{enumerate}
 
 	
 %Thesis summary and organization
-We briefly discuss the relevant background such as \ac{CPS}, \ac{DNN}, and \ac{MILP} and describe our problem statement in Chapter ~\ref{background}.
-We provide a motivating example, and enlist the challenges encountered in automating the synthesis of these attacks in Chapter ~\ref{attack}.
-We formulate \ac{DNN} model and explain our synthesis approach in Chapter ~\ref{relusyn} which is followed by the evaluation of our technique on three case studies in Chapter ~\ref{evaluation}.
+We briefly discuss the relevant background such as \ac{CPS}, \ac{DNN}, and \ac{MILP} in Chapter ~\ref{background}, so we can then formally state the problem this thesis addresses. 
+We provide a motivating example, and identify the challenges encountered in automating the synthesis of these attacks in Chapter ~\ref{attack}.
+We formulate \ac{DNN} model and explain our synthesis approach in Chapter ~\ref{relusyn}, which is followed by the evaluation of our technique on three case studies in Chapter ~\ref{evaluation}.
 We discuss the related work section in Chapter ~\ref{relatedwork}.
-We end our thesis by concluding on our work, discussing some interesting points about using our technique to design robust \ac{DNN}s and listing the future work in this area in Chapter ~\ref{conclusion}.
+We conclude the thesis with a discussion of how to use our attack generation to design robust \ac{DNN}s and suggesting future work in ~\ref{conclusion}.
+
 
 
 
