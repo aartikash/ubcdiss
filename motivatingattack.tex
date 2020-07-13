@@ -17,32 +17,32 @@ A patient relies on  \ac{APS} to correctly determine the next dose of insulin to
 
 %How is APS constructed?
 The APS architecture is  the same as that discussed in Section ~\ref{apsdnn}. 
-We examine the \ac{APS} controller model from Dutta et al., which has a feed-forward architecture with $1$ hidden layers  with 74 inputs 
-The DNN for APS creates mappings between the insulin and the glucose values that allow for the prediction of future insulin values as shown in Figure ~\ref{fig:apsdnn}. 
-The insulin and the glucose values are the values collected from the sensors and the actuators. 
-The model has 74 inputs in total, where 32 inputs are the glucose, and the other 32  are insulin values collected every 5 minutes.
- The DNN layers use these values as inputs to predict the next value. 
+We examine the \ac{APS} controller model from Dutta et al., which has a feed-forward architecture with $2$ hidden layers and $50$ neurons each, 74 inputs and $1$ output. 
+The DNN for APS takes 32 glucose and insulin values discretized over time as inputs and produces the next insulin values as output as shown in Figure ~\ref{fig:apsdnn}. 
  This implies that the future value is predicted based on the inputs from the previous set of values. 
+The insulin and glucose values are collected from the sensors and the actuators. 
+
 
 
 %Defense mechanisms
-There are two phases in a \ac{DNN}s life; training phase and inference phase. 
+There are two phases in a \ac{DNN}s life; training and testing phase. 
 During the training phase, there are three \ac{DNN}s that are trained in an \ac{APS} to predict the next outcome. 
 The first \ac{DNN} is used to predict the next outcome. 
-The accompanying two \ac{DNN}s are for the purpose of designing defense mechanisms such that the patient is not overdosed with insulin.  
+The accompanying two \ac{DNN}s are for designing defense mechanisms to prevent the patient from an insulin overdose.  
 The two \ac{DNN}s are separate from its main decision making controller. 
-These \ac{DNN}s are trained based on the latest 30-day patient data which is collected from monitoring the patient, to understand the standard injections for a patient over time. 
+These \ac{DNN}s are trained based on the latest 30-day patient data, which is collected by monitoring the patient to understand the standard injections for a patient over time. 
 
 One \ac{DNN} learns a lower threshold on injection amount; the other learns an upper bound on injection amount. 
-Hence, for every time of the day based on the previous patient characteristic, the minimum and the maximum values are known. 
+Hence, for every time of the day, based on prior patient characteristic, the minimum and the maximum values are known. 
 However, the system will not detect  an adversary  who manages to always administer the maximum allowed dosage through \ac{RFDIA}. 
-Hence, the attacker needs to identify inputs and  perturb them  such that the output changes the maximum allowed dosage for every injection,
-  while being lower than the upper threshold to avoid detection, and cause maximum potential damage to the patient. 
+Hence, the attacker needs to identify inputs and  perturb them  such that the output administers maximum allowed dosage for every injection,
+  while being lower than the upper threshold to avoid detection. 
+  We further elaborate this in the next section. 
 
 
 \section{Attack Model}
-The attacker's goal is to manipulate the sensor measurements to conduct FDIAs without triggering alarms as shown in Figure ~\ref{fig:attackmodelphysical}. 
-The attacker can use network noise or physical means of sensor tampering to attack the systems ~\cite{10.1145/3319535.3339815}.
+The attacker's goal is to manipulate the sensor measurements to corrupt output without triggering alarms as shown in Figure ~\ref{fig:attackmodelphysical}. 
+The attacker can use network noise or physical sensor tampering to attack the systems ~\cite{10.1145/3319535.3339815}.
  
 \begin{figure}
 	\centering
@@ -53,42 +53,41 @@ The attacker can use network noise or physical means of sensor tampering to atta
 
 We assume that the attacker has following capabilities:
 \begin{enumerate}
-	\item The \ac{DNN}  architecture  is known to the attacker for example., a feed forward  network in case of an \ac{APS}. This information easy to find, as the architectures are  usually public information for the systems. 
-	\item  The weights and bias of the \ac{DNN}  architecture are known as well through a read-only access to the system.  
-	\item The attacker cannot modify the code of the system, but can modify the inputs to the model.
+	\item The attacker knows the precise \ac{DNN}  architecture. This information easy to find, as the architectures are  usually in documentation. 
+	\item  The weights and bias of the \ac{DNN}  are known as well through a read-only access to the system.  
+	\item The attacker can modify only the inputs to the model.
 	\item The \ac{DNN} contains ReLU as its activation function. %All three systems in this work contain ReLU.
 \end{enumerate}
 
 \subsection{Strawman attacker}
-A simple way to attack the system would be to change all the 74 values that are the inputs to the DNN.
- If all the inputs are changed, the final output prediction is going to be wrong. The problem in this particular scenario is that 
+A simple way to attack the system would be to change all the 74 inputs to the DNN.
+ If all the inputs are changed, the final output prediction is going to be wrong. The problem in this  scenario is that 
  these inputs are collected every five minutes from the sensors attached to the patient. 
- This means that the attacker will have to conduct FDIAs every five minutes when the data is being collected, to cause a change in the output. 
- However, this is quite tedious in a practical scenario and hence, the attacker needs a better way of attacking the system. 
+ This means that the attacker will have to conduct FDIAs every five minutes to cause a change in the output. 
+ However, this is quite tedious in practice scenario and hence, the attacker needs a better way to attack the system. 
 
 \subsection{Sophisticated Attacker}
-A more sophisticated approach to attack the system would be by perturbing one or two inputs out of the 74 inputs that cause a change in the output. There are two ways to proceed when the attacker tries to change just one or two inputs at a time. 
+A more sophisticated approach to attack the system would be by perturbing small number of inputs that cause a change in the output. 
+There are two ways to proceed are:
 
 \subsubsection{Attack 1}
-The attacker can randomly choose two inputs and perturb them by huge amounts. 
+The attacker can randomly choose two inputs and perturb them by large amounts. 
 This will indeed cause a wrong output prediction. 
-However, if the input is perturbed by large amount, the error detection mechanisms will recognize that there is an anomaly. 
-To prevent this the attacker can choose to perturb the two inputs by small amounts. 
-However, perturbing any two random inputs by very small amounts might not necessarily lead to a wrong output prediction as shown in Chapter ~\ref{evaluation}. 
+However, if the input is perturbed by a large amount, the error detection mechanisms will likely recognize that there is an anomaly. 
+To prevent this, the attacker can choose to perturb the two inputs by small amounts. 
+However, perturbing any two random inputs by small amounts might not necessarily lead to a wrong output prediction, as shown in Chapter ~\ref{evaluation}. 
 
 \subsubsection{Attack 2}
-Adding one more layer of sophistication, the attacker does not
-know the critical inputs or the input whose perturbation can lead to wrong predictions.
- This will be a more targeted approach for attacking the system since the input selection will not be random. 
+Adding one more layer of sophistication, the attacker carefully chooses the inputs that can lead to wrong predictions. 
+ This will be a more targeted approach for attacking the system since the input selection will not be random as before. 
 However, not knowing the precise amounts by which the critical inputs should be perturbed can lead to an unsuccessful attack. 
 If the perturbation is too high, it will trigger the error-detection mechanisms, 
 and if it is too low, it will not affect the output as shown in Chapter ~\ref{evaluation}. 
 
 \subsubsection{Attack 3}
-The most sophisticated means for an attacker to attack the system would be to know precisely which inputs to perturb and by what amounts,
- such that the output prediction is wrong. 
-To do so, the attacker needs an automated technique that in limited time, finds the critical inputs
- and also the smallest possible perturbations that can ensure a wrong output prediction. 
+The ideal attack would change a minimal number of inputs by the smallest amount possible to produce the desired change in output. 
+We demonstrate that it is possible to generate this kind of attack.
+ 
 
 %Our motivation for designing the technique were these different ways of attacking the system that can automatically synthesize attacks in an efficient way. 
 

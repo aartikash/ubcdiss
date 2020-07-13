@@ -120,7 +120,8 @@ A \ac{NN} consists of input, output and hidden layers.
 The layers are composed of nodes. Every computation occurs within in a node of a network.
 In the simplest case, there is a single neuron that takes all the inputs to produce an output, as shown in Figure 2.5. 
 All inputs to the node in Figure 2.5 are summed and  passed through an activation function. 
-The activation function introduces non-linearity in the network. 
+Activation function decides, whether a neuron should be activated or not by calculating weighted sum and further adding bias with it. The purpose of the activation function is to introduce non-linearity into the output of a neuron.
+A common activation function is the \ac{ReLU} function. 
 The node determines up to what extent the signal must progress to calculate the final output. 
 The final output depends on the network and can be in binary form or have a precise value associated with it. 
 
