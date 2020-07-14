@@ -45,10 +45,10 @@ There are three parties involved in designing and attacking \ac{CPS}. These are 
 
 \section{Cyber-Physical Systems}
 \ac{CPS} are systems that use sensor readings from the physical world to perform computations that produce changes in the physical  world.   
-As shown in Figure ~\ref{fig:systemsdescription} the sensors and actuators are the physical parts of the system. 
+As shown in Figure ~\ref{fig:systemsdescription}, the sensors and actuators are the physical parts of the system. 
 The sensors gather data from the physical environment and send it to the computational unit. 
-The computational unit is a controller, which makes decision, which is sent to the actuator which then physically performs the action.
-The physical and virtual contexts can either be humans in the loop or an automated mechanism.
+The computational unit is a controller, which makes decisions that are sent to the actuator, which in turn  physically performs the action.
+The physical and virtual contexts can either be humans in the loop or automated mechanisms.
 
 In the \ac{APS} shown in Figure ~\ref{fig:apsrig}, the sensor is the \ac{CGM} that is attached to the back of a patient to report blood glucose level.  
 \ac{RPi} is the computational part of the \ac{APS}, and the insulin pump is the actuator. 
@@ -104,7 +104,7 @@ The move from equation-based models to DNNs for modeling \ac{CPS} behavior has b
 	For instance, they contain separate models for image recognition and lane detection that continuously interact with each other to decide the next best course of action.
 	
 	\item Sarabakha et al. \cite{sarabakha2019online} show that using a \ac{DNN} based controller for a quadcopter leads to better decision making in unspecified cases compared to control theory models.
-	This is due to the \ac{DNN}s ability to adapt to different situations in contrast to the fixed nature of conventional control theory. 
+	This is due to the \ac{DNN}'s ability to adapt to different situations in contrast to the fixed nature of conventional control theory. 
 	Hence, in cases when the trajectories or situations cannot be precisely modeled, the \ac{DNN} is likely to be more effective. 
 \end{enumerate}
 
@@ -132,14 +132,14 @@ The information flows only forward from input through layer to outputs \cite{Zel
 The classical controller model is being replaced by such DNN based controllers for CPS as shown in  Figure 2.6.
 The \ac{DNN} for \ac*{CPS} is trained using the data gathered from conventional control equations. 
 One example is the DNN based controller designed by Dutta et al. \cite{Dutta_Others__2018__Robust}. 
-Dutta et al. model robust DNN using available patient data to predict the output for an insulin pump.
-Their controller design is for providing a data-driven approach for an artificial pancreas system (APS), which is also our first system for evaluation. 
+Dutta et al. model a robust DNN using available patient data to predict the output for an insulin pump.
+Their controller design is for providing a data-driven approach for an artificial pancreas system (APS), which is also our first system used for evaluation. 
 
 We evaluate two other systems called \ac{CA} systems for unmanned vehicles \cite{7778055} called \ac{HCAS} and \ac{ACAS-Xu}: both \ac{CA} systems are bigger in size (number of nodes and layers) and have a complex architecture in as compared to \ac{APS}.
 
 
 %Normalization layers in DNN
-\ac{DNN}s also consist of a feature called normalization in their layers. . 
+\ac{DNN}s also consist of a feature called normalization in their layers.  
 Normalization is a common feature engineering method where all the inputs are brought to standard scale since different set of inputs can be in different ranges. 
 This is important in \ac{DNN}s for reasons explained by  LeCun et al.  \cite{10.5555/645754.668382}.
 %The first reason is trivial as computations on a bounded range of numbers prevent some numerical inaccuracies and limit the computational power required. The second reason is that some machine learning algorithms can handle that data better when it is normalized. There are several approaches to normalization of the data.
@@ -191,7 +191,7 @@ When we refer to \ac{DNN} complexity in this thesis, we are referring to differe
 \label{milp}
 We present a general structure that is required for building a \ac{LP} \ac{MILP} model.
 \ac{MILP} is a \ac{LP} where some of the variables are restricted to be integers. 
-The reason we are introducing the notion of \ac{MILP} is because we use the modeling techniques underlying \ac{MILP} to model \ac{DNN}s and systematically reason about them in different scenarios with minimal effort. 
+We introduce the notion of \ac{MILP} because we use the underlying techniques to model \ac{DNN}s, and systematically reason about them in different scenarios with minimal effort. 
 An \ac{LP} is characterized by the following components. 
 
 \begin{enumerate}
@@ -224,7 +224,7 @@ As this is a linear model, so non-linear terms, for instance, multiplication of 
 We simplify the \ac{DNN} by modeling it as a \ac{MILP} which we will elaborate more in Chapter ~\ref{evaluation}.  
 
 There are multiple tools that build \ac{MILP} models such as Cplex ~\cite{cplex}, and Gurobi ~\cite{gurobi}.
-Both are widely used tools; however, we choose Gurobi for our purpose due to a more intuitive interface.  
+Both are widely used tools; however, we choose Gurobi for our work due to its more intuitive interface.  
 
 
 
