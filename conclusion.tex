@@ -2,67 +2,65 @@
 \label{conclusion}
 
 
-We discuss two main approaches that can help researchers or developers design error-free \ac{DNN}s. 
-We also discuss some limitations in our approach.
-Finally, we conclude and discuss some future work.
+Based on our results, we discuss two approaches that can help researchers and developers design error-free \ac{DNN}s. 
+We also discuss some limitations of our approach.
+Finally, we conclude, and discuss potential future work.
 
 
 \section{Designing Robust DNNs}
-From our experience in attacking three different types of \ac{DNN} based CPS we realized that there are two ways to construct or build robust \ac{DNN} based systems. 
+From our experience in attacking three different types of \ac{DNN} based CPS, there are two ways to construct or build robust \ac{DNN} based systems.
+
 The two things that help us in building our intuition were:
 \begin{enumerate}
-	\item Building and running the models on \ac{MILP} solvers helped us understand the power in terms of reasoning about \ac{DNN} based systems for observing non-obvious security properties such as ripples. 
-	\item Attacking three practical systems helped  us come to a realization how to design robust \ac{DNN}  by adding layers of complexity to \ac{DNN}. 
+	\item Building and running the models on \ac{MILP} solvers helped us understand the power in terms of reasoning about \ac{DNN} based systems for exposing vulnerabilities in form of \ac{RFDIA}. 
+	\item Attacking three practical systems helped us come to a realization how to design robust \ac{DNN} by adding layers of complexity to \ac{DNN} since the some architectures are more secure than other. 
 \end{enumerate}
 
 
 \subsection{Effects of normalization and attacks}
 The biggest difference between \ac{APS} and \ac{ACAS-Xu} apart from the \ac{DNN} size was the robustness of the \ac{DNN}. 
 \ac{APS} has a fully-connected feed-forward architecture, where the network takes the inputs and passes them through the hidden layers to compute the output. 
-\ac{ACAS-Xu} is also a fully-connected \ac{DNN} however, it includes normalization.
-This means that we have to try out more combinations of input variable perturbations to find if an attack exists. 
+\ac{ACAS-Xu} is also a fully-connected \ac{DNN}; however, it includes normalization.
+This means that \tool has to try out more combinations of input variable perturbations to find if an attack exists. 
 Small perturbations during the \ac{FDIA} get masked due to the normalization layer; changing an input value from $5$ to $10$ has little to no effect on the \ac{DNN} if the normalization layer normalizes a range of inputs to a value between $0$ and $1$. 
-Thus we have to perturb by values large enough to induce a change in the normalized representation. 
-We also observed that in many cases, despite large enough perturbation we were unable to generate \ac{RFDIA} in \ac{HCAS} and \ac{ACAS-Xu} as shown in Chapter ~\ref{evaluation}.
-Intuitively due to the nature of the attacks based on the sizes of \ac{APS} and \ac{ACAS-Xu} we should have been able to generate significantly more \ac{RFDIA}; instead we observe that despite the bigger search space in \ac{HCAS} and \ac{ACAS-Xu} we found very few \ac{RFDIA} as compared to \ac{APS}. 
+Thus, we have to perturb the inputs by values large enough to induce a change in the normalized representation. 
+We also observed that in many cases, despite large enough perturbation, we were unable to generate \ac{RFDIA} in \ac{HCAS} and \ac{ACAS-Xu} as shown in Chapter ~\ref{evaluation}.
+Intuitively, based on the sizes of \ac{APS} and \ac{ACAS-Xu} we should have been able to generate significantly more \ac{RFDIA} than \ac{APS}; instead we observe that despite the bigger search space in \ac{HCAS} and \ac{ACAS-Xu} we found very few \ac{RFDIA} as compared to \ac{APS}. 
 
-
-We believe that normalization makes it difficult for attacker to compromise the system. 
-It does not eliminate the possibility of conducting attacks entirely, but makes the system somewhat more secure. 
+Therefore, we believe that normalization makes it difficult for the attacker to compromise the system via \ac{RFDIA}. 
+It does not eliminate the possibility of conducting \ac{RFDIA} entirely, but makes the system more secure against them. 
 
 \subsection{Effects of DNN size and attacks}
 The \ac{APS} was a relatively smaller system compared to \ac{ACAS-Xu} and \ac{HCAS}.
-We observe that due to the smaller and much less complex nature of \ac{APS}, we are able to try out more combinations and hence are able to find more attacks. 
-Every attack in \ac{APS} takes less than a minute to generate if it exists or tell us if it does not; \ac{HCAS} and \ac{ACAS-Xu} on the other hand can take hours just to tell us that there is no attack. 
-This restricts and allows us to conduct a limited number of combinations to find attacks. 
+We observe that due to much less complex nature of \ac{APS}, \tool is able to try out more combinations and hence are able to find more attacks. 
+Every attack in \ac{APS} takes less than a minute to generate if it exists, or to tell us no attacks are possible; 
+\ac{HCAS} and \ac{ACAS-Xu}, on the other hand can take hours, just to tell us that there is no attack or to find attacks if they do exist.
+This restricts us in terms of exploring all possible combinations and hence selectively choosing the a subset of all combinations. 
 Hence, comparing between small systems such as \ac{APS}, and relatively bigger systems, such as \ac{HCAS} and \ac{ACAS-Xu}, we observe that the small system size enables us to generate more attacks and cover more combinations. 
 When we compare \ac{HCAS} and \ac{ACAS-Xu} we observe a similar behavior; \ac{HCAS} took less time per attack and hence we were able to explore more space and find successful instances of attacks. 
 The reason we consider time an important factor is because if it takes 100 days to find an attack, attacks become more expensive to find. 
 Hence, our focus is not to generate the attack in seconds but our goal is to come to a reasonable trade-off between time and size to generate attacks. 
 
-Thus, based on our observations we can say that designing bigger systems can help make systems more secure but this is true given they are well trained since if a network is poorly trained no matter how big it is will not help secure it. 
+Thus, based on our observations we can say that designing bigger systems can help make systems more secure given the other aspects of the \ac{DNN} are similar to our evaluation systems. 
+\newline
+\newline 
+\newline 
+Thus keeping the above two principles in mind, adding normalization and increasing the complexity in the \ac{DNN} can significantly help the \ac{DNN}s be more secure. 
 
 
-
-
-\subsection{Summary}
-Thus keeping the above two principles in mind, adding normalization and having certain level of complexity in the \ac{DNN} can significantly help the \ac{DNN}s be more secure. 
-This will obviously not work in every situation because the \ac{DNN} might have other flaws but it is good to keep this in mind when designing networks especially for safety-critical systems. 
-
-\section{Debugging existing DNN using \tool}
-In our work we used \tool to generate attacks for trained \ac{DNN}s that also tell us if in a particular setting an attack does not exist. 
-However, instead of trying to find attacks in the \ac{DNN} we can also use \tool in a slightly different way which is for debugging; it means that we can conduct an input-output pair generation to study if there are some abnormal pairs that are being generated. 
-This can be seen as trying to generate the datasets from a trained model that can be used to understand the corner cases; cases can help the designers or researchers to understand how to modify the training data such that they can improve a \ac{DNN} performance by adding or removing from the datasets. 
-
+\subsection{Debugging existing DNN using \tool}
+In our work, we proposed \tool to generate attacks for trained \ac{DNN}s that also tell us if in a particular setting, no attacks exist. 
+However, instead of trying to find attacks in the \ac{DNN}, we can also use \tool for debugging; it means that we can conduct an input-output pair generation to study if there are some wrong pairs based on the application that are being generated. 
+This can be seen as trying to generate the datasets from a trained model that can be used to understand the corner cases; cases can help the designers or researchers to understand how to modify the training data such that they can improve a \ac{DNN} performance by adding or removing from the datasets.
+In an \ac{APS} by using \ac{tool} we can generate all combinations of input-output pairs and observe if at the boundary values there exist some wrong predictions. 
 
 
 
 
 
+\section{ Limitations}
 
-\section{ Limitations  and Future Work}
-
-There are 2 limitations that pave way for future work. 
+There are 2 limitations of \tool that pave way for future work. 
 \begin{enumerate}
 	\item First, we are assuming that the attacker has read access to the weights and the bias of a \ac{DNN}.
 	However, in an ideal scenario it is difficult to obtain read access to weights and bias of safety-critical systems such as \ac{CA} systems since they protect their systems by security by obscurity for an attacker. 
@@ -77,42 +75,47 @@ There are 2 limitations that pave way for future work.
 	
 \end{enumerate}
 
-
-
+\section{ Future Work}
 
 Finally, we believe that there are many more extensions that can be done with \tool. 
 \begin{enumerate}
 	\item First, it can be extended for multiple different application domains to find attacks.
-	For instance \ac{AV} have multiple stacks of \ac{DNN}s to compute the output and \tool can be utilized to find attacks in multiple \ac{DNN}s.
-	\item Second, one can try and model cost functions for an attack model different from ours and use our insights to generate attacks.
+	For instance \ac{AV} such as self-driving cars have multiple stacks of \ac{DNN}s to compute the output, and \tool can be utilized to find attacks in multiple \ac{DNN}s. 
+	This will require an extension in \tool to accommodate multiple \ac{DNN}s to be analyzed together and be tested for \ac{RFDIA} or any other attack unlike in our current work where we analyze one \ac{DNN} at a time. 
+	\item Second, one can model cost functions for an attack model different from ours and use our insights to generate attacks. 
 	This is because the modeling of the \ac{DNN} and \tool can be easily reused by integrating with different attack specific cost functions. 
+	Currently there are a lot of unexplored vulnerabilities that exist in \ac{DNN}-based \ac*{CPS} thus one can use \tool to model new vulnerabilities. 
 \end{enumerate}
 
 
 \section{Conclusion}
-We demonstrate \tool, which is based on generating \attack using backend \ac{MILP} solvers. 
+
+
+Our goal is to understand if the  \ac*{RFDIA} in classical control theory can also be applied to a \ac{DNN} to expose new vulnerabilities.
+
+We demonstrate \tool, which is based on generating \attack using back-end \ac{MILP} solvers. 
 
 We address the two main challenges in synthesizing \attack: 
 \begin{enumerate}
 	\item Locating the critical inputs: 
 	
-	\item finding the smallest perturbations for critical inputs to conduct \attack.
+	\item Finding the smallest perturbations for critical inputs to conduct \attack.
 	
 \end{enumerate}
 To locate the critical inputs, we model a cost function and add $delta$ variable to the inputs and minimize the $delta$. 
-This tells the attacker changing the minimal set of inputs by smallest possible amounts will result in wrong output predictions.
+This helps the attacker in identifying the minimal set of inputs which by perturbing by the smallest amounts can result in wrong output predictions. 
 
 Based on our experiments, we conclude that:
 
 \begin{enumerate}
-	\item The first observation is that it is easier (in terms of time) to find attacks on small-sized DNN based CPS. 
+	\item The first observation is that it is faster to find attacks on small-sized DNN based CPS. 
 	APS took less than a second for finding an attack whereas ACAS Xu took as high as 5 hours and timed out for certain constraints. 
 	
 	\item We found fewer attacks in ACAS Xu as compared to APS indicating  that ACAS Xu is a more robustly designed network due to the existence of normalization that makes it difficult to generate ripples. 
 	Hence, it is possible to design robust \ac{DNN} while designing the architectures by integrating such features. 
 	
-	\item Finally, we observe that the choice of the cost function and the intervals affects the state explosion of the system. 
-	If there is a minimization function on the input perturbations, it takes much longer to compute and can also lead to state-space in certain cases as comparing with other function. 
+	\item Finally, we observe that the choice of the cost function and range analysis can help scale our technique. 
+	If there is a minimization function on the input perturbations, it takes much longer to compute.
 \end{enumerate}
 
 
