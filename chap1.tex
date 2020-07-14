@@ -25,22 +25,22 @@ Thus, an adversary can cause irreparable harm to such a system by injecting a fa
 
 Recently,  \ac{DNN} based controllers have replaced classical control-theory based controllers \cite{xiang18} \cite{Kocic2019} \cite{bechtel2017deeppicar}.  
 Techniques used to generate inputs to mount an FDIA attack for classical control theory based controllers are not directly applicable for DNNs, because the state space for DNN based systems is typically much larger that for classical control theory models. 
-In a conventional system, it is relatively easy to identify the function that maps changes in input values to changes in output values because the control theory equations are well defined for different modes of output prediction.
-However, in a \ac{DNN} the computation proceeds through multiple layers and the input-output mapping becomes opaque, because the \ac{DNN} model is a function of the training data-set.
+In a conventional system, it is relatively easy to identify the function that maps changes in input values to changes in output values, because the control theory equations are well defined for different modes of output prediction.
+However, in a \ac{DNN} the computation proceeds through multiple layers and hence the input-output mapping becomes opaque, because the \ac{DNN} model is a function of the training data-set.
 
 However, a motivated attacker can figure out how to conduct such attacks in a \ac{DNN} as we demonstrate in this thesis. 
 If we are to build systems to prevent or mitigate such attacks, we must understand the fundamental nature of these attacks. 
-This work takes a first step towards preventing such attacks by introducing a technique to synthesize such attacks. 
-We demonstrate a vulnerability in these systems by using our technique to synthesize a new class of attacks for DNN based controllers that perturbs critical inputs to produce change in output. 
+This work takes a first step towards preventing such attacks by introducing an {\em automated technique} to synthesize such attacks. 
+
+We demonstrate a vulnerability in these systems \karthik{many vulnerabilities, correct?} by using our technique to synthesize a new class of attacks for DNN based controllers that perturbs critical inputs to produce changes in output. 
 We call these attacks \ac{RFDIA} as they are transmitted through the DNN's layers in the CPS like ripples in large puddles of water. 
 Much like the outward motion of waves in water when disturbed by dropping a stone, the perturbations introduced to the inputs of a DNN ripple through the layers until they reach the output layer. 
-To mount a successful \ac{RFDIA} attack on a DNN based controller, the attacker needs to distort an input to the extent that the effects of its perturbation reach the final layer in without triggering any alarms. 
-
+To mount a successful \ac{RFDIA} attack on a DNN based controller, the attacker needs to distort an input such \karthik{should we say maximally distort?} that the effects of its perturbation reach the final layer, without triggering any alarms. 
 
 To mount a \ac{RFDIA}, the attacker needs to identify two things: 
 \begin{enumerate}
 	\item \textbf{The critical inputs}: The inputs (for the attacker) that can be perturbed (either together or in isolation) to cause a desirable change in the output.
-	\item \textbf{Perturbations for each critical input}: The smallest perturbations that will trigger the desired change in output. 
+	\item \textbf{Perturbations for each critical input}: The smallest perturbations that will trigger the desired change in output. \karthik{Say why it should be smallest here}
 \end{enumerate}
 
 
@@ -54,16 +54,16 @@ The main contributions in this work are as follows:
 	\item Define and demonstrate a new class of attacks called \ac{RFDIA} for \ac{DNN} based \ac{CPS}. 
 	\item Model \ac{RFDIA} synthesis as an optimization problem (specifically as a \ac{MILP}). 
 	\item Demonstrate \ac{RFDIA} on three \ac{DNN} based \ac{CPS}:  An \ac{APS} and two air traffic control management systems called \ac{ACAS-Xu} and \ac{HCAS}.
-	\item Evaluate \tool's performance and show that it can identify the critical inputs and perturbations \ac{RFDIA} in a short time period.  
+	\item Evaluate \tool's performance and show that it can identify the critical inputs and perturbations for mounting an \ac{RFDIA} in a short time period.  
 \end{enumerate}
 
 The main results in this work are as follows:
 
 \begin{enumerate}
 	\item We exposed a new set of vulnerabilities in \ac{DNN} based systems. 
-	 We find ~7000, ~20, ~40 successful \ac{RFDIA} for \ac{APS}, \ac{HCAS} and \ac{ACAS-Xu} fewer than a second, 40 seconds, and 7000 seconds, respectively. 
-	\item We design attack specific cost functions to synthesize the attacks for the three evaluation systems.
-	\item We demonstrate the affects of introducing normalization layers in \ac{DNN} by showing they make \ac{DNN}s more robust against \ac{RFDIA}.
+	 We find ~7000, ~20, ~40 successful \ac{RFDIA} for \ac{APS}, \ac{HCAS} and \ac{ACAS-Xu} in fewer than 1 second, 40 seconds, and 7000 seconds, respectively. 
+	\item We design attack specific cost functions to synthesize the attacks for the three systems.
+	\item We demonstrate the affects of introducing normalization layers in \ac{DNN} by showing they make \ac{DNN}s more robust against \ac{RFDIA}. \karthik{I think it's a bit of a stretch to say we demonstrate this as we didn't do a targeted experiment with normalization. Perhaps tone it down and say we 'hypothesize' instead.}
 \end{enumerate}
 
 	
