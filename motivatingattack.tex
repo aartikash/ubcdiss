@@ -25,15 +25,15 @@ The insulin and glucose values are collected from the sensors and the actuators.
 
 
 %Defense mechanisms
-There are two phases in a \ac{DNN}s life; training and testing phase. 
+There are two phases in a \ac{DNN}'s life; training and testing phase. 
 During the training phase, there are three \ac{DNN}s that are trained in an \ac{APS} to predict the next outcome. 
 The first \ac{DNN} is used to predict the next outcome. 
-The accompanying two \ac{DNN}s are for designing defense mechanisms to prevent the patient from an insulin overdose.  
+The accompanying two \ac{DNN}s are used as defense mechanisms to prevent the patient from an insulin overdose.  
 The two \ac{DNN}s are separate from its main decision making controller. 
 These \ac{DNN}s are trained based on the latest 30-day patient data, which is collected by monitoring the patient to understand the standard injections for a patient over time. 
 
 One \ac{DNN} learns a lower threshold on injection amount; the other learns an upper bound on injection amount. 
-Hence, for every time of the day, based on prior patient characteristic, the minimum and the maximum values are known. 
+Hence, for every time of the day, based on prior patient characteristics, the minimum and the maximum values are known. 
 However, the system will not detect  an adversary  who manages to always administer the maximum allowed dosage through \ac{RFDIA}. 
 Hence, the attacker needs to identify inputs and  perturb them  such that the output administers maximum allowed dosage for every injection,
   while being lower than the upper threshold to avoid detection. 
@@ -53,10 +53,11 @@ The attacker can use network noise or physical sensor tampering to attack the sy
 
 We assume that the attacker has following capabilities:
 \begin{enumerate}
-	\item The attacker knows the precise \ac{DNN}  architecture. This information easy to find, as the architectures are  usually in documentation. 
+	\item The attacker knows the precise \ac{DNN}  architecture. This information easy to find, as the architectures are  usually specified in the  documentation. 
 	\item  The weights and bias of the \ac{DNN}  are known as well through a read-only access to the system.  
 	\item The attacker can modify only the inputs to the model.
-	\item The \ac{DNN} contains ReLU as its activation function. %All three systems in this work contain ReLU.
+	\item The \ac{DNN} contains ReLU as its activation function. \karthik{This is not a capability of the attacker, but rather is an assumption we make. So move it to a separate paragraph.}
+	%All three systems in this work contain ReLU.
 \end{enumerate}
 
 \subsection{Strawman attacker}
@@ -64,11 +65,11 @@ A simple way to attack the system would be to change all the 74 inputs to the DN
  If all the inputs are changed, the final output prediction is going to be wrong. The problem in this  scenario is that 
  these inputs are collected every five minutes from the sensors attached to the patient. 
  This means that the attacker will have to conduct FDIAs every five minutes to cause a change in the output. 
- However, this is quite tedious in practice scenario and hence, the attacker needs a better way to attack the system. 
+ However, this is quite tedious in practice, and hence the attacker needs a better way to attack the system. 
 
 \subsection{Sophisticated Attacker}
 A more sophisticated approach to attack the system would be by perturbing small number of inputs that cause a change in the output. 
-There are two ways to proceed are:
+There are two ways to proceed:
 
 \subsubsection{Attack 1}
 The attacker can randomly choose two inputs and perturb them by large amounts. 

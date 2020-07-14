@@ -7,17 +7,17 @@ There are three challenges in the design of this technique.
 
 \subsection{Selecting  the automated technique}
 The first part is choosing an abstraction that allows the attacker to model a DNN and find critical inputs. 
-There are multiple possible approaches such as SMT solvers, symbolic execution and MILP.
+There are multiple possible approaches such as SMT \karthik{Did we expand this earlier?} solvers, symbolic execution and MILP.
 
 We desire a model that is
 \begin{enumerate}
 	\item General: \ac{APS} has an architecture that %despite being similar to our other evaluated systems 
 	is quite different from that of an air control traffic management system (\ac{ACAS-Xu} and \ac{HCAS}) as observed from Table 6.1.
 	This is due to the difference in the application domain and the \ac{DNN} architecture design. 
-	\ac{APS} is a medical system that consists of a standard feed-forward network without normalization; \ac{ACAS-Xu} normalizes it's inputs by scaling them to a range of {0-1} which makes it difficult to perturb the inputs. 
-	To accommodate normalization, we have to additional details in our abstraction.  
+	\ac{APS} is a medical system that consists of a standard feed-forward network without normalization; \ac{ACAS-Xu} normalizes its inputs by scaling them to a range of {0-1}, which makes it difficult to perturb the inputs. 
+	To accommodate normalization, we need additional details in our abstraction.  
 	Hence, we want an abstraction that supports different architectures. 
-	\item Scalable: The fully-connected \ac{APS} \ac{DNN} consists of $2$ hidden layers with $50$ neurons each which basically means that there are $2800$ ($50x5 + 50x50 + 50x1$) connections in total.
+	\item Scalable: The fully-connected \ac{APS} \ac{DNN} consists of $2$ hidden layers with $50$ neurons each which basically means that there are $2800$ ($50*5 + 50*50 + 50*1$) connections in total.
 	On the other hand, \ac{ACAS-Xu} consists of 5 hidden layers with 50 neurons each, for $10,500$ total connections. 
 	Hence, we need a technique that is scalabe to complex systems. 
 	
@@ -29,21 +29,21 @@ We desire a model that is
 \subsection{ Mapping  Mixed-Integer Linear Programming Model to Deep Neural Networks}
 
 DNN architectures are quite complex making it difficult to extract direct mappings from inputs to outputs. 
-\ac{DNN}s  mathematical structure contains multiple layers, which is the first layer of complexity, and the non-linearity introduced due to the activation functions within the network add another layer of complexity for modeling in \ac{MILP}  that we elaborate below. 
-The complexity arises due to 
+A \ac{DNN}'s  mathematical structure contains multiple layers, which is the first layer of complexity. The non-linearity introduced due to the activation functions within the network adds another layer of complexity for modeling in \ac{MILP}  that we elaborate below. 
+The complexity arises due to 2 factors.
 \begin{enumerate}
 	\item The mutliple layers in \ac{DNN}.
-	ac{APS} has two layers as explained in Chapter 3 and has 50 neurons each. 
+	\ac{APS} has two layers as explained in Chapter 3
+	\karthik{Check reference}  with 50 neurons each. 
 	\item The non-linearity  of the activation function. 
 	Non-linear terms are not allowed in \ac{MILP} modeling \cite{gnonlinearity}
 \end{enumerate}
 
-
-We formalize \ac{DNN} as set of equations.
+We formalize \ac{DNN} as sets of equations.
 We use these equations to build \ac{MILP} models by adding constraints on the variables. 
-We handle the non-linear activation function by representing it as a piecewise linear function that can be represented as a \ac{MILP} model. 
+We handle the non-linear activation function by representing it as a piecewise linear function that can be expressed as a \ac{MILP} model. 
 We tackle the non-linearity of activation functions by defining them as piece-wise linear functions, which we demonstrate for the ReLU activation function.
-We chose ReLU as it is used in all of our evaluation systems. 
+We chose ReLU as it is used in all 3 systems we use for evaluation. 
 
 \subsection{Modeling cost function}
 The goal of the cost function is to minimize or maximize the linear constraints that represents the \ac{DNN} architecture and produce an optimization problem. 
