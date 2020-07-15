@@ -20,8 +20,8 @@ They also come from two rather different domains: medical devices and autonomous
 			%$\alpha$ & $\beta$ & $\gamma$ & $\gamma$ \\
 			\hline
 			\textbf{Size of the networks} &  &  &  \\
-			Number of inputs &  74&   5&  5\\
-			Number of hidden layers &  2&  3&  3\\
+			Number of inputs &  74&   3&  5\\
+			Number of hidden layers &  2&  6&  7\\
 			Neurons/Layer &  8&  25 & 50 \\
 			Number of outputs & 1&  5& 5\\
 			\hline
@@ -43,42 +43,38 @@ They also come from two rather different domains: medical devices and autonomous
 
 We chose safety-critical applications for evaluating our approach. 
 Our first application was inspired by the open-source system called openAPS.
-Dutta et al. \cite{10.1007/978-3-319-99429-1_11} proposed a DNN for APS that takes in 74 inputs by discretizing time.
-The second and third systems are modeling a collision avoidance (CA) system; it is a automatic system designed for unmanned vehicles  
-The researchers proposed ACAS Xu standards that are tailored for threat CA logic and horizontal logic \cite{7778055}. 
+Dutta et al. \cite{10.1007/978-3-319-99429-1_11} proposed a DNN for APS that takes in 74 inputs as explained in Section ~\ref{aps}.
+The second and third systems are modeling a collision avoidance (CA) system; an automatic system designed for unmanned vehicles  
+The researchers proposed ACAS Xu standards \cite{7778055}. 
 These standards were implemented in \ac{ACAS-Xu} \ac{DNN}.
 There are 45 DNNs that together make up the collision avoidance system \cite{Julian_2019}.  
-Julian et al. \cite{Julian_2019} proposed a DNN compression for ACAS by representing large data tables in the form of DNNs. ACAS Xu dataset is currently proprietary and hence we did not have access to it. But for our tool, the trained model is enough to synthesize \ac{FDIA}. \ac{HCAS} is an open-source model created for collision avoidance. The reason we test our approach on ACAS and HCAS is that the sizes of these systems are different. The cost functions designed are the same in both cases.
+Julian et al. \cite{Julian_2019} proposed a DNN compression for ACAS by representing large data tables in the form of DNNs. 
+The \ac{ACAS-Xu} dataset is currently proprietary, so we did not have access to it. But for our tool, the trained model is enough to synthesize \ac{FDIA}. \ac{HCAS} is an open-source model created for collision avoidance. The reason we test our approach on \ac{ACAS-Xu} and \ac{HCAS} is that the sizes of these systems are different. The cost functions designed are the same in both cases.
 
 \section{Methodology}
-Our overall methodology is described in Figure \ref{fig:methodology-2} which describes how we evaluate three different systems. 
-We pass the trained \ac{DNN} models through our tool which then synthesizes the critical inputs and the perturbations for conducting \ac{RFDIA} if they exist. 
+Our overall methodology is described in Figure \ref{fig:methodology-2}. 
+We pass the trained \ac{DNN} models through \tool which then identifies the critical inputs and perturbations for conducting \ac{RFDIA} if they exist. 
 Our tool currently supports tensorflow and pytorch formats.
 
 As explained in \ref{relusyn} the tool converts the \ac{DNN} to \ac{MILP} format and provides the critical inputs and the perturbations. 
-
-
-We used an 8-core system and ran the experiments on Gurobi such that it uses a single thread for running the experiments. 
-
-Using this approach the attacker can use \tool to synthesize the attacks and can mount the attacks on these systems in real-time by introducing noise in the physical and/or network communications as explained in Chapter ~\ref{attack}. 
-Our work focuses on synthesizing the attacks if they exist and not the latter part. 
-
-
+We ran our experiments in Gurobi default mode that spawns multiple threads for solving a model; using an 8-core system. 
+ 
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{"Images/Methodology2"}
-	\caption[Methodology]{Our work supports DNNs modeled in tensorflow and pytorch. These files when passed through ReLUSyn produce the critical inputs and perturbations that can be used to conduct ripplle false data injection attacks if they exist.}
+	\caption[Methodology]{Our work supports DNNs modeled in tensorflow and pytorch. These files when passed through ReLUSyn produce the critical inputs and perturbations that can be used to conduct ripple false data injection attacks or determine that no such attack is possible.}
 	\label{fig:methodology-2}
 \end{figure}
 
 
 
-\section{APS}
+\section{Case study: APS}
 %The APS model designed by Kushner et al. \cite{Dutta_Others__2018__Robust}\smi{add space here}is a data-driven model. The goal of the model is to predict future blood glucose values for the patients.
-APS is the running example that we have used throughout the paper. 
-APS model predicts the insulin value at a "lookahead" time $t + T$, using the history of the past $N$ glucose and insulin values with a step size of $h$. 
-The step size implies that the data is recorded after every $h$ seconds from the starting time. The inputs contain the past insulin values and glucose values by keeping the step size $h$ as 5 and the neural network builds the mapping between input and output values. It is a network with two hidden layers (with 8 neurons per layer), 74 inputs and one output that predicts the future insulin values. 
+APS is the running example that we have used throughout the paper and explained in Section ~\ref{aps}.
+\ac{APS} takes 74 inputs ($37$ pairs of insulin and glucose values) gathered every $5$ minutes. 
+It then predicts the next insulin value to be injected into the patient which is $5$ minutes from the last calculated output by the network. 
+Since the predicted value is dependent on last $37$ pairs, there are safety checks on the output as demonstrated in Table ~\ref{criticalinputs} and hence we add ranges to the outputs to synthesize \ac{RFDIA}.
 
 %Attacks in the APS system.
 Using \tool, we can successfully synthesize attacks in less than a minute. 
@@ -86,30 +82,7 @@ Using \tool, we can successfully synthesize attacks in less than a minute.
 
 
 
-\begin{table}[h!]
-	\begin{center}
-		\caption{Critical Inputs - APS - 1 Input perturbed at a time}
-		\label{criticalinputs}
-		\begin{tabular}{l|S|r}
-			\textbf{Output range} & \textbf{Total inputs} & \textbf{Critical Inputs}  \\
-			%$\alpha$ & $\beta$ & $\gamma$ & $\gamma$ \\
-			\hline
-			(204 $<= Output <=$ 210) &  74&  (1-5, 7, 9-13, 34-43,45,70-74) \\
-			
-		
-			(210 $<= Output <=$ 215) &  74&   (41, 43)\\
-			(215 $<= Output <=$ 220) &  74&  X \\
-			(220 $<= Output <=$ 221) &  74&  X \\
-			%(200 <= Output <= 203) &  74& , 50, 51, 53, 54, 55, 56, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 72, 73) \\
-			(200 $<= Output <=$ 203) &  74&  (23, 31, 35, 36, 38-41, 42, 45-51, 53-56, 59-70, 72, 73) \\
-			(197 $<= Output <=$200) & 74& (40, 45, 48-51, 56, 61, 63-67, 70, 72, 73)\\
-			\hline
-			\hline
-			
-		
-		\end{tabular}
-	\end{center}
-\end{table}
+
 
 
 \begin{table}[h!]
@@ -117,7 +90,7 @@ Using \tool, we can successfully synthesize attacks in less than a minute.
 	\caption{APS Results: The Attack column consists of the attack models where our goal is to minimize the inputs, Output ranges are the output bounds we have set where we want to find the deltas, no. of combinations is the combinations of attacks depending on the attack model (APS has 74 inputs) which is followed the total number of successful and unsuccessful attacks, peak time to conduct an attack in each set of experiment, memory used. }
 	\label{APS}
 	\begin{tabular}{|L{2cm}|L{2.7cm}|L{1cm}|L{1cm}|L{1cm}|L{1cm}|L{1cm}|L{4cm}|L{1cm}|}
-		Attack & Output ranges (O) & No. of combinations  & Successful Attack(s) & Unsuccessful Attack(s) & Peak time& Memory used \\
+		Attack & Output ranges (O) & No. of combinations  & Successful Attack(s) & Unsuccessful Attack(s) & Peak time (s)& Memory used/MB \\
 		\hline
 		
 		\multicolumn{4}{c}{Attack 1: (-5 $<=$ Input $<$= 5)}\\
@@ -258,9 +231,53 @@ Using \tool, we can successfully synthesize attacks in less than a minute.
 	\end{tabular}
 \end{table}
 
+\begin{table}[h!]
+	\begin{center}
+		\caption{Critical Inputs - APS - 1 Input perturbed at a time. These are the safe ranges that we obtain from the specification document for a patient. We perturb inputs   }
+		\label{criticalinputs}
+		\begin{tabular}{|l|r|}
+			\textbf{Output range}  & \textbf{Critical Inputs}  \\
+			%$\alpha$ & $\beta$ & $\gamma$ & $\gamma$ \\
+			\hline
+			(204 $<= Output <=$ 210)&  (1-5, 7, 9-13, 34-43,45,70-74) \\
+			
+			
+			(210 $<= Output <=$ 215) &   (41, 43)\\
+			(215 $<= Output <=$ 220) &  X \\
+			(220 $<= Output <=$ 221) &  X \\
+			%(200 <= Output <= 203) &  74& , 50, 51, 53, 54, 55, 56, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 72, 73) \\
+			(200 $<= Output <=$ 203) &  (23, 31, 35, 36, 38-41, 42, 45-51, 53-56, 59-70, 72, 73) \\
+			(197 $<= Output <=$200) & (40, 45, 48-51, 56, 61, 63-67, 70, 72, 73)\\
+			\hline
+			\hline
+			
+			
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\subsection{Experimental methodology}
+
+Our experimental methodology is as follows:
+We consider a set of accurate inputs and construct perturbation scenarios.
+A perturbation scenario consists of
+\begin{enumerate}
+	\item  Number of inputs to perturb
+	\item  range by which we can perturb each input.
+\end{enumerate}
+	
+For each perturbation scenario, we evaluate our attack efficacy for a range of different outcomes. 
+ In \ac{APS} if a normal output value is $x$; we consider $n$ different output ranges as shown in Table ~\ref{APS} and \ref{criticalinputs}, each of which administer too much insulin, differing only in how much additional insulin is administered.	
+ We then exhaustively test each unique attack in the perturbation scenario till we obtain the smallest one.
+ For example as shown in Table ~\ref{APS}, if the perturbation scenario is "Attack only a single input, change its value by $<= +/- 5$ and the objective is input perturbation minimization" then, given 74 inputs, we run 74 tests for each target output range till be find the feasible input. 
+ We randomly chose $5$ in our evaluation despite the units of insulin and glucose units being different because we have constraints in the model that add the maximum and minimum values of insulin and glucose which if $<$ $5$ and $>$ $-5$  respectively override $5$. 
+ In \ac{APS} we set the insulin range and the glucose ranges based on their units and if $5$ is greater or less than their maximum and minimum values respectively then $5$ is overridden by their ranges. 
+ We do so because there are too many combinations to test to find all possible perturbations if check for smaller ranges or try to find every attack value that can possibly exist.   
+ We iterate over the 74 different inputs, perturbing each by a random amount in the range ($x$ - $5$) $<=$ ($x$ + $5$).
+ Table ~\ref{APS} shows the results for three perturbation scenarios: changing a single input, changing two inputs, and changing all inputs, using a range of $+-$ $5$ for each scenario.   
+ 
 
 
-\subsection{Attacks}
 The goal is to minimize the input perturbations such that the output is perturbed by amounts so it remains between the user-specified lower and the upper bounds.
 Injecting more than the required amounts even if within the bounds is potentially fatal for users of the systems. 
 
