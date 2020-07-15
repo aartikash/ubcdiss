@@ -49,12 +49,15 @@ The researchers proposed ACAS Xu standards \cite{7778055}.
 These standards were implemented in \ac{ACAS-Xu} \ac{DNN}.
 There are 45 DNNs that together make up the collision avoidance system \cite{Julian_2019}.  
 Julian et al. \cite{Julian_2019} proposed a DNN compression for ACAS by representing large data tables in the form of DNNs. 
-The \ac{ACAS-Xu} dataset is currently proprietary, so we did not have access to it. But for our tool, the trained model is enough to synthesize \ac{FDIA}. \ac{HCAS} is an open-source model created for collision avoidance. The reason we test our approach on \ac{ACAS-Xu} and \ac{HCAS} is that the sizes of these systems are different. The cost functions designed are the same in both cases.
+The \ac{ACAS-Xu} dataset is currently proprietary, so we did not have access to it. But for our tool, the trained model is enough to synthesize \ac{FDIA}. \ac{HCAS} is an open-source model created for collision avoidance. The reason we test our approach on \ac{ACAS-Xu} and \ac{HCAS} is that the sizes of these systems are different as shown in Table \ref{tab:table1}. 
+The cost functions that we designed are the same in both cases.
 
-\section{Methodology}
+
 Our overall methodology is described in Figure \ref{fig:methodology-2}. 
 We pass the trained \ac{DNN} models through \tool which then identifies the critical inputs and perturbations for conducting \ac{RFDIA} if they exist. 
-Our tool currently supports tensorflow and pytorch formats.
+Our tool currently supports tensorflow and pytorch  \ac{DNN} formats. 
+We used the python to synthesize \ac{MILP} models from \ac{DNN} and we used it as our Gurobi interface. 
+
 
 As explained in \ref{relusyn} the tool converts the \ac{DNN} to \ac{MILP} format and provides the critical inputs and the perturbations. 
 We ran our experiments in Gurobi default mode that spawns multiple threads for solving a model; using an 8-core system. 
@@ -263,7 +266,7 @@ We consider a set of accurate inputs and construct perturbation scenarios.
 A perturbation scenario consists of
 \begin{enumerate}
 	\item  Number of inputs to perturb
-	\item  range by which we can perturb each input.
+	\item  Range by which we can perturb each input. 
 \end{enumerate}
 	
 For each perturbation scenario, we evaluate our attack efficacy for a range of different outcomes. 
@@ -273,18 +276,22 @@ For each perturbation scenario, we evaluate our attack efficacy for a range of d
  We randomly chose $5$ in our evaluation despite the units of insulin and glucose units being different because we have constraints in the model that add the maximum and minimum values of insulin and glucose which if $<$ $5$ and $>$ $-5$  respectively override $5$. 
  In \ac{APS} we set the insulin range and the glucose ranges based on their units and if $5$ is greater or less than their maximum and minimum values respectively then $5$ is overridden by their ranges. 
  We do so because there are too many combinations to test to find all possible perturbations if check for smaller ranges or try to find every attack value that can possibly exist.   
- We iterate over the 74 different inputs, perturbing each by a random amount in the range ($x$ - $5$) $<=$ ($x$ + $5$).
+ We iterate over the 74 different inputs, perturbing each by a random amount in the range ($x$ - $5$) $<=$ ($x$ + $5$) till we find the one with the smallest perturbation.
+ Finally, the inputs that on smallest perturbations lead to output deviations becomes our critical inputs set as shown in Table ~\ref{criticalinputs} for one specific case. 
  Table ~\ref{APS} shows the results for three perturbation scenarios: changing a single input, changing two inputs, and changing all inputs, using a range of $+-$ $5$ for each scenario.   
  
 
 
-The goal is to minimize the input perturbations such that the output is perturbed by amounts so it remains between the user-specified lower and the upper bounds.
-Injecting more than the required amounts even if within the bounds is potentially fatal for users of the systems. 
-
+%The goal is to minimize the input perturbations such that the output is perturbed by amounts so it remains between the user-specified lower and the upper bounds.
+%Injecting more than the required amounts even if within the bounds is potentially fatal for users of the systems. 
 %Randomly changing inputs can trigger alarms in the system because it will raise the levels above the bounds enforced by specifications. We want to perturb the inputs in a stealthy way. The stealthiness is induced by finding the exact perturbations and to find those exact perturbations we need \tool. Brute force would require to search through the entire search space. We model the attack by including a $delta$ function in the inputs. 
-To locate the critical inputs we first perturb the inputs, one at a time, to induce small perturbations in the outputs as shown in Table ~\ref{summary} under the APS section and in more details in Table ~\ref{APS}. 
+\subsection{Result Analysis}
+To locate the critical inputs we first perturb the inputs, one at a time, to induce perturbations in the outputs as shown in Table ~\ref{summary} under the APS section and in more details in Table ~\ref{APS}. 
 We find that for different ranges of outputs, the critical inputs vary as shown in Table ~\ref{criticalinputs}. 
-We have included the critical inputs when we perturb only one input at a time since these are the most useful from an attackers' perspective, and also because of space reasons. 
+We show the critical inputs for the case where one input perturbation is enough to produce a desirable output change. 
+This makes attacking easy from an attacker's perspective because to conduct a successful \ac{RFDIA} perturbing an input is enough to cause damage instead of changing multiple inputs. 
+We show that it takes less than a second to identify the critical inputs and find the minimum perturbations for all the attacks. 
+
 As we can observe in Table ~\ref{APS} as the number of perturbed inputs increases the possible combinations of critical inputs also increases. 
 
 
