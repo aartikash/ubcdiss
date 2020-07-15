@@ -2,7 +2,7 @@
 \label{attack}
 
 \section{Motivating system: Artificial Pancreas System}
-
+\label{aps}
 
 We use a DNN based \ac{APS}, closed-loop model, by Dutta et al. \cite{10.1007/978-3-319-99429-1_11}  as our motivating example for illustrating a \ac{RFDIA}. 
 The \ac{APS} model we use in this section is also our first evaluation system; it is also the simplest of the three systems in terms of \ac{DNN} complexity described in ~\ref{dnncomplexity}.
@@ -51,12 +51,12 @@ The attacker can use network noise or physical sensor tampering to attack the sy
 	\label{fig:attackmodelphysical}
 \end{figure}
 
-We assume that the attacker has following capabilities:
+We make the following assumptions in the attack model:
 \begin{enumerate}
 	\item The attacker knows the precise \ac{DNN}  architecture. This information easy to find, as the architectures are  usually specified in the  documentation. 
 	\item  The weights and bias of the \ac{DNN}  are known as well through a read-only access to the system.  
 	\item The attacker can modify only the inputs to the model.
-	\item The \ac{DNN} contains ReLU as its activation function. \karthik{This is not a capability of the attacker, but rather is an assumption we make. So move it to a separate paragraph.}
+	\item The \ac{DNN} contains ReLU as its activation function. 
 	%All three systems in this work contain ReLU.
 \end{enumerate}
 

@@ -32,22 +32,22 @@ However, a motivated attacker can figure out how to conduct such attacks in a \a
 If we are to build systems to prevent or mitigate such attacks, we must understand the fundamental nature of these attacks. 
 This work takes a first step towards preventing such attacks by introducing an {\em automated technique} to synthesize such attacks. 
 
-We demonstrate a vulnerability in these systems \karthik{many vulnerabilities, correct?} by using our technique to synthesize a new class of attacks for DNN based controllers that perturbs critical inputs to produce changes in output. 
+We demonstrate a vulnerability in these systems by using our technique to synthesize a new class of attacks for DNN based controllers that perturbs critical inputs to produce changes in output. 
 We call these attacks \ac{RFDIA} as they are transmitted through the DNN's layers in the CPS like ripples in large puddles of water. 
 Much like the outward motion of waves in water when disturbed by dropping a stone, the perturbations introduced to the inputs of a DNN ripple through the layers until they reach the output layer. 
-To mount a successful \ac{RFDIA} attack on a DNN based controller, the attacker needs to distort an input such \karthik{should we say maximally distort?} that the effects of its perturbation reach the final layer, without triggering any alarms. 
+To mount a successful \ac{RFDIA} attack on a DNN based controller, the attacker needs to maximally distort an input such that the effects of its perturbation reach the final layer, without triggering any alarms. 
 
 To mount a \ac{RFDIA}, the attacker needs to identify two things: 
 \begin{enumerate}
 	\item \textbf{The critical inputs}: The inputs (for the attacker) that can be perturbed (either together or in isolation) to cause a desirable change in the output.
-	\item \textbf{Perturbations for each critical input}: The smallest perturbations that will trigger the desired change in output. \karthik{Say why it should be smallest here}
+	\item \textbf{Perturbations for each critical input}: The smallest perturbations that will trigger the desired change in output. 
 \end{enumerate}
 
 
 We present an automated technique that finds the \textit{critical inputs} and the \textit{minimal perturbations} to cause a successful \ac{RFDIA}. 
 We model attack synthesis as an optimization problem using \ac{MILP} and build an automated tool \tool that identifies the critical inputs and finds the perturbations.
-{\em To the best of our knowledge, we are the first to  propose an automated approach to systematically identify the critical inputs and find the minimum perturbations to conduct a \ac{RFDIA} for DNN-based controller systems.
-}
+{\em To the best of our knowledge, we are the first to  propose an automated approach to systematically identify the critical inputs and find the minimum perturbations to conduct a \ac{RFDIA} for DNN-based controller systems.}
+
 The main contributions in this work are as follows:
 
 \begin{enumerate}
@@ -63,7 +63,7 @@ The main results in this work are as follows:
 	\item We exposed a new set of vulnerabilities in \ac{DNN} based systems. 
 	 We find ~7000, ~20, ~40 successful \ac{RFDIA} for \ac{APS}, \ac{HCAS} and \ac{ACAS-Xu} in fewer than 1 second, 40 seconds, and 7000 seconds, respectively. 
 	\item We design attack specific cost functions to synthesize the attacks for the three systems.
-	\item We demonstrate the affects of introducing normalization layers in \ac{DNN} by showing they make \ac{DNN}s more robust against \ac{RFDIA}. \karthik{I think it's a bit of a stretch to say we demonstrate this as we didn't do a targeted experiment with normalization. Perhaps tone it down and say we 'hypothesize' instead.}
+	\item We demonstrate the affects of introducing normalization layers in \ac{DNN} by showing they make \ac{DNN}s more robust against \ac{RFDIA}. 
 \end{enumerate}
 
 	

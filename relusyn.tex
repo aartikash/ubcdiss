@@ -131,7 +131,7 @@ We cannot directly represent the non-linear formulation as a direct representati
 
  To implement the piece-wise linear behavior, we define an activation variable $ac$ that imposes the logical implications. 
 The choice to use different symbols was made in the interest of clarity. 
-The equation in this rewritten form is linear, and it does model ReLU functionality  correctly \karthik{Seems like a strange thing to say - did you mean accurately?} as $x$ will always be non-negative. 
+The equation in this rewritten form is linear, and it does model ReLU functionality  accurately as $x$ will always be non-negative. 
 
 Modern MILP solvers can handle these constraints directly.
 
@@ -147,14 +147,14 @@ ac \in \{0,1\} \\
 The $x \leq 0$ constraint in conjunction with $x \geq 0$ forces $x$ to zero. The other case forces $s$ to be zero.
 This opens the door for a formulation that leads to unique solutions for $x$ and $s$ while enforcing the constraint $x \geq 0$.
 The uniqueness may be achieved by adding a regularization term in the objective function that encourages most entries in $ac$ to be zero.
-Extending this scalar example to the DNN case leads to a \ac{MILP} model of the form: \karthik{Should there be an equation below?}
+Extending this scalar example to the DNN case leads to a \ac{MILP} model of the form shown below. 
 
 
 We have divided our \ac{MILP} model in three main parts. 
 
 
 Equation ~\ref{7} represents the cost functions that are to be minimized or maximized.
-These cost functions are different for different applications and depends on our goal; for an attack synthesis application minimization of input deviations is the goal whereas for a resource utilization \karthik{Sentence is incomplete}.
+These cost functions are different for different applications and depends on our goal; for an attack synthesis application minimization of input deviations is the goal.
 The equation \ref{7} is a generic representation of cost function modeling. 
 We explain our cost function in more details in \ref{section:costfunction} for \ac{RFDIA} attack synthesis. 
 
@@ -264,7 +264,7 @@ The DNN input for $k+1$ is the output of the $k$ layer as shown in Algorithm  ~\
 The $inputs$ to the  Algorithm ~\ref{algo:b} is the \ac{DNN} architecture. 
 The $output$ is a \ac{MILP} model that can be solved using our backend solver Gurobi. 
 We use the \ac{DNN} formalism described above to map it to a \ac{MILP} model using Algorithm ~\ref{algo:b}.
-Following the same algorithm, we successfully synthesize models for \ac{APS}, \ac{ACAS-Xu}, and \ac{HCAS} within a minute. \karthik{This should go in the results section, as it is not a feature of the algorithm.}
+%Following the same algorithm, we successfully synthesize models for \ac{APS}, \ac{ACAS-Xu}, and \ac{HCAS} within a minute. \karthik{This should go in the results section, as it is not a feature of the algorithm.}
 Different applications differ only in the number of layers and nodes in each layer. 
 
 \iffalse

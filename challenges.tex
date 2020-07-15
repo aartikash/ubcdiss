@@ -7,7 +7,7 @@ There are three challenges in the design of this technique.
 
 \subsection{Selecting  the automated technique}
 The first part is choosing an abstraction that allows the attacker to model a DNN and find critical inputs. 
-There are multiple possible approaches such as SMT \karthik{Did we expand this earlier?} solvers, symbolic execution and MILP.
+There are multiple possible approaches such as \ac*{SMT} solvers, symbolic execution and \ac*{MILP}.
 
 We desire a model that is
 \begin{enumerate}
@@ -33,8 +33,7 @@ A \ac{DNN}'s  mathematical structure contains multiple layers, which is the firs
 The complexity arises due to 2 factors.
 \begin{enumerate}
 	\item The mutliple layers in \ac{DNN}.
-	\ac{APS} has two layers as explained in Chapter 3
-	\karthik{Check reference}  with 50 neurons each. 
+	\ac{APS} has two layers as explained in Section ~\ref{aps} with $8$ neurons each. 
 	\item The non-linearity  of the activation function. 
 	Non-linear terms are not allowed in \ac{MILP} modeling \cite{gnonlinearity}
 \end{enumerate}
