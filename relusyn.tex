@@ -6,7 +6,7 @@ We show how fully connected, feed-forward \ac{DNN}s can be formulated as \ac{MIL
 We use a generic representation and describe the modeling of cost functions that are used to generate \ac{RFDIA}.
 We then show how this allows us to identify critical inputs and find minimal perturbations. 
 Finally, we demonstrate its efficiency in three real systems. 
-We also include a section on how ReLU (the non-linear activation function) might be modeled internally by MILP solvers based on work by Fischetti et al. \cite{fischetti2017deep}, who propose a 0-1 MILP model for \ac{DNN} modeling. 
+We also include a section on how ReLU (the non-linear activation function) is likely to be modeled internally by MILP solvers based on Fischetti et al. \cite{fischetti2017deep}. %, who propose a 0-1 MILP model for \ac{DNN} modeling. 
 
 
 \begin{figure}
@@ -124,14 +124,14 @@ w^Ty + b = x - s, x \geq 0, s \geq 0 \\
 %The reason we represent it as in Equation ~\ref{5} is to first separate the equation from its non-linear component;  ReLU activation function is the non-linear part of Equation ~\ref{4}.
 The addition of variable $s$ in Equation ~\ref{5} translates the ReLU activation function to a linear representation.
 We make this division so that we can reason about the non-linear activation function separately from the actual equation. 
-The reason we cannot directly represent the non-linear formulation as a direct representation of $x$ $>$/$<$ $0$ because that level of expressiveness is not available to us in a \ac{MILP}  formulation. 
+We cannot directly represent the non-linear formulation as a direct representation of $x$ $>$/$<$ $0$ because that level of expressiveness is not available in a \ac{MILP}  formulation. 
 \ac{MILP} allows us to model implications but not $if$ statements.
 
 
 
  To implement the piece-wise linear behavior, we define an activation variable $ac$ that imposes the logical implications. 
 The choice to use different symbols was made in the interest of clarity. 
-The equation in this rewritten form is linear, and it does model ReLU functionality  correctly as $x$ will always be non-negative. 
+The equation in this rewritten form is linear, and it does model ReLU functionality  correctly \karthik{Seems like a strange thing to say - did you mean accurately?} as $x$ will always be non-negative. 
 
 Modern MILP solvers can handle these constraints directly.
 
@@ -147,14 +147,14 @@ ac \in \{0,1\} \\
 The $x \leq 0$ constraint in conjunction with $x \geq 0$ forces $x$ to zero. The other case forces $s$ to be zero.
 This opens the door for a formulation that leads to unique solutions for $x$ and $s$ while enforcing the constraint $x \geq 0$.
 The uniqueness may be achieved by adding a regularization term in the objective function that encourages most entries in $ac$ to be zero.
-Extending this scalar example to the DNN case leads to a \ac{MILP} model of the form:
+Extending this scalar example to the DNN case leads to a \ac{MILP} model of the form: \karthik{Should there be an equation below?}
 
 
 We have divided our \ac{MILP} model in three main parts. 
 
 
 Equation ~\ref{7} represents the cost functions that are to be minimized or maximized.
-These cost functions are different for different applications and depends on our goal; for an attack synthesis application minimization of input deviations is the goal whereas for a resource utilization 
+These cost functions are different for different applications and depends on our goal; for an attack synthesis application minimization of input deviations is the goal whereas for a resource utilization \karthik{Sentence is incomplete}.
 The equation \ref{7} is a generic representation of cost function modeling. 
 We explain our cost function in more details in \ref{section:costfunction} for \ac{RFDIA} attack synthesis. 
 
@@ -170,7 +170,7 @@ We explain our cost function in more details in \ref{section:costfunction} for \
 
 Equations ~\ref{8} represents the ReLU modeling for each layer in the network. 
 We showed in Equation~\ref{6} how we can represent ReLU units as a set of linear constraints in \ac{MILP} solvers. 
-To model the constraints we use the formalism from Equation \ref{5} where we introduce the variable $s$ to accommodate the non-linearity using linear representations as explained in \ref{6}. 
+To model the constraints, we use the formalism from Equation \ref{5} where we introduce the variable $s$ to accommodate the non-linearity using linear representations as explained in \ref{6}. 
 We expand on it and apply it to all the layers in the modeling.   
  
 ReLU constraints
@@ -189,7 +189,7 @@ ReLU constraints
 Equations ~\ref{9} add lower bounds ($lb$) and upper bounds ($up$) in the  model for different variables that we will  require to add limits to our search space. 
 These bounds are for the input and the output layers, all other layers are unbounded and will be 0 and $+\infty$ respectively. 
  
-Upper and lower bounds for range analysis
+Upper and lower bounds for range analysis are as follows.
 %Lower and upper bounds on the model
 \begin{equation}
 \label{9}
@@ -264,7 +264,7 @@ The DNN input for $k+1$ is the output of the $k$ layer as shown in Algorithm  ~\
 The $inputs$ to the  Algorithm ~\ref{algo:b} is the \ac{DNN} architecture. 
 The $output$ is a \ac{MILP} model that can be solved using our backend solver Gurobi. 
 We use the \ac{DNN} formalism described above to map it to a \ac{MILP} model using Algorithm ~\ref{algo:b}.
-Following the same algorithm, we successfully synthesize models for \ac{APS}, \ac{ACAS-Xu}, and \ac{HCAS} within a minute. 
+Following the same algorithm, we successfully synthesize models for \ac{APS}, \ac{ACAS-Xu}, and \ac{HCAS} within a minute. \karthik{This should go in the results section, as it is not a feature of the algorithm.}
 Different applications differ only in the number of layers and nodes in each layer. 
 
 \iffalse
@@ -315,7 +315,7 @@ However, the catch here is that the inputs perturbations should be sufficiently 
 
 It does not consist of the cost function since the function will be different for different systems, depending on what the attacker wants to minimize and/or maximize.
 In our case we are specifically demonstrating \ac{RFDIA} where the goal is to minimize the inputs deviations and/or maximize the output deviations.  
-This behavior can be modeled the objective function by introducing a new variable called $delta$ in the inputs and outputs which is then minimized and maximized  respectively. 
+This behavior can be modeled in the objective function by introducing a new variable called $delta$ in the inputs and outputs, which is then minimized and maximized  respectively. 
 
 Hence, the equation ~\ref{1} is represented as ~\ref{11},
 
@@ -369,10 +369,9 @@ The \ac{RFDIA} cost function in Algorithm ~\ref{algo:c} minimizes the absolute v
 Once the attacker has a model and the cost function designed, the next step is to identify the critical inputs, and the desirable perturbations.
 In the running example of APS, there are 74 inputs collected from two sensors every five minutes.
  The goal of the attacker is to locate the critical inputs such that they can conduct \ac{RFDIA}.
- In \ac{APS} the goal of the attacker is to maximize the outputs that is the insulin to be injected into a patient and minimize the inputs that is the previous glucose and insulin values. 
- To do so, an attacker chooses the inputs to be perturbed and the ranges by which they can be perturbed.  
+ In \ac{APS}, the attacker's goal is to maximize the output, namely the insulin to be injected into a patient, and minimize the inputs, namely the previous glucose and insulin values. 
+ To do so, an attacker chooses the inputs to be perturbed, and the ranges by which they can be perturbed.  
+  
  
- 
- 
-We explain our experiments and results in the next section. 
+We explain our experiments and results in the next chapter. 
 
