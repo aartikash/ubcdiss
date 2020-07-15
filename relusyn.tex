@@ -112,6 +112,21 @@ x &= ReLU(w^Ty + b) \\
 
 We cannot apply the $f(X) = \max(0, x)$ operator directly because it is non-linear. 
 As explained in Figure \ref{fig:relubreakdown}, the ReLU function can be broken in two parts, namely positive and negative parts which is termed as piecewise linear. 
+
+In theory $f(x)$ = $Max(0,x)$ can be represented as Equation ~\ref{12}, however, \ac{MILP} does not support $if-then$ constructs because \ac{MILP} only supports logical constraints. 
+Hence to model ReLU in \ac{MILP} we introduce a dummy variable $s$. 
+ 
+
+\begin{equation}
+\label{12}
+\begin{aligned}
+& if (x < 0) \\
+& & then(0); \\
+& else (x);	 \\
+\end{aligned}
+\end{equation}
+
+
 Instead, we can rewrite the equation given above as follows:
 
 \begin{equation}
@@ -124,8 +139,8 @@ w^Ty + b = x - s, x \geq 0, s \geq 0 \\
 %The reason we represent it as in Equation ~\ref{5} is to first separate the equation from its non-linear component;  ReLU activation function is the non-linear part of Equation ~\ref{4}.
 The addition of variable $s$ in Equation ~\ref{5} translates the ReLU activation function to a linear representation.
 We make this division so that we can reason about the non-linear activation function separately from the actual equation. 
-We cannot directly represent the non-linear formulation as a direct representation of $x$ $>$/$<$ $0$ because that level of expressiveness is not available in a \ac{MILP}  formulation. 
-\ac{MILP} allows us to model implications but not $if$ statements.
+%We cannot directly represent the non-linear formulation as a direct representation of $x$ $>$/$<$ $0$ because that level of expressiveness is not available in a \ac{MILP}  formulation. 
+%\ac{MILP} allows us to model implications but not $if$ statements. 
 
 
 
