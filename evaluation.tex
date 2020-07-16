@@ -21,7 +21,7 @@ They also come from two rather different domains: medical devices and autonomous
 			\hline
 			\textbf{Size of the networks} &  &  &  \\
 			Number of inputs &  74&   3&  5\\
-			Number of hidden layers &  2&  6&  7\\
+			Number of hidden layers &  2&  5&  6\\
 			Neurons/Layer &  8&  25 & 50 \\
 			Number of outputs & 1&  5& 5\\
 			\hline
@@ -40,18 +40,18 @@ They also come from two rather different domains: medical devices and autonomous
 
 
 
-
+\iffalse
 We chose safety-critical applications for evaluating our approach. 
 Our first application was inspired by the open-source system called openAPS.
 Dutta et al. \cite{10.1007/978-3-319-99429-1_11} proposed a DNN for APS that takes in 74 inputs as explained in Section ~\ref{aps}.
-The second and third systems are modeling a collision avoidance (CA) system; an automatic system designed for unmanned vehicles  
-The researchers proposed ACAS Xu standards \cite{7778055}. 
+The second and third systems are modeling a collision avoidance (CA) system; an automatic system designed for unmanned aerial vehicles.  
+Manfredi et al. proposed ACAS Xu standards \cite{7778055}. 
 These standards were implemented in \ac{ACAS-Xu} \ac{DNN}.
 There are 45 DNNs that together make up the collision avoidance system \cite{Julian_2019}.  
 Julian et al. \cite{Julian_2019} proposed a DNN compression for ACAS by representing large data tables in the form of DNNs. 
-The \ac{ACAS-Xu} dataset is currently proprietary, so we did not have access to it. But for our tool, the trained model is enough to synthesize \ac{FDIA}. \ac{HCAS} is an open-source model created for collision avoidance. The reason we test our approach on \ac{ACAS-Xu} and \ac{HCAS} is that the sizes of these systems are different as shown in Table \ref{tab:table1}. 
-The cost functions that we designed are the same in both cases.
-
+The \ac{ACAS-Xu} dataset is currently proprietary, so we did not have access to it. But for our tool, the trained model is enough to synthesize \ac{FDIA}. \ac{HCAS} is an open-source model created for collision avoidance. The reason we test our approach on \ac{ACAS-Xu} and \ac{HCAS} is that the architecture of these systems are different as shown in Table \ref{tab:table1}. 
+The cost functions that we designed are the similar for the two cases.  
+\fi 
 
 Our overall methodology is described in Figure \ref{fig:methodology-2}. 
 We pass the trained \ac{DNN} models through \tool which then identifies the critical inputs and perturbations for conducting \ac{RFDIA} if they exist. 
@@ -60,7 +60,7 @@ We used the python to synthesize \ac{MILP} models from \ac{DNN} and we used it a
 
 
 As explained in \ref{relusyn} the tool converts the \ac{DNN} to \ac{MILP} format and provides the critical inputs and the perturbations. 
-We ran our experiments in Gurobi default mode that spawns multiple threads for solving a model; using an 8-core system. 
+We ran our experiments in Gurobi default mode that spawns multiple threads for solving a model using an 8-core system. 
  
 
 \begin{figure}
@@ -74,13 +74,13 @@ We ran our experiments in Gurobi default mode that spawns multiple threads for s
 
 \section{Case study: APS}
 %The APS model designed by Kushner et al. \cite{Dutta_Others__2018__Robust}\smi{add space here}is a data-driven model. The goal of the model is to predict future blood glucose values for the patients.
-APS is the running example that we have used throughout the paper and explained in Section ~\ref{aps}.
+
 \ac{APS} takes 74 inputs ($37$ pairs of insulin and glucose values) gathered every $5$ minutes. 
 It then predicts the next insulin value to be injected into the patient which is $5$ minutes from the last calculated output by the network. 
-Since the predicted value is dependent on last $37$ pairs, there are safety checks on the output as demonstrated in Table ~\ref{criticalinputs} and hence we add ranges to the outputs to synthesize \ac{RFDIA}.
+
 
 %Attacks in the APS system.
-Using \tool, we can successfully synthesize attacks in less than a minute. 
+Using \tool, we can successfully synthesize attacks in less than a minute which works out well for an attacker since now the attacker can distort the inputs in one shot to cause damage in short time. 
 %The experiments that we conduct
 
 
@@ -290,6 +290,7 @@ To locate the critical inputs we first perturb the inputs, one at a time, to ind
 We find that for different ranges of outputs, the critical inputs vary as shown in Table ~\ref{criticalinputs}. 
 We show the critical inputs for the case where one input perturbation is enough to produce a desirable output change. 
 This makes attacking easy from an attacker's perspective because to conduct a successful \ac{RFDIA} perturbing an input is enough to cause damage instead of changing multiple inputs. 
+We kept the $delta$ range  to be between $+-5$ which is a very small perturbation for the insulin values which ideally lie between $100-200$; hence we can observe that small perturbations are enough to conduct successful \ac{RFDIA}.    
 We show that it takes less than a second to identify the critical inputs and find the minimum perturbations for all the attacks. 
 
 As we can observe in Table ~\ref{APS} as the number of perturbed inputs increases the possible combinations of critical inputs also increases. 
@@ -340,7 +341,7 @@ As we can observe in Table ~\ref{APS} as the number of perturbed inputs increase
 
 
 
-\section{ACAS Xu and HCAS}
+\section{Case Study: ACAS-Xu and HCAS}
 
 
 
@@ -754,14 +755,35 @@ The ACAS Xu and HCAS are different from each other in terms of their architectur
 Apart from the difference between the weights, bias and the number of layers, the datasets used to produce the two are also quite different. 
 
 %We conduct two random and targeted \attack \smi{this is singular but should perhaps be plural; good idea to skim the rest of the paper where \attack is used} in these systems, to understand how the systems\smi{this sentence is incomplete}
-The ACAS Xu is designed to model a large lookup table that maps sensor readings to the decisions based on the readings or advisories. 
+The geometry of \ac{ACAS-Xu} is shown in Figure ~\ref{fig:acasxugeometry}.
+The ownship is the unmanned vehicle with the \ac{CA} system and the intruder's (another vehicle) goal is to crash with the ownship. 
+The \ac{ACAS-Xu} is designed to model a large lookup table that maps sensor readings to the decisions based on the readings or advisories. 
+This is represented as forty-five different \ac{DNN} models. 
+Each network has the architecture as described Table ~\ref{tab:table1} with $5$ inputs, $6$ hidden layers and $5$ outputs.  
 
-The geometry of the ACAS Xu is shown in Figure ~\ref{fig:acasxugeometry}.
-The ownship is the unmanned vehicle with the \ac{CA} system and the intruder's goal is to crash with the ownship. 
-There are five sensor readings:  (1) Distance from ownship to intruder, (2) Angle to the intruder relative to ownship heading direction, (3) Header angle to intruder relative to ownship heading direction, (4) Speed of ownship, and (5) Speed of intruder.  
-The outputs represent five different possible advisories or decisions based on sensor readings: (1 )clear-of-conflict (COC), (2) weak right, (3) strong right, (4) weak left, and (5) strong right. 
-The advisories goals is to avoid crashes of the ownship with the intruder; incase the two are getting too close, an action is taken that moves the two apart. 
-Based on the inputs, the one with the least value is the advisory that is going to be the action to be taken by the system.  
+There are five sensor readings (inputs to the network): 
+\begin{itemize}[noitemsep,nolistsep]
+	\item Distance from ownship to intruder ($\upvarrho$)
+	\item Angle to the intruder relative to ownship heading direction ($\psi$)
+	\item Header angle to intruder relative to ownship heading direction  ($\theta$)
+	\item Speed of ownship ($v_{own}$)
+	\item Speed of intruder($v_{int}$)
+\end{itemize}
+
+The $5$ outputs are:
+\begin{itemize}[noitemsep,nolistsep]
+		\item clear-of-conflict (COC)
+	\item weak right ($1.5\degree /s$)
+	\item strong right  ($3 \degree /s$)
+	\item weak left  ($1.5\degree /s$)
+	\item strong right ($3 \degree /s$)
+\end{itemize}
+
+\ac{ACAS-Xu}'s goal is to avoid crashes of the ownship with intruder; incase the two are getting too close, an action is taken that moves the two apart. 
+The output in the \ac{DNN} corresponds to the score of outputs where the one with the minimal score is the action to be taken. 
+This means that based on the sensor readings, if the output score for $strong$ $right$ is the least of all the other outputs then the unmanned vehicle should turn $3 \degree /s$ to it's right to avoid a crash. 
+
+
 
 
 We conduct two types of \ac{RFDIA} here: targeted and random, to understand how long it take to synthesize attacks. 
