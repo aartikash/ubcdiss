@@ -55,11 +55,17 @@ The cost functions that we designed are the similar for the two cases.
 
 Our overall methodology is described in Figure \ref{fig:methodology-2}. 
 We pass the trained \ac{DNN} models through \tool, which then identifies the critical inputs, and perturbations for conducting \ac{RFDIA} (if they exist). 
-Our tool currently supports TensorFlow and PyTorch   \ac{DNN} formats. \karthik{Add citations}
-We wrote a Python script\karthik{Please check} to synthesize \ac{MILP} models from \ac{DNN}s, and used it as our Gurobi interface. 
+Our tool currently supports TensorFlow \ac{DNN} formats  \cite{TensorFlow}. 
+We wrote a Python script to synthesize \ac{MILP} models from \ac{DNN}s, and used it as our Gurobi interface. 
 
 As explained in \ref{relusyn} the tool converts the \ac{DNN} to \ac{MILP} format and provides the critical inputs and the perturbations. 
-We ran our experiments in Gurobi's default mode that spawns multiple threads for solving a model, using an 8-core system. \karthik{Provide more details about system}
+We ran our experiments in server with a 2.40 GHz (10 MB L3 cache) Intel Xeon E5-2407 v2 processor
+with 8 cores across 2 NUMA nodes and hyperthreading disabled. The server uses Ubuntu 16.04.6 LTS with 32 GB RAM that
+is uniformly distributed (16 GB each) across both NUMA nodes.
+
+%Gurobi's default mode that spawns multiple threads for solving a model; 
+
+
  
 
 \begin{figure}
@@ -74,11 +80,11 @@ We ran our experiments in Gurobi's default mode that spawns multiple threads for
 \section{Case study: APS}
 %The APS model designed by Kushner et al. \cite{Dutta_Others__2018__Robust}\smi{add space here}is a data-driven model. The goal of the model is to predict future blood glucose values for the patients.
 
-As mentioned before\karthik{Add section ref}, \ac{APS} takes 74 inputs ($37$ pairs of insulin and glucose values) gathered every $5$ minutes. 
+As mentioned before in Section ~\ref{aps}, \ac{APS} takes 74 inputs ($37$ pairs of insulin and glucose values) gathered every $5$ minutes. 
 It then predicts the next insulin value to be injected into the patient, which is $5$ minutes from the last calculated output by the network. 
 %
 %Attacks in the APS system.
-Using \tool, we can successfully synthesize attacks in less than a minute, which is reasonable for an attacker to mount attacks in real-time on the system\karthik{please check}.
+Using \tool, we can successfully synthesize attacks in less than a minute, which is cost effective for an attacker.
 %which works out well for an attacker since now the attacker can distort the inputs in one shot to cause damage in short time. 
 %The experiments that we conduct
 
@@ -272,11 +278,12 @@ For each perturbation scenario, we evaluate our attack efficacy for a range of d
  In \ac{APS}, if a normal output value is $x$; we consider $n$ different output ranges as shown in Table ~\ref{APS} and \ref{criticalinputs}, each of which administer too much insulin, differing only in how much additional insulin is administered.	
  We then exhaustively test each unique attack in the perturbation scenario till we obtain the smallest one.
  For example as shown in Table ~\ref{APS}, if the perturbation scenario is "Attack only a single input, change its value by $<= +/- 5$ and the objective is input perturbation minimization" then, given 74 inputs, we run 74 tests for each target output range till we find the feasible input. 
- We randomly\karthik{Do you use a random number generator ? I'm confused.} chose $5$ in our evaluation despite the units of insulin and glucose units being different,  because we have constraints in the model that add the maximum and minimum values of insulin and glucose, which if $<$ $5$ and $>$ $-5$  respectively override $5$. \karthik{Sorry, I don't understand this}
+ We chose $5$ in our evaluation despite the units of insulin and glucose units being different, because we have constraints in the model that add the maximum and minimum values of insulin and glucose, which if $<$ $5$ and $>$ $-5$  respectively override $5$. 
  In \ac{APS}, we set the insulin and glucose ranges based on their units, and if $5$ is greater or less than their maximum and minimum values respectively, then $5$ is overridden by their ranges. 
  We do so because there are too many combinations to test to find all possible perturbations if we check for smaller ranges, or try to find every attack value that can possibly exist.   
- We iterate over the 74 different inputs, perturbing each by a random amount in the range ($x$ - $5$) $<=$ ($x$ + $5$) till we find the one with the smallest perturbation. \karthik{I guess you have to try them all to find the smallest, so I don't understand why you say till ?}
- Finally, the inputs that on smallest perturbations lead to output deviations \karthik{Is it 1 input or many ? The previous sentence makes it sound like it's unique} becomes our critical inputs set as shown in Table ~\ref{criticalinputs} for one specific case. 
+ We iterate over the 74 different inputs, perturbing each by a random amount in the range ($x$ - $5$) $<=$ ($x$ + $5$) so we find the one with the smallest perturbation. 
+ Finally, the inputs that on small perturbations lead to output deviations  becomes our critical inputs set as shown in Table ~\ref{criticalinputs} for one specific case. 
+ 
  
  Table ~\ref{APS} shows the results for three perturbation scenarios: changing a single input, changing two inputs, and changing all inputs, within a range of $+-$ $5$, % for each scenario.   
  
@@ -284,7 +291,7 @@ For each perturbation scenario, we evaluate our attack efficacy for a range of d
 %Injecting more than the required amounts even if within the bounds is potentially fatal for users of the systems. 
 %Randomly changing inputs can trigger alarms in the system because it will raise the levels above the bounds enforced by specifications. We want to perturb the inputs in a stealthy way. The stealthiness is induced by finding the exact perturbations and to find those exact perturbations we need \tool. Brute force would require to search through the entire search space. We model the attack by including a $delta$ function in the inputs. 
 \subsection{Result Analysis}
-To locate the critical inputs we first perturb the inputs, one at a time, to induce perturbations in the outputs \karthik{Didn't you just say this ?} as  shown in Table ~\ref{summary} and Table ~\ref{APS}. 
+Results are shown in Table ~\ref{summary} and Table ~\ref{APS}. 
 We find that for different ranges of outputs, the critical inputs vary as shown in Table ~\ref{criticalinputs}.         
 \begin{enumerate}
 	\item We show the critical inputs for the case where one input perturbation is enough to produce a desirable output change. 
@@ -877,10 +884,10 @@ Some interesting observations were:
 
 \section{Summary}
 \begin{enumerate}
-	\item Overall, we conducted ~19,000 attacks for \ac{APS} out of which ~7200 attacks were successful, and took less than 1 second \karthik{Did you mean per attack ? Or total time ?}. 
+	\item Overall, we conducted ~19,000 attacks for \ac{APS} out of which ~7200 attacks were successful, and took less than 1 second per attack. 
 	\item We conducted ~30 \ac{HCAS} random attacks out of which ~20 were successful, and the maximum amount taken by the attacks was 41 seconds.
 	\item We conducted ~7 targeted attacks for \ac{HCAS} out of which 1 attack was successful.
-	\item We conducted ~140 \ac{ACAS-Xu} random attacks out of which ~32 \karthik{~ means approximate - don't use it for exact values ! Or is 32 approximate ? Same for many of the values above. } were successful, and the maximum amount taken by the attacks was 7228 seconds.
+	\item We conducted ~140 \ac{ACAS-Xu} random attacks out of which ~32 were successful, and the maximum amount taken by the attacks was 7228 seconds.
 	\item We conducted ~16 targeted attacks for \ac{HCAS}, out of which 2 attacks was successful.
 \end{enumerate}
 
