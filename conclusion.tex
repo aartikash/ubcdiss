@@ -48,11 +48,7 @@ Thus, based on our observations we can say that designing bigger systems can hel
 Thus keeping the above two principles in mind, adding normalization and increasing the complexity in the \ac{DNN} can significantly help the \ac{DNN}s be more secure. 
 
 
-\subsection{Debugging existing DNN using \tool}
-In our work, we proposed \tool to generate attacks for trained \ac{DNN}s that also tell us if in a particular setting, no attacks exist. 
-However, instead of trying to find attacks in the \ac{DNN}, we can also use \tool for debugging; it means that we can conduct an input-output pair generation to study if there are some wrong pairs based on the application that are being generated. 
-This can be seen as trying to generate the datasets from a trained model that can be used to understand the corner cases; cases can help the designers or researchers to understand how to modify the training data such that they can improve a \ac{DNN} performance by adding or removing from the datasets.
-In an \ac{APS} by using \tool we can generate all combinations of input-output pairs and observe if at the boundary values there exist some wrong predictions. 
+
 
 
 
@@ -85,6 +81,11 @@ Finally, we believe that there are many more extensions that can be done with \t
 	\item Second, one can model cost functions for an attack model different from ours and use our insights to generate attacks. 
 	This is because the modeling of the \ac{DNN} and \tool can be easily reused by integrating with different attack specific cost functions. 
 	Currently there are a lot of unexplored vulnerabilities that exist in \ac{DNN}-based \ac*{CPS} thus one can use \tool to model new vulnerabilities. 
+	\item Finally, we can \tool to debug existing DNN.
+	In our work, we proposed \tool to generate attacks for trained \ac{DNN}s that also tell us if in a particular setting, no attacks exist. 
+	However, instead of trying to find attacks in the \ac{DNN}, we can also use \tool for debugging; it means that we can conduct an input-output pair generation to study if there are some wrong pairs based on the application that are being generated. 
+	This can be seen as trying to generate the datasets from a trained model that can be used to understand the corner cases; cases can help the designers or researchers to understand how to modify the training data such that they can improve a \ac{DNN} performance by adding or removing from the datasets.
+	In an \ac{APS} by using \tool we can generate all combinations of input-output pairs and observe if at the boundary values there exist some wrong predictions. 
 \end{enumerate}
 
 

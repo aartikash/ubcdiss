@@ -127,7 +127,7 @@ Hence to model ReLU in \ac{MILP} we introduce a dummy variable $s$.
 \end{equation}
 
 
-Instead, we can rewrite the equation given above as follows:
+Instead, we can rewrite Equation ~\ref{4} given above as follows:
 
 \begin{equation}
 \label{5}
@@ -136,17 +136,27 @@ w^Ty + b = x - s, x \geq 0, s \geq 0 \\
 \end{aligned}
 \end{equation}
 
-%The reason we represent it as in Equation ~\ref{5} is to first separate the equation from its non-linear component;  ReLU activation function is the non-linear part of Equation ~\ref{4}.
+
 The addition of variable $s$ in Equation ~\ref{5} translates the ReLU activation function to a linear representation.
 We make this division so that we can reason about the non-linear activation function separately from the actual equation. 
-%We cannot directly represent the non-linear formulation as a direct representation of $x$ $>$/$<$ $0$ because that level of expressiveness is not available in a \ac{MILP}  formulation. 
-%\ac{MILP} allows us to model implications but not $if$ statements. 
+
+Equation ~\ref{5} by itself is problematic there are infinitely many $x, s \geq 0$ that would satisfy this equation. For example, if $x’, s’$ is a possible solution, then so is $x’ + 5, s’ + 5$ and so on. This is why we need to introduce $ac \in {0, 1}$ which adds a separate constraint to the model depending on its value.
+
+
+
 
 
 
  To implement the piece-wise linear behavior, we define an activation variable $ac$ that imposes the logical implications. 
 The choice to use different symbols was made in the interest of clarity. 
 The equation in this rewritten form is linear, and it does model ReLU functionality  accurately as $x$ will always be non-negative. 
+
+
+If $ac = 1$, this will add the constraint $x \leq 0$ to the model. This coupled with $x \geq 0$ will mean $x$ will be forced to be $0$ and $Wy + b = - s \leq 0$ (but $x$ which represents the output to the next layer would be $0$).
+
+If $ac = 0$, this will add the constraint $s \leq 0$ to the model. This coupled with $s \geq 0$ will mean $s$ will be forced to be $0$ and $Wy + b = x \geq 0$ (and $x$ which represents the output to the next layer would be $\geq 0$).
+
+Adding regularization to $ac$ will mean there is a unique solution for $x$ and $s$. This regularization will try to clamp $ac$ to 0, which will force $s$ to be 0 and consequently $x$ to be greater than or equal to 0. The main takeaway is that it is possible to model ReLU(x) (or max(0, x)) internally in a MILP solver.
 
 Modern MILP solvers can handle these constraints directly.
 
@@ -159,9 +169,7 @@ ac \in \{0,1\} \\
 \end{aligned}
 \end{equation}
 
-The $x \leq 0$ constraint in conjunction with $x \geq 0$ forces $x$ to zero. The other case forces $s$ to be zero.
-This opens the door for a formulation that leads to unique solutions for $x$ and $s$ while enforcing the constraint $x \geq 0$.
-The uniqueness may be achieved by adding a regularization term in the objective function that encourages most entries in $ac$ to be zero.
+
 Extending this scalar example to the DNN case leads to a \ac{MILP} model of the form shown below. 
 
 

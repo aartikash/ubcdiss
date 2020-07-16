@@ -20,10 +20,10 @@ They also come from two rather different domains: medical devices and autonomous
 			%$\alpha$ & $\beta$ & $\gamma$ & $\gamma$ \\
 			\hline
 			\textbf{Size of the networks} &  &  &  \\
-			Number of inputs &  74&   3&  5\\
+			Number of inputs &  74&   5&  5\\
 			Number of hidden layers &  2&  5&  6\\
 			Neurons/Layer &  8&  25 & 50 \\
-			Number of outputs & 1&  5& 5\\
+			Number of outputs & 1&  3& 5\\
 			\hline
 			\hline
 			
@@ -287,13 +287,20 @@ For each perturbation scenario, we evaluate our attack efficacy for a range of d
 %Randomly changing inputs can trigger alarms in the system because it will raise the levels above the bounds enforced by specifications. We want to perturb the inputs in a stealthy way. The stealthiness is induced by finding the exact perturbations and to find those exact perturbations we need \tool. Brute force would require to search through the entire search space. We model the attack by including a $delta$ function in the inputs. 
 \subsection{Result Analysis}
 To locate the critical inputs we first perturb the inputs, one at a time, to induce perturbations in the outputs as shown in Table ~\ref{summary} under the APS section and in more details in Table ~\ref{APS}. 
-We find that for different ranges of outputs, the critical inputs vary as shown in Table ~\ref{criticalinputs}. 
-We show the critical inputs for the case where one input perturbation is enough to produce a desirable output change. 
-This makes attacking easy from an attacker's perspective because to conduct a successful \ac{RFDIA} perturbing an input is enough to cause damage instead of changing multiple inputs. 
-We kept the $delta$ range  to be between $+-5$ which is a very small perturbation for the insulin values which ideally lie between $100-200$; hence we can observe that small perturbations are enough to conduct successful \ac{RFDIA}.    
-We show that it takes less than a second to identify the critical inputs and find the minimum perturbations for all the attacks. 
+We find that for different ranges of outputs, the critical inputs vary as shown in Table ~\ref{criticalinputs}.         
+\begin{enumerate}
+	\item We show the critical inputs for the case where one input perturbation is enough to produce a desirable output change. 
+	This makes attacking easy from an attacker's perspective because to conduct a successful \ac{RFDIA} perturbing an input is enough to cause damage instead of changing multiple inputs. 
+	\item We kept the $delta$ range  to be between $+-5$ which is a very small perturbation for the insulin values which ideally lie between $100-200$; hence we can observe that small perturbations are enough to conduct successful \ac{RFDIA}.  
+	\item  We show that it takes less than a second to identify the critical inputs and find the minimum perturbations for all the attacks.
+	\item As we can observe in Table ~\ref{APS} as the number of perturbed inputs increases the possible combinations of critical inputs also increases. 
+	
+\end{enumerate}
 
-As we can observe in Table ~\ref{APS} as the number of perturbed inputs increases the possible combinations of critical inputs also increases. 
+
+ 
+
+
 
 
 
@@ -352,7 +359,7 @@ As we can observe in Table ~\ref{APS} as the number of perturbed inputs increase
 	\label{hcas}
 
 		\begin{tabular}{|L{3cm}|L{2cm}|L{1cm}|L{1cm}|L{1cm}|L{1cm}|L{1cm}|L{2cm}|L{1cm}|}
-		Attack & Inputs perturbed & No. of combinations  & Successful Attack(s) & Unsuccessful Attack(s) & Peak time& Memory used &Critical inputs\\
+		Attack & Inputs perturbed & No. of combinations  & Successful Attack(s) & Unsuccessful Attack(s) & Peak time (s)& Memory used/ MB &Critical inputs\\
 		\hline
 		
 		\multicolumn{4}{c}{Random}\\
@@ -762,34 +769,33 @@ This is represented as forty-five different \ac{DNN} models.
 Each network has the architecture as described Table ~\ref{tab:table1} with $5$ inputs, $6$ hidden layers and $5$ outputs.  
 
 There are five sensor readings (inputs to the network): 
-\begin{itemize}[noitemsep,nolistsep]
+\begin{enumerate}[noitemsep,nolistsep]
 	\item Distance from ownship to intruder ($\upvarrho$)
 	\item Angle to the intruder relative to ownship heading direction ($\psi$)
 	\item Header angle to intruder relative to ownship heading direction  ($\theta$)
 	\item Speed of ownship ($v_{own}$)
 	\item Speed of intruder($v_{int}$)
-\end{itemize}
+\end{enumerate}
 
 The $5$ outputs are:
-\begin{itemize}[noitemsep,nolistsep]
-		\item clear-of-conflict (COC)
-	\item weak right ($1.5\degree /s$)
-	\item strong right  ($3 \degree /s$)
-	\item weak left  ($1.5\degree /s$)
-	\item strong right ($3 \degree /s$)
-\end{itemize}
+\begin{enumerate}[noitemsep,nolistsep]
+		\item clear-of-conflict (COC): keep going in the same direction
+	\item weak right: Turn ($1.5\degree /s$) to right
+	\item strong right:  Turn  ($3 \degree /s$) to right
+	\item weak left: Turn ($1.5\degree /s$) to left
+	\item strong left: Turn ($3 \degree /s$) to left
+\end{enumerate}
 
 \ac{ACAS-Xu}'s goal is to avoid crashes of the ownship with intruder; incase the two are getting too close, an action is taken that moves the two apart. 
 The output in the \ac{DNN} corresponds to the score of outputs where the one with the minimal score is the action to be taken. 
 This means that based on the sensor readings, if the output score for $strong$ $right$ is the least of all the other outputs then the unmanned vehicle should turn $3 \degree /s$ to it's right to avoid a crash. 
 
+\ac{HCAS} functions similar to \ac{ACAS-Xu} apart from the architectural differences as stated in Table 5.1. 
 
 
+We conduct two types of \ac{RFDIA} here: targeted and random.
+In targeted attacks, the attacker specifically chooses a particular action to take, and in a random attack, the model should produce any output that differs from the correct one. 
 
-We conduct two types of \ac{RFDIA} here: targeted and random, to understand how long it take to synthesize attacks. 
-In targeted attacks, the attacker specifically chooses an output that has to be minimized and have to have the smallest values of the five possible outcomes.
-This means that out of the five advisories listed above depending on the ownship and the intruder location that action is taken which moves the ownship away from the intruder and the one with the smallest value is the action supposed to be taken by the \ac{CA}.
-The \ac{HCAS} works in a similar way except that it takes in three inputs instead of five. %Also, as shown in Table 1, the parameters are different for ACAS Xu and HCAS. 
 
 
 \begin{figure}
@@ -799,16 +805,51 @@ The \ac{HCAS} works in a similar way except that it takes in three inputs instea
 	\label{fig:acasxugeometry}
 \end{figure}
 
+
+
+\subsection{Experiment Methodology}
+We consider a set of accurate inputs and construct perturbation scenarios. A perturbation scenario consists of 
+\begin{enumerate}
+	\item The output order
+	\item Inputs perturbed
+\end{enumerate}
+
+\subsubsection{Random Attack}
+Unlike \ac{APS} that had a concrete value as an output in \ac{ACAS-Xu} and \ac{HCAS} the output action depends on the scores. 
+In a random attack if the normal output was $strong$ $right$ the attacker's goal
+is to change the output to $COC$.
+This would lead to a crash since according to the new output decision there is no intruder in the vicinity and the unmanned vehicle should keep following it's original path. 
+This can be done by adding a constraint that ensures that the score of $COC$ is the least among all other outputs. 
+The orderings of other outputs is of no concern to the attacker so long $COC$ has the least score. 
+
+For each perturbation scenario, we evaluate our attack efficacy for different orderings which means that if the correct decision based on the scores is $1$ then we perturb the inputs such that the output changes to $2$.
+For this to happen the score for $2$ has to be the least of all other outputs. 
+$Attack$ $1$ in Table ~\ref{hcas} is an example of a random attack where we set one of the outputs to be the least of all the outputs. 
+The ordering of rest of outputs does not matter because the decision is selected based on the output with the least score. 
+We test it out by checking for attacks by perturbing $1$, $2$ and $3$ inputs at a time. 
+From a practical scenario a random attack is useful for an attacker because
+they just have to state one constraint in this case, $value(2)$ $<$ $(all$ $other$ $values)$.
+
+\subsubsection{Targeted Attack}
+
+ 
+In a targeted attack if the original output was $strong$ $right$ the goal of the attacker is to change the output to $strong$ $left$. 
+The difference from random attack is that the attacker wants the order of all the other inputs also to be in a specific order. 
+This is to avoid suspicions of getting detected since if the score for $strong$ $left$ is the lowest and the next higher score is for $strong$ $right$ this can trigger conflicts. 
+Hence the attacker sets constraints with a specific order such that $strong$ $left$ is followed by $weak$ $left$. 
+
+Multiple different orders and tested for in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu}. 
+
+
+We conducted two types of targeted attacks:
+\begin{enumerate}
+\item Total ordering: In total ordering there is a specific order decided by the attacker.
+\item Partial ordering: In partial ordering the order is set only for the first two outputs.  
+\end{enumerate}
+
+
+
 \iffalse
-%Explain about the normalization layer
-The one feature about these systems that are different from the previous system which is the APS is that these systems consist of inputs and outputs normalization. These normalization are used to place bounds on how much the inputs can be perturbed by. To accommodate the normalization layer, we introduce certain heuristics that are deep network specific. %The normalization depends on the conditions that are introduced by the neural network.
-\fi
-
-We conduct two categories of attacks in \ac{ACAS-Xu} and \ac{HCAS}:
-\subsection{Targeted attack} 
-In the first attack, we minimize the input perturbations by keeping all but $1$, $2$ and $n$ inputs constant in the three sets of experiments that we conduct as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu}. 
-Our goal is to find the smallest input perturbations that produce an output with the wrong direction, for instance, weak left to weak right, or weak right to weak left, or weak right instead of COC. 
-
 
 Consider a set of five inputs for which the output is weak left. 
 The output weak left indicates that the \ac{DNN} returns 4. 
@@ -816,40 +857,41 @@ The network is trained in a way such that the least value signifies the output t
 The attacker's goal is to change the output in a way such that the minimum value changes from weak left to weak right. 
 To model this, we first add a delta value to the inputs as in our previous evaluation. 
 To do so, we add constraints that force the output to 5 instead of 4; the constraints look of the form "$05 < $(All other outputs)".
+\fi
 
 
-Some combinations we experiment with are as follows:
-\begin{enumerate}
-	\item Targeted attack 1 = 03 $<$ 02 $<$ 01 $<$ 04 $<$ 05
-	\item Targeted attack 2 = 03 $<$ 02 $<$ 01 $<$ 05 $<$ 04
-	\item Targeted attack 3 = 01 $<$ 02 $<$ (any order)
-	\item Targeted attack 4 = 01 $<$ (any order) 
-\end{enumerate}
  
-The attacker can conduct various targeted attacks using the critical inputs as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu} through physical means. 
+The attacker can conduct various targeted attacks using the critical inputs as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu}. 
 
 
-\begin{figure}
-	\centering
-	\includegraphics[width=0.7\linewidth]{Images/ACASXuDNN}
-	\caption[ACAS Xu DNN]{ACAS Xu DNN representation: 5 inputs and 5 outputs with 5 hidden layers that consist of 50 neurons each.}
-	\label{fig:acasxudnn}
-\end{figure}
 
+\iffalse
 \subsection{FDI random attack} 
 Constructing random \ac{RFDIA} attacks is slightly less effort for the attacker as compared to targeted attacks; this is because the constraints in a targeted setting are much tighter. 
 Building on the previous example, if we have 5 inputs that give us the result as output 4, we need to perturb the inputs such that the output changes to any of the other possibilities such as output 1, output 2, output 3 and output 5.
 
 In this case, we try out multiple different combinations that allow us to find the perturbations as shown in Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} for \ac{HCAS} and \ac{ACAS-Xu}.
+\fi
 
+\subsection{Result Analysis}
+Some interesting observations were:
+\begin{enumerate}
+	\item We found attacks where perturbing a single input was enough to change the output decision.  
+	\item In a complete ordering targeted attack scenario we were unable to find a single successful attack. We believe this was so because the constraints were too tight. 
+	\item When we tried finding the smallest perturbation several experiments timed out but finding a perturbation between $delta$ was successful. 
+\end{enumerate}	
 
 
 \section{Summary}
-From our experimentation we conduct ~19,000 attacks for \ac{APS} out of which ~7200 attacks were successful and took less than 1 second. 
-We conducted ~30 \ac{HCAS} random attacks out of which ~20 were successful and the maximum amount taken by the attacks was 41 seconds. 
-We conducted ~7 targeted attacks for \ac{HCAS} out of which 1 attack was successful.
-We conducted ~140 \ac{ACAS-Xu} random attacks out of which ~32 were successful and the maximum amount taken by the attacks was 7228 seconds. 
-We conducted ~16 targeted attacks for \ac{HCAS} out of which 2 attacks was successful.
+\begin{enumerate}
+	\item From our experimentation we conduct ~19,000 attacks for \ac{APS} out of which ~7200 attacks were successful and took less than 1 second. 
+	\item We conducted ~30 \ac{HCAS} random attacks out of which ~20 were successful and the maximum amount taken by the attacks was 41 seconds.
+	\item We conducted ~7 targeted attacks for \ac{HCAS} out of which 1 attack was successful.
+	\item We conducted ~140 \ac{ACAS-Xu} random attacks out of which ~32 were successful and the maximum amount taken by the attacks was 7228 seconds.
+	\item We conducted ~16 targeted attacks for \ac{HCAS} out of which 2 attacks was successful.
+\end{enumerate}
+
+ 
 These results are shown in Table ~\ref{summary}.
 
 Thus we can see that synthesizing \ac{RFDIA} attacks can be easily accomplished by the attacker in a small amount of time. 
