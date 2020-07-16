@@ -25,14 +25,14 @@ Thus, an adversary can cause irreparable harm to such a system by injecting a fa
 
 Recently,  \ac{DNN} based controllers have replaced classical control-theory based controllers \cite{xiang18} \cite{Kocic2019} \cite{bechtel2017deeppicar}.  
 Techniques used to generate inputs to mount an FDIA attack for classical control theory based controllers are not directly applicable for DNNs, because the state space for DNN based systems is typically much larger that for classical control theory models. 
-In a conventional system, it is relatively easy to identify the function that maps changes in input values to changes in output values, because the control theory equations are well defined for different modes of output prediction.
+In a conventional system, it is relatively easy to identify the function that maps changes in input values to changes in output values, because the control theory equations are well defined for different scenarios of output prediction.
 However, in a \ac{DNN} the computation proceeds through multiple layers and hence the input-output mapping becomes opaque, because the \ac{DNN} model is a function of the training data-set.
 
 However, a motivated attacker can figure out how to conduct such attacks in a \ac{DNN} as we demonstrate in this thesis. 
-If we are to build systems to prevent or mitigate such attacks, we must understand the fundamental nature of these attacks. 
-This work takes a first step towards preventing such attacks by introducing an {\em automated technique} to synthesize such attacks. 
+If we are to build systems to prevent or mitigate such attacks, we must first understand the fundamental nature of these attacks. 
+This work takes a first step towards preventing such attacks by introducing an {\em automated technique} to synthesize them. 
 
-We demonstrate a vulnerability in these systems by using our technique to synthesize a new class of attacks for DNN based controllers that perturbs critical inputs to produce changes in output. 
+We demonstrate a vulnerability in these systems by using our technique to synthesize a new class of attacks for DNN based controllers that perturbs specific inputs to produce changes in output. 
 We call these attacks \ac{RFDIA} as they are transmitted through the DNN's layers in the CPS like ripples in large puddles of water. 
 Much like the outward motion of waves in water when disturbed by dropping a stone, the perturbations introduced to the inputs of a DNN ripple through the layers until they reach the output layer. 
 To mount a successful \ac{RFDIA} attack on a DNN based controller, the attacker needs to maximally distort an input such that the effects of its perturbation reach the final layer, without triggering any alarms. 
@@ -72,7 +72,7 @@ We briefly discuss the relevant background such as \ac{CPS}, \ac{DNN}, and \ac{M
 We provide a motivating example, and identify the challenges encountered in automating the synthesis of these attacks in Chapter ~\ref{attack}.
 We formulate \ac{DNN} model and explain our synthesis approach in Chapter ~\ref{relusyn}, which is followed by the evaluation of our technique on three case studies in Chapter ~\ref{evaluation}.
 We discuss the related work section in Chapter ~\ref{relatedwork}.
-We conclude the thesis with a discussion of how to use our attack generation to design robust \ac{DNN}s and suggesting future work in ~\ref{conclusion}.
+We conclude the thesis with a discussion of how to use our attack generation to design robust \ac{DNN}s and suggesting future work in Chapter ~\ref{conclusion}.
 
 
 
