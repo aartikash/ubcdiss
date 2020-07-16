@@ -1,7 +1,7 @@
 \chapter{Background}
 \label{background}
 
-We begin this section by describing a \ac{CPS} attack in terms of three parties involved; this decomposition will lead into our attack model in Chapter ~\ref{attack}.
+We begin this section by describing a \ac{CPS} attack in terms of three parties involved; this decomposition will lead into our attack model in Chapter~\ref{attack}.
 Next, we provide a summary of canonical \ac{CPS} so we can then introduce conventional controller designs and its limitations. 
 We then define \ac{DNN} based models and describe the open problems in them. 
 Finally, we conclude the section with a formal problem statement. 
@@ -61,7 +61,7 @@ In closed-loop systems, there is no human intervention
 as shown in Figure ~\ref{fig:closedvsopen} (bottom). 
 In the latter case, understanding different types of security attacks becomes a necessity, because automation means that once the attacker has found a way to tamper with the automation mechanism, they can break the system. 
 In the case of stealthy (or subtle) attacks, as will be described in Chapter ~\ref{attack}, 
-Closed loop systems are more vulnerable because existing error-detection mechanisms can be reverse engineered and then used to attack the systems. 
+closed loop systems are more vulnerable because existing error-detection mechanisms can be reverse engineered and then used to attack the systems. 
 
 \section{Conventional Controllers for CPS}
 
@@ -189,7 +189,7 @@ When we refer to \ac{DNN} complexity in this thesis, we are referring to differe
 
 \section{Modeling Mixed-Integer Linear Programming Problems}
 \label{milp}
-We present a general structure that is required for building a \ac{LP} \ac{MILP} model.
+We present a general structure that is required for building a \ac{LP} model, specifically a \ac{MILP} model.
 \ac{MILP} is a \ac{LP} where some of the variables are restricted to be integers. 
 We introduce the notion of \ac{MILP} because we use the underlying techniques to model \ac{DNN}s, and systematically reason about them in different scenarios with minimal effort. 
 An \ac{LP} is characterized by the following components. 
@@ -224,7 +224,7 @@ As this is a linear model, so non-linear terms, for instance, multiplication of 
 We simplify the \ac{DNN} by modeling it as a \ac{MILP} which we will elaborate more in Chapter ~\ref{evaluation}.  
 
 There are multiple tools that build \ac{MILP} models such as Cplex ~\cite{cplex}, and Gurobi ~\cite{gurobi}.
-Both are widely used tools; however, we choose Gurobi for our work due to its more intuitive interface.  
+Both are widely used tools; however, we choose Gurobi for our work due to its more intuitive interface and python support.
 
 
 

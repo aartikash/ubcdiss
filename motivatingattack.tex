@@ -18,9 +18,9 @@ A patient relies on  \ac{APS} to correctly determine the next dose of insulin to
 %How is APS constructed?
 The APS architecture is  the same as that discussed in Section ~\ref{apsdnn}. 
 We examine the \ac{APS} controller model from Dutta et al., which has a feed-forward architecture with $2$ hidden layers and $50$ neurons each, 74 inputs and $1$ output. 
-The DNN for APS takes 32 glucose and insulin values discretized over time as inputs and produces the next insulin values as output as shown in Figure ~\ref{fig:apsdnn}. 
+The DNN for APS takes $37$ glucose and insulin values discretized over time as inputs and produces the next insulin values as output as shown in Figure ~\ref{fig:apsdnn}. 
  This implies that the future value is predicted based on the inputs from the previous set of values. 
-The insulin and glucose values are collected from the sensors and the actuators. 
+The insulin and glucose values are collected from the sensors and the actuators by monitoring the patients behavior for a while. 
 
 
 
@@ -79,7 +79,7 @@ To prevent this, the attacker can choose to perturb the two inputs by small amou
 However, perturbing any two random inputs by small amounts might not necessarily lead to a wrong output prediction, as shown in Chapter ~\ref{evaluation}. 
 
 \subsubsection{Attack 2}
-Adding one more layer of sophistication, the attacker carefully chooses the inputs that can lead to wrong predictions. 
+Adding one more layer of sophistication, the attacker can carefully chooses the inputs that can lead to wrong predictions. 
  This will be a more targeted approach for attacking the system since the input selection will not be random as before. 
 However, not knowing the precise amounts by which the critical inputs should be perturbed can lead to an unsuccessful attack. 
 If the perturbation is too high, it will trigger the error-detection mechanisms, 
