@@ -13,7 +13,7 @@ From our experience in attacking three different types of \ac{DNN} based CPS, th
 The two things that help us in building our intuition were:
 \begin{enumerate}
 	\item Building and running the models on \ac{MILP} solvers helped us understand the power in terms of reasoning about \ac{DNN} based systems for exposing vulnerabilities in form of \ac{RFDIA}. 
-	\item Attacking three practical systems helped us understand how to design robust \ac{DNN} by adding layers of complexity to \ac{DNN}, since some architectures are more secure \karthik{resilient or secure ?} than other. 
+	\item Attacking three practical systems helped us understand how to design robust \ac{DNN} by adding layers of complexity to \ac{DNN}, since some architectures are more resilient than other. 
 \end{enumerate}
 
 
@@ -47,14 +47,14 @@ our goal is to find a reasonable trade-off between time and size to generate att
 
 Thus, based on our observations we can say that designing bigger systems can help make systems more secure given the other aspects of the \ac{DNN} are similar to our evaluation systems. 
 
-Keeping the above two principles in mind, adding normalization and increasing the complexity in the \ac{DNN} can significantly help the \ac{DNN}s be more secure. \karthik{Didn't we already say this at the beginning ?}
+
 
 \section{ Limitations}
 
 There are 2 limitations of \tool that pave way for future work. 
 \begin{enumerate}
 	\item First, we are assuming that the attacker has read access to the weights and the bias of a \ac{DNN}.
-	However, in an ideal scenario it is difficult to obtain read access to weights and bias of safety-critical systems such as \ac{CA} systems since they protect their systems by security by obscurity \karthik{wierd phrasing - just say they obscure it} for an attacker. 
+	However, in an ideal scenario it is difficult to obtain read access to weights and bias of safety-critical systems such as \ac{CA} systems since the systems are obscure. 
 	Therefore, the attacker might need tools or techniques that allows them to attack the system without having knowledge about the internals of the network; also called as a black-box approach. 
 	This would mean that within a short amount of time (say a couple of hours), the attacker is able to attack a black box system and conduct \ac{RFDIA} or other attacks. 
 	\item Second, we observed that in complex \ac{DNN}s of our three systems, there were many cases when  \ac{ACAS-Xu} timed out and did not return any results. 
@@ -99,7 +99,7 @@ We address the two main challenges in synthesizing \attack:
 	
 \end{enumerate}
 To locate the critical inputs, we model a cost function,  add $delta$ variable to the inputs and minimize the $delta$. 
-This helps the attacker in identifying the minimal set of inputs, by perturbing which by the smallest amounts \karthik{Seems awkward to say it this way -can we say small}, can result in wrong output predictions. 
+This helps the attacker in identifying the minimal set of inputs, by perturbing which by the small amounts, can result in wrong output predictions. 
 
 Based on our experiments, we conclude that:
 
