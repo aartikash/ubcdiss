@@ -18,24 +18,24 @@ A patient relies on  \ac{APS} to correctly determine the next dose of insulin to
 %How is APS constructed?
 The APS architecture is  the same as that discussed in Section ~\ref{apsdnn}. 
 We examine the \ac{APS} controller model from Dutta et al., which has a feed-forward architecture with $2$ hidden layers and $50$ neurons each, 74 inputs and $1$ output. 
-The DNN for APS takes $37$ glucose and insulin values discretized over time as inputs and produces the next insulin values as output as shown in Figure ~\ref{fig:apsdnn}. 
+The DNN for APS takes $37$ glucose and insulin input values (for a total of 74 inputs) discretized over time and produces the next insulin values as output as shown in Figure ~\ref{fig:apsdnn}. 
  This implies that the future value is predicted based on the inputs from the previous set of values. 
-The insulin and glucose values are collected from the sensors and the actuators by monitoring the patients behavior for a while. 
+The insulin and glucose values are collected from the sensors and the actuators by monitoring the patients behavior for a $30$ days. 
 
 
 
 %Defense mechanisms
-There are two phases in a \ac{DNN}'s life; training and testing phase. 
-During the training phase, there are three \ac{DNN}s that are trained in an \ac{APS} to predict the next outcome. 
-The first \ac{DNN} is used to predict the next outcome. 
-The accompanying two \ac{DNN}s are used as defense mechanisms to prevent the patient from an insulin overdose.  
-The two \ac{DNN}s are separate from its main decision making controller. 
+There are two distinct phases in a \ac{DNN}'s life; training and testing phase. 
+During the training phase, there are three \ac{DNN}s. 
+The first \ac{DNN} predicts the dose to administer. 
+The other two \ac{DNN}s are defense mechanisms to prevent the patient from an insulin overdose.  
+The two \ac{DNN}s are separate from the main decision making controller. 
 These \ac{DNN}s are trained based on the latest 30-day patient data, which is collected by monitoring the patient to understand the standard injections for a patient over time. 
 
 One \ac{DNN} learns a lower threshold on injection amount; the other learns an upper bound on injection amount. 
 Hence, for every time of the day, based on prior patient characteristics, the minimum and the maximum values are known. 
 However, the system will not detect  an adversary  who manages to always administer the maximum allowed dosage through \ac{RFDIA}. 
-Hence, the attacker needs to identify inputs and  perturb them  such that the output administers maximum allowed dosage for every injection,
+Hence, the attacker needs to identify inputs and  perturb them  such that the output administers the maximum allowed dosage for every injection,
   while being lower than the upper threshold to avoid detection. 
   We further elaborate this in the next section. 
 
@@ -53,22 +53,22 @@ The attacker can use network noise or physical sensor tampering to attack the sy
 
 We make the following assumptions in the attack model:
 \begin{enumerate}
-	\item The attacker knows the precise \ac{DNN}  architecture. This information easy to find, as the architectures are  usually specified in the  documentation. 
-	\item  The weights and bias of the \ac{DNN}  are known as well through a read-only access to the system.  
+	\item The attacker knows the precise \ac{DNN}  architecture. This information is easy to find, as the architectures are  usually specified in the  documentation. 
+	\item  The weights and bias of the \ac{DNN}  are known as well through read-only access to the system.  
 	\item The attacker can modify only the inputs to the model.
 	\item The \ac{DNN} contains ReLU as its activation function. 
 	%All three systems in this work contain ReLU.
 \end{enumerate}
 
 \subsection{Strawman attacker}
-A simple way to attack the system would be to change all the 74 inputs to the DNN.
+A simple way to attack the system would be to change all 74 inputs to the DNN.
  If all the inputs are changed, the final output prediction is going to be wrong. The problem in this  scenario is that 
  these inputs are collected every five minutes from the sensors attached to the patient. 
- This means that the attacker will have to conduct FDIAs every five minutes to cause a change in the output. 
+ This means that the attacker will have to conduct $74$ FDIAs every five minutes to cause a change in the output. 
  However, this is quite tedious in practice, and hence the attacker needs a better way to attack the system. 
 
 \subsection{Sophisticated Attacker}
-A more sophisticated approach to attack the system would be by perturbing small number of inputs that cause a change in the output. 
+A more sophisticated approach to attack the system would be by perturbing a small number of inputs that cause a change in the output. 
 There are two ways to proceed:
 
 \subsubsection{Attack 1}

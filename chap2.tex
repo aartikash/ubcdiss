@@ -51,7 +51,7 @@ The computational unit is a controller, which makes decisions that are sent to t
 The physical and virtual contexts can either be humans in the loop or automated mechanisms.
 
 In the \ac{APS} shown in Figure ~\ref{fig:apsrig}, the sensor is the \ac{CGM} that is attached to the back of a patient to report blood glucose level.  
-\ac{RPi} is the computational part of the \ac{APS}, and the insulin pump is the actuator. 
+A \ac{RPi} is the computational part of the \ac{APS}, and the insulin pump is the actuator. 
 
 There are two types of CPS: open feedback and closed-loop feedback.
 In open feedback systems, 
@@ -61,11 +61,11 @@ In closed-loop systems, there is no human intervention
 as shown in Figure ~\ref{fig:closedvsopen} (bottom). 
 In the latter case, understanding different types of security attacks becomes a necessity, because automation means that once the attacker has found a way to tamper with the automation mechanism, they can break the system. 
 In the case of stealthy (or subtle) attacks, as will be described in Chapter ~\ref{attack}, 
-closed loop systems are more vulnerable because existing error-detection mechanisms can be reverse engineered and then used to attack the systems. 
+closed loop systems are more vulnerable, because existing error-detection mechanisms can be reverse engineered and then used to attack the systems. 
 
 \section{Conventional Controllers for CPS}
 
-A conventional controller transforms into decisions the sensors readings using sets of differential equations for the controller. 
+A conventional controller transforms  the sensors readings into decisions using sets of differential equations. 
 For instance, a quadcopter contains multiple flight modes in its controller based on the weather conditions such as windy or normal day. 
 These modes are important because during windy weather, the decision making model for stable quadcopter flights will be different from a normal weather flight \cite{inbook}. 
 
@@ -117,10 +117,10 @@ The move from equation-based models to DNNs for modeling \ac{CPS} behavior has b
 
 %A \ac{NN} is an algorithm that is modeled after the human brain.
 A \ac{NN} consists of input, output and hidden layers. 
-The layers are composed of nodes. Every computation occurs within in a node of a network.
+The layers are composed of nodes. Every computation occurs within a node of a network.
 In the simplest case, there is a single neuron that takes all the inputs to produce an output, as shown in Figure 2.5. 
 All inputs to the node in Figure 2.5 are summed and  passed through an activation function. 
-Activation function decides, whether a neuron should be activated or not by calculating weighted sum and further adding bias with it. The purpose of the activation function is to introduce non-linearity into the output of a neuron.
+The activation function decides, whether a neuron should be activated or not by calculating weighted a sum and further adding bias with it. The purpose of the activation function is to introduce non-linearity into the output of a neuron.
 A common activation function is the \ac{ReLU} function. 
 The node determines up to what extent the signal must progress to calculate the final output. 
 The final output depends on the network and can be in binary form or have a precise value associated with it. 
@@ -141,9 +141,9 @@ We evaluate two other systems called \ac{CA} systems for unmanned vehicles \cite
 %Normalization layers in DNN
 \ac{DNN}s also consist of a feature called normalization in their layers.  
 Normalization is a common feature engineering method where all the inputs are brought to standard scale since different set of inputs can be in different ranges. 
-This is important in \ac{DNN}s for reasons explained by  LeCun et al.  \cite{10.5555/645754.668382}.
+This is important in \ac{DNN}s for reasons explained by  LeCunn et al.  \cite{10.5555/645754.668382}.
 %The first reason is trivial as computations on a bounded range of numbers prevent some numerical inaccuracies and limit the computational power required. The second reason is that some machine learning algorithms can handle that data better when it is normalized. There are several approaches to normalization of the data.
-Our two evaluation systems are aircraft  control management systems \cite{10.1007/978-3-319-63387-9_5} consist of a normalization layer, 
+Our two evaluation systems are aircraft  control management systems \cite{10.1007/978-3-319-63387-9_5} which include a normalization layer, 
 which we consider during our \ac{MILP} formulation in Chapter ~\ref{relusyn}.
 
 \subsection{Understanding DNN complexity}
@@ -191,7 +191,7 @@ When we refer to \ac{DNN} complexity in this thesis, we are referring to differe
 \label{milp}
 We present a general structure that is required for building a \ac{LP} model, specifically a \ac{MILP} model.
 \ac{MILP} is a \ac{LP} where some of the variables are restricted to be integers. 
-We introduce the notion of \ac{MILP} because we use the underlying techniques to model \ac{DNN}s, and systematically reason about them in different scenarios with minimal effort. 
+We introduce the notion of \ac{MILP}, because we use the underlying techniques to model \ac{DNN}s, and systematically reason about them in different scenarios with minimal effort. 
 An \ac{LP} is characterized by the following components. 
 
 \begin{enumerate}
@@ -208,7 +208,7 @@ The general form of a \ac{LP}  is shown in Equations 2.1.
 Values of $c$ denote the objective coefficient. 
 $x_i$ denotes decision variables.
 $b_i$ denotes the constraints.
-As this is a linear model, so non-linear terms, for instance, multiplication of $z$ variables, are not allowed. 
+As this is a linear model, non-linear terms, for instance, multiplication of $z$ variables, are not allowed. 
 
 \begin{equation}
 \begin{aligned}
@@ -221,10 +221,10 @@ As this is a linear model, so non-linear terms, for instance, multiplication of 
 \end{equation}
 
 
-We simplify the \ac{DNN} by modeling it as a \ac{MILP} which we will elaborate more in Chapter ~\ref{evaluation}.  
+We simplify the \ac{DNN} by modeling it as a \ac{MILP}, which we will elaborate more in Chapter ~\ref{evaluation}.  
 
 There are multiple tools that build \ac{MILP} models such as Cplex ~\cite{cplex}, and Gurobi ~\cite{gurobi}.
-Both are widely used tools; however, we choose Gurobi for our work due to its more intuitive interface and python support.
+Both are widely used, however, we choose Gurobi for our work because it has a more intuitive interface and python support.
 
 
 

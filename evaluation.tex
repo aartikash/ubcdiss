@@ -4,7 +4,7 @@
 %Why are they important
 %How are they different from each other?
 %Why does my system selection show that our techniques are generalizable. 
-Table \ref{tab:table1} presents the architectures of the three \ac{DNN}s used in \ac{APS}, \ac{HCAS}, and \ac{ACAS-Xu}, in increasing order of complexity. 
+Table \ref{tab:table1} presents the architectures of the three \ac{DNN}s used in the \ac{APS}, \ac{HCAS}, and \ac{ACAS-Xu}, in increasing order of complexity. 
 These applications are all mission critical, and can produce catastrophic outcomes in the presence of a successful attack.
 They also come from two rather different domains: medical devices and autonomous vehicles, providing evidence of the generality of \tool. 
 
@@ -54,12 +54,12 @@ The cost functions that we designed are the similar for the two cases.
 \fi 
 
 Our overall methodology is described in Figure \ref{fig:methodology-2}. 
-We pass the trained \ac{DNN} models through \tool, which then identifies the critical inputs, and perturbations for conducting \ac{RFDIA} (if they exist). 
+We pass the trained \ac{DNN} models through \tool, which then identifies the critical inputs and perturbations for conducting \ac{RFDIA} (if they exist). 
 Our tool currently supports TensorFlow \ac{DNN} formats  \cite{TensorFlow}. 
-We wrote a Python script to synthesize \ac{MILP} models from \ac{DNN}s, and used it as our Gurobi interface. 
+We wrote a Python script to synthesize \ac{MILP} models from \ac{DNN}s and used it as our Gurobi input. 
 
-As explained in \ref{relusyn} the tool converts the \ac{DNN} to \ac{MILP} format and provides the critical inputs and the perturbations. 
-We ran our experiments in server with a 2.40 GHz (10 MB L3 cache) Intel Xeon E5-2407 v2 processor
+As explained in Chapter \ref{relusyn}, our tool \tool, converts the \ac{DNN} to \ac{MILP} format and provides the critical inputs and the perturbations. 
+We ran our experiments on server with a 2.40 GHz (10 MB L3 cache) Intel Xeon E5-2407 v2 processor
 with 8 cores across 2 NUMA nodes and hyperthreading disabled. The server uses Ubuntu 16.04.6 LTS with 32 GB RAM that
 is uniformly distributed (16 GB each) across both NUMA nodes.
 
@@ -80,11 +80,11 @@ is uniformly distributed (16 GB each) across both NUMA nodes.
 \section{Case study: APS}
 %The APS model designed by Kushner et al. \cite{Dutta_Others__2018__Robust}\smi{add space here}is a data-driven model. The goal of the model is to predict future blood glucose values for the patients.
 
-As mentioned before in Section ~\ref{aps}, \ac{APS} takes 74 inputs ($37$ pairs of insulin and glucose values) gathered every $5$ minutes. 
-It then predicts the next insulin value to be injected into the patient, which is $5$ minutes from the last calculated output by the network. 
+The \ac{APS} takes 74 inputs ($37$ pairs of insulin and glucose values) gathered every $5$ minutes. 
+It then predicts the next insulin value to be injected, which is $5$ minutes later than the last calculated output by the network. 
 %
 %Attacks in the APS system.
-Using \tool, we can successfully synthesize attacks in less than a minute, which is cost effective for an attacker.
+Using \tool, we can successfully synthesize attacks in less than a minute, making it cost effective for an attacker.
 %which works out well for an attacker since now the attacker can distort the inputs in one shot to cause damage in short time. 
 %The experiments that we conduct
 
@@ -275,14 +275,14 @@ A perturbation scenario consists of
 \end{enumerate}
 	
 For each perturbation scenario, we evaluate our attack efficacy for a range of different outcomes. 
- In \ac{APS}, if a normal output value is $x$; we consider $n$ different output ranges as shown in Table ~\ref{APS} and \ref{criticalinputs}, each of which administer too much insulin, differing only in how much additional insulin is administered.	
- We then exhaustively test each unique attack in the perturbation scenario till we obtain the smallest one.
- For example as shown in Table ~\ref{APS}, if the perturbation scenario is "Attack only a single input, change its value by $<= +/- 5$ and the objective is input perturbation minimization" then, given 74 inputs, we run 74 tests for each target output range till we find the feasible input. 
+ In \ac{APS}, if a normal output value is $x$; we consider $n$ different output ranges as shown in Table ~\ref{APS} and \ref{criticalinputs}, each of which administers too much insulin, differing only in how much additional insulin is administered.	
+ We then exhaustively test each unique attack in the perturbation scenario until we obtain the smallest one.
+ For example as shown in Table ~\ref{APS}, if the perturbation scenario is "Attack only a single input, change its value by $<= +/- 5$ and the objective is input perturbation minimization" then, given 74 inputs, we run 74 tests for each target output range until we find a feasible input. 
  We chose $5$ in our evaluation despite the units of insulin and glucose units being different, because we have constraints in the model that add the maximum and minimum values of insulin and glucose, which if $<$ $5$ and $>$ $-5$  respectively override $5$. 
  In \ac{APS}, we set the insulin and glucose ranges based on their units, and if $5$ is greater or less than their maximum and minimum values respectively, then $5$ is overridden by their ranges. 
  We do so because there are too many combinations to test to find all possible perturbations if we check for smaller ranges, or try to find every attack value that can possibly exist.   
- We iterate over the 74 different inputs, perturbing each by a random amount in the range ($x$ - $5$) $<=$ ($x$ + $5$) so we find the one with the smallest perturbation. 
- Finally, the inputs that on small perturbations lead to output deviations  becomes our critical inputs set as shown in Table ~\ref{criticalinputs} for one specific case. 
+ We iterate over the 74 different inputs, perturbing each by a random amount in the range ($x$ - $5$) $<=$ ($x$ + $5$) until we find the one with the smallest perturbation. 
+ Finally, the inputs that on small perturbations lead to output deviations  become our critical inputs set as shown in Table ~\ref{criticalinputs} for one specific case. 
  
  
  Table ~\ref{APS} shows the results for three perturbation scenarios: changing a single input, changing two inputs, and changing all inputs, within a range of $+-$ $5$, % for each scenario.   
@@ -297,7 +297,7 @@ We find that for different ranges of outputs, the critical inputs vary as shown 
 	\item We show the critical inputs for the case where one input perturbation is enough to produce a desirable output change. 
 	This makes attacking easy from an attacker's perspective because to conduct a successful \ac{RFDIA}, perturbing a single input is enough to cause damage instead of changing multiple inputs. 
 	\item We kept the $delta$ range  to be between $+-5$ which is a very small perturbation for the insulin values which ideally lie between $100-200$; hence we can observe that small perturbations are enough to conduct successful \ac{RFDIA}.  
-	\item  We show that it takes less than a second to identify the critical inputs and find the minimum perturbations for all the attacks.
+	\item  We show that it takes less than a second for \ac{APS} to identify the critical inputs and find the minimum perturbations for all the attacks.
 	\item As we can observe in Table ~\ref{APS}, as the number of perturbed inputs increases, the possible combinations of critical inputs also increases. 
 	
 \end{enumerate}
@@ -771,7 +771,7 @@ The geometry of \ac{ACAS-Xu} is shown in Figure ~\ref{fig:acasxugeometry}.
 The ownship is the unmanned vehicle with the \ac{CA} system and the intruder's (another vehicle) goal is to crash with the ownship. 
 The \ac{ACAS-Xu} is designed to model a large lookup table that maps sensor readings to the decisions based on the readings or advisories. 
 This is represented as forty-five different \ac{DNN} models. 
-Each network has the architecture as described Table ~\ref{tab:table1} with $5$ inputs, $6$ hidden layers and $5$ outputs.  
+Each network has the architecture described Table ~\ref{tab:table1} with $5$ inputs, $6$ hidden layers and $5$ outputs.  
 
 There are five sensor readings (inputs to the network): 
 \begin{enumerate}[noitemsep,nolistsep]
@@ -791,11 +791,11 @@ The $5$ outputs are:
 	\item strong left: Turn ($3 \degree /s$) to left
 \end{enumerate}
 
-\ac{ACAS-Xu}'s goal is to avoid crashes of the ownship with the intruder; in case the two are getting too close, an action is taken that moves the two apart. 
-The output in the \ac{DNN} corresponds to the score of outputs where the one with the minimal score is the action to be taken. 
+\ac{ACAS-Xu}'s goal is to avoid crashes of the ownship with the intruder; if the two are getting too close, an action is taken that moves the two apart. 
+The output in the \ac{DNN} corresponds to the action associated with the minimal score. 
 This means that based on the sensor readings, if the output score for $strong$ $right$ is the least of all the other outputs then the unmanned vehicle should turn $3 \degree /s$ to its right to avoid a crash. 
 
-\ac{HCAS} functions similar to \ac{ACAS-Xu} apart from the architectural differences as stated in Table 5.1. 
+\ac{HCAS} functions similarly to \ac{ACAS-Xu} apart from the architectural differences as stated in Table 5.1. 
 
 We conduct two types of \ac{RFDIA}: targeted and random.
 In targeted attacks, the attacker specifically chooses a particular action to take, and in a random attack, the model should produce any output that differs from the correct one. 
@@ -807,29 +807,29 @@ In targeted attacks, the attacker specifically chooses a particular action to ta
 	\label{fig:acasxugeometry}
 \end{figure}
 
-\subsection{Experiment Methodology}
+\subsection{Experimental Methodology}
 We consider a set of accurate inputs and construct perturbation scenarios. A perturbation scenario consists of 
 \begin{enumerate}
 	\item The output order
 	\item Inputs perturbed
 \end{enumerate}
 
-\subsubsection{Random Attack}
+\subsubsection{Random Ordering Attack}
 Unlike \ac{APS} that had a concrete value as an output, in \ac{ACAS-Xu} and \ac{HCAS}, the output action depends on the scores. 
 In a random attack, if the normal output was $strong$ $right$ the attacker's goal
 is to change the output to $COC$.
 This would lead to a crash since according to the new output decision, there is no intruder in the vicinity, and the unmanned vehicle should keep following its original path. 
 This can be done by adding a constraint that ensures that the score of $COC$ is the least among all other outputs. 
-The orderings of other outputs is of no concern to the attacker so long $COC$ has the least score. 
+The orderings of other outputs is of no concern to the attacker so long as $COC$ has the least score. 
 
 For each perturbation scenario, we evaluate our attack efficacy for different orderings, which means that if the correct decision based on the scores is $1$, then we perturb the inputs such that the output changes to $2$.
-For this to happen the score for $2$ has to be the least of all other outputs. 
+For this to happen the score for $2$ has to be smallest of all other outputs. 
 
 $Attack$ $1$ in Table ~\ref{hcas} is an example of a random attack where we set one of the outputs to be the least of all the outputs. 
 The ordering of rest of outputs does not matter because the decision is selected based on the output with the least score. 
 We test it by checking for attacks by perturbing $1$, $2$ and $3$ inputs at a time. 
 From a practical scenario, a random attack is useful for an attacker because
-they just have to state one constraint in this case, $value(2)$ $<$ $(all$ $other$ $values)$.
+they have to state four constraints in this case, $value(2)$ $<$ $(all$ $other$ $values)$.
 
 \subsubsection{Targeted Attack}
 
@@ -878,24 +878,24 @@ Some interesting observations were:
 \begin{enumerate}
 	\item We found attacks where perturbing a single input was enough to change the output decision.  
 	\item In a complete ordering targeted attack scenario, we were unable to find a single successful attack. We believe this was so because the constraints were too tight. 
-	\item When we tried finding the smallest perturbation, several experiments timed out but finding a perturbation between $delta$ was successful. 
+	\item When we tried finding the smallest perturbation, several experiments timed out but finding a perturbation within possible inputs was successful. 
 \end{enumerate}	
 
 
 \section{Summary}
 \begin{enumerate}
 	\item Overall, we conducted ~19,000 attacks for \ac{APS} out of which ~7200 attacks were successful, and took less than 1 second per attack. 
-	\item We conducted ~30 \ac{HCAS} random attacks out of which ~20 were successful, and the maximum amount taken by the attacks was 41 seconds.
+	\item We conducted ~30 \ac{HCAS} random attacks out of which ~20 were successful, and the maximum amount of time taken by the attacks was 41 seconds.
 	\item We conducted ~7 targeted attacks for \ac{HCAS} out of which 1 attack was successful.
-	\item We conducted ~140 \ac{ACAS-Xu} random attacks out of which ~32 were successful, and the maximum amount taken by the attacks was 7228 seconds.
-	\item We conducted ~16 targeted attacks for \ac{HCAS}, out of which 2 attacks was successful.
+	\item We conducted ~140 \ac{ACAS-Xu} random attacks out of which ~32 were successful, and the maximum amount of time taken by the attacks was 7228 seconds.
+	\item We conducted ~16 targeted attacks for \ac{HCAS}, out of which 2 attacks were successful.
 \end{enumerate}
 
  
 These results are shown in Table ~\ref{summary}.
 
 Thus we can see that synthesizing \ac{RFDIA} attacks can be easily accomplished by the attacker in a small amount of time using \tool. 
-We have also tried out multiple different combinations of attacks keeping multiple attacker scenarios in mind, and show that for systems such as \ac{APS} perturbing a single input out of the 74 inputs is enough to cause damage in Table ~\ref{APS}.
+We have also tried out multiple different combinations of attacks keeping multiple attacker scenarios in mind, and show that for systems such as \ac{APS}, perturbing a single input out of the 74 inputs is enough to cause damage in Table ~\ref{APS}.
 Similarly for \ac{HCAS} and \ac{ACAS-Xu}, we observe  from Table ~\ref{hcas}, ~\ref{hcas2}, ~\ref{hcas3} and ~\ref{acasxu} that perturbing a single input in certain scenarios is enough to cause output deviation. 
 
  \begin{table}[h!]

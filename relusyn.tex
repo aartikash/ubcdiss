@@ -27,8 +27,8 @@ We also include a section on how ReLU (the non-linear activation function) is li
 \section{ReLUSyn: Overview}
 Figure ~\ref{fig:methodology} depicts \tool.
 \begin{enumerate}
-	\item \tool takes as input the DNN for a CPS controller, an optional cost function (which allows users to request particular types of attacks, which will be discussed in more detail in section~\ref{section:costfunction}), and a set of bounds indicating how much inputs can be varied without raising alarms. The bounds can be on inputs, outputs or both depending on our attack model. 
-	\item \tool then produces a \ac{MILP} model for \ac{DNN}.
+	\item \tool takes as input the DNN for a CPS controller, an optional cost function (which allows users to request particular types of attacks, which will be discussed in more detail in section~\ref{section:costfunction}), and a set of bounds indicating how much inputs can be varied without raising alarms. The bounds can be on inputs, outputs or both, depending on our attack model. 
+	\item \tool then produces a \ac{MILP} model for the \ac{DNN}.
 	\item Any solution that the  \ac{MILP} Solver finds for the model maps to a feasible attack.
 	\item If there is no such solution, then no attack is possible.
 \end{enumerate}
@@ -43,13 +43,13 @@ The \ac{DNN} controller in
 
 %Formal modeling of a DNN for later use when explaining the modeling in MILP  
 We represent the architecture as a function F defined as $F: X \rightarrow Y$ composed of multiple layers that map inputs X to output Y. 
-Assume \ac{DNN} composed of $K + 1$ layers, numbered 0 to K.
+Assume a \ac{DNN} composed of $K + 1$ layers, numbered 0 to K.
 Layer 0 %does not really exist since it 
 is the input layer, while layer K is the output.
 Each layer $k$ $\epsilon$ $\{0,1,....,K\}$ consists of $n_k$ nodes (neurons).
 Each neuron has a bias associated with it. 
 The network is fully connected, hence each neuron from layer $k$ is an input to layer $k+1$. 
-The neurons are labeled starting from $1$ to $n_k$ in the network. 
+The neurons are labeled starting from $1$ to $n_k$ in each layer of the network. 
 We denote each neuron by $NODE(i,k)$ which corresponds to the $ith$ node for the layer k. 
 
 We denote the output vector of layer $k$ as $F_k(x)$.
@@ -68,7 +68,7 @@ F_k(x) &= \upsigma(W^{k-1}x^{k-1} + b^{k-1}) \\
 where $W$ is the weight vector, $b$ is the bias associated with each layer, $x$ is the input to the network and $\upsigma$ represents the activation function. 
 \ac{DNN}s can have various activation functions, each with different modeling capabilities. 
 Two common ones are: Rectified Linear Unit (ReLU) ($f(x) = max$ (${0,x}$) as shown in Figure \ref{fig:relubreakdown} and logistic (or sigmoid) activation function $f(x)=1/(1+ exp(-e))$.
-\tool focuses on ReLU,  since it is one of the commonly used activation functions according to Krizhevsky et al. \cite{10.1145/3065386} and is used in all of our example systems.
+\tool focuses on ReLU,  since it is one of the most commonly used activation functions according to Krizhevsky et al. \cite{10.1145/3065386} and is used in all of our example systems.
 
 Thus, the activation function for a layer $k$ and vector $x$ is 
 
@@ -110,8 +110,8 @@ x &= ReLU(w^Ty + b) \\
 \end{equation}
  
 
-We cannot apply the $f(X) = \max(0, x)$ operator directly because it is non-linear. 
-As explained in Figure \ref{fig:relubreakdown}, the ReLU function can be broken in two parts, namely positive and negative parts which is termed as piecewise linear. 
+We cannot apply the $f(x) = \max(0, x)$ operator directly because it is non-linear. 
+As explained in Figure \ref{fig:relubreakdown}, the ReLU function is piecewise linear can be broken in two parts, namely positive and negative parts. 
 
 In theory $f(x)$ = $Max(0,x)$ can be represented as Equation ~\ref{12}, however, \ac{MILP} does not support $if-then$ constructs because \ac{MILP} only supports logical constraints. 
 Hence to model ReLU in \ac{MILP} we introduce a dummy variable $s$. 
@@ -178,9 +178,9 @@ We have divided our \ac{MILP} model in three main parts.
 
 
 Equation ~\ref{7} represents the cost functions that are to be minimized or maximized.
-These cost functions are different for different applications and depends on our goal; for an attack synthesis application minimization of input deviations is the goal.
+These cost functions are different for different applications and depend on our goal; for an attack synthesis application minimization of input deviations is the goal.
 The equation \ref{7} is a generic representation of cost function modeling. 
-We explain our cost function in more details in \ref{section:costfunction} for \ac{RFDIA} attack synthesis. 
+We explain our cost function in more detail in \ref{section:costfunction} for \ac{RFDIA} attack synthesis. 
 
 \begin{equation}
 \label{7}
@@ -287,7 +287,7 @@ This converts the neural network structure into a set of linear equations that c
 The DNN input for $k+1$ is the output of the $k$ layer as shown in Algorithm  ~\ref{algo:b}. 
 The $inputs$ to the  Algorithm ~\ref{algo:b} is the \ac{DNN} architecture. 
 The $output$ is a \ac{MILP} model that can be solved using our backend solver Gurobi. 
-We use the \ac{DNN} formalism described above to map it to a \ac{MILP} model using Algorithm ~\ref{algo:b}.
+
 %Following the same algorithm, we successfully synthesize models for \ac{APS}, \ac{ACAS-Xu}, and \ac{HCAS} within a minute. \karthik{This should go in the results section, as it is not a feature of the algorithm.}
 Different applications differ only in the number of layers and nodes in each layer. 
 
@@ -360,21 +360,21 @@ Algorithm ~\ref{algo:c} shows how to include the cost functions for \ac{RFDIA} a
 	%\renewcommand{\labelenumi}{(\Roman{enumi})}
 	%\begin{enumerate}[noitemsep,nolistsep]
 	%\item
-	(I) For the first layer $k = 0$ (with weight matrix $W_0$ and bias vector $b_0$), $output_0 = W_0 * (x + \Delta x) + b_k$
+	(I) \textcolor{red}{For the first layer $k = 0$ (with weight matrix $W_0$ and bias vector $b_0$),} $\color{red} output_0 = W_0 * (x + \Delta x) + b_k$
 	\linebreak
-	(II) For every subsequent layer $k \geq 1$ (with weight matrix $W_k$ and bias vector $b_k$), $output_k = W_k * input_k + b_k$
+	(II) For every subsequent layer $k \geq 1$ (with weight matrix $W_k$ and bias vector $b_k$), $ output_k = W_k * input_k + b_k$
 	\linebreak
 	%\item 
 	(III) Applying activation function to every layer's output,
 	\linebreak
 	Constraints: $ReLU\_output_k = max(0, output_k)$ (component-wise) \
 	\linebreak
-	(IV) Applying constraints to the DNN output to force the desired deviation
+	(IV) \textcolor{red} {Applying constraints to the DNN output to force the desired deviation}
 	\linebreak
 	The final layer's rectified output is the DNN output.
 	
 	\textbf{Cost/Attack Function} \linebreak
-	$\min |\Delta x|$
+	$ \color{red} \min |\Delta x|$
 	%$Minimize $  $input\_delta$
 	\caption{Modeling neural network in MILP with perturbation variables and a cost function}
 	\label{algo:c}
@@ -393,7 +393,7 @@ The \ac{RFDIA} cost function in Algorithm ~\ref{algo:c} minimizes the absolute v
 Once the attacker has a model and the cost function designed, the next step is to identify the critical inputs, and the desirable perturbations.
 In the running example of APS, there are 74 inputs collected from two sensors every five minutes.
  The goal of the attacker is to locate the critical inputs such that they can conduct \ac{RFDIA}.
- In \ac{APS}, the attacker's goal is to maximize the output, namely the insulin to be injected into a patient, and minimize the inputs, namely the previous glucose and insulin values. 
+ In \ac{APS}, the attacker's goal is to maximize the output, namely the insulin to be injected into a patient subject to a constraint, and minimize the change in inputs, namely the previous glucose and insulin values. 
  To do so, an attacker chooses the inputs to be perturbed, and the ranges by which they can be perturbed.  
   
  
