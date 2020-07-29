@@ -4,12 +4,12 @@
 \chapter{Abstract}
 
 \ac{CPS} are deployed in many mission-critical applications such as medical devices (e.g., an \ac{APS}), autonomous vehicular systems (e.g., self-driving cars, unmanned aerial vehicles) and aircraft control management systems (e.g.,  \ac{HCAS} and \ac{ACAS-Xu}). 
-Ensuring correctness is becoming more difficult as these systems adopt new technology, such as \ac{DNN}, to control these systems. 
-\ac{DNN} are black box algorithms whose inner workings are complex and difficult to discern.
+Ensuring correctness is becoming more difficult as researchers adopt new technology, such as \ac{DNN}s, to control these systems. 
+\ac{DNN}s are black box algorithms whose inner workings are complex and difficult to discern.
 As such, understanding their vulnerabilities is also complex and difficult. 
 
-We identify a new vulnerability in these systems and demonstrate how to synthesize a new category of attacks \ac{RFDIA} in them by perturbing specific inputs, by minimal amounts, to stealthily change the \ac{DNN}'s output. 
- These perturbations propagate as ripples through multiple \ac{DNN} layers and can lead to corruptions that can be fatal. 
+We identify a new vulnerability in these systems, and demonstrate how to synthesize a new category of attacks \ac{RFDIA} in them by perturbing specific inputs, by minimal amounts, to stealthily change the \ac{DNN}'s output. 
+ These  perturbations propagate as ripples through multiple \ac{DNN} layers and can lead to corruptions that can be fatal. 
 We demonstrate that it is possible  to construct such attacks efficiently by identifying the \ac{DNN}'s critical inputs. 
 The critical inputs are those that  affect the final outputs the most on being perturbed. 
 Understanding this new class of attacks sets the stage for developing methods to mitigate vulnerabilities. 
@@ -17,7 +17,7 @@ Understanding this new class of attacks sets the stage for developing methods to
 Our attack synthesis technique is based on modeling the attack as an optimization problem using \ac{MILP}.
 We define an abstraction for \ac{DNN}-based \ac{CPS} that allows us to automatically: 1) identify the critical inputs, and 2) find the smallest perturbations that produce output changes. 
 We demonstrate our technique on three practical \ac{CPS} with two mission-critical applications in increasing order of complexity: Medical systems (\ac{APS}) and aircraft control management systems (\ac{HCAS} and \ac{ACAS-Xu}). 
-Our key observations for scaling our technique to complex systems such as \ac{ACAS-Xu} were to define: 1) appropriate intervals for their inputs and the outputs, and 2) attack specific objective (cost) functions in the abstraction.  
+Our key insights for scaling our technique to complex systems such as \ac{ACAS-Xu} were to define: 1) appropriate intervals for their inputs and the outputs, and 2) attack specific objective (cost) functions in the abstraction.  
  
 
 
